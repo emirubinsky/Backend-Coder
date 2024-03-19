@@ -19,10 +19,10 @@ productRouter.get("/realtimeproducts/message/:id", productController.getMessages
 productRouter.get("/realtimeproducts/:category", productController.getProductsByCategory);
 
 // Manejar la solicitud de agregar un producto en tiempo real
-productRouter.post("/realtimeproducts/addProduct", imgUpload.single("image"), productController.addProduct);
+productRouter.post("/addProduct", imgUpload.single("image"), productController.addProduct);
 
 // Manejar la solicitud de editar un producto en tiempo real
-productRouter.put("/realTimeProducts/editProduct/:id", imgUpload.single("image"), productController.updateProduct)
+productRouter.put("/realtimeproducts/editProduct/:id", imgUpload.single("image"), productController.updateProduct);
 
 // Manejar la solicitud de eliminación de un producto en tiempo real
 productRouter.delete('/realtimeproducts/deleteProduct/:id', productController.deleteProduct);

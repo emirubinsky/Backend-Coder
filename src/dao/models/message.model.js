@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 
 const messageSchema = new mongoose.Schema({
-    text: String,
-    name: String,
+    user: String,
+    message: String,
     date: {
         type: Date,
         default: Date.now,
@@ -12,8 +12,8 @@ const messageSchema = new mongoose.Schema({
         ref: 'Product'
     },
     responses: [{
-        text: String,
-        name: String,
+        user: String,
+        message: String,
         date: {
             type: Date,
             default: Date.now,

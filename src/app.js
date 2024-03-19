@@ -51,12 +51,24 @@ httpServer.listen(PORT, () => {
 });
 
 // Servidor WebSocket
-export const io = new Server(httpServer);
+const io = new Server(httpServer);
 
 io.on('connection', socket => {
     console.log("Nuevo cliente conectado!!");
 
-    socket.on('message', data => {
-        console.log(data);
+    socket.on("deleteProduct", (deleteProduct) => {
+        console.log("Producto borrado:", deleteProduct);
+        io.emit("deleteProduct", deleteProduct);
+    });
+
+    socket.on("addProduct", (addProduct) => {
+        console.log("Producto agregado:", addProduct);
+        io.emit("addProduct", addProduct);
+    });
+
+    socket.on("addMessage", (addMessage) => {
+        console.log("Mensaje agregado");
+        io.emit("addMessage", addMessage);
+    
     })
 })

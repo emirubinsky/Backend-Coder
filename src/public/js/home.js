@@ -1,5 +1,3 @@
-import { io } from "../../app.js";
+import io from "socket.io-client";
 
 const socket = io();
-
-socket.emit('message', 'Se ha conectado el websocket');
