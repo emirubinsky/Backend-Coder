@@ -19,8 +19,7 @@ app.use(express.json());
 //app.use("/api/carts", cartRouter);
 
 mongoose.connect("mongodb+srv://rubinskyemiliano:mongo1020@codercluster.k6ioe0m.mongodb.net/?retryWrites=true&w=majority&appName=CoderCluster", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
+    
 });
 
 
@@ -59,10 +58,13 @@ const io = new Server(httpServer);
 io.on('connection', socket => {
     console.log("Nuevo cliente conectado!!");
 
-    socket.on("deleteProduct", (deleteProduct) => {
-        console.log("Producto borrado:", deleteProduct);
-        io.emit("deleteProduct", deleteProduct);
+    socket.on("deleteProduct", (deleteProductId) => {
+        console.log("Producto borrado:", deleteProductId);
+        io.emit("deleteProduct", deleteProductId);
+        
     });
+
+   
 
     socket.on("addProduct", (addProduct) => {
         console.log("Producto agregado:", addProduct);

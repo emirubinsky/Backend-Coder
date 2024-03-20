@@ -1,27 +1,34 @@
 const socket = io.connect('http://localhost:8080');
 
-    socket.on('addProduct', (addProduct) => {
-    // Lógica para agregar el nuevo producto a la interfaz de usuario
+async function renderProducts(products) {
+    if (!products || !products.image) {
+        console.error('No se pudo renderizar el producto:', products);
+        return;
+    }
+
     const productList = document.getElementById('productList');
     const productElement = document.createElement('div');
     productElement.classList.add('col-md-4', 'mb-4');
     productElement.innerHTML = `
         <div class="card">
-            <img src="/img/${addProduct.image}" class="card-img-top img-fluid" alt="${addProduct.title}"
+        <img src="/img/${products.image}" class="card-img-top img-fluid" alt="${products.title}"
                 style="max-height: 400px; aspect-ratio: 3/2; object-fit: contain;">
             <div class="card-body">
-                <h5 class="card-title">${addProduct.title}</h5>
-                <p class="card-text">${addProduct.brand}</p>
-                <p class="card-text">${addProduct.description}</p>
-                <p class="card-text">Precio: $${addProduct.price}</p>
-                <p class="card-text">Stock: ${addProduct.stock}</p>
-                <p class="card-text">Categoría: ${addProduct.category}</p>
-                <button class="btn btn-danger delete-btn" data-product-id="${addProduct._id}"
-                    data-delete-url="/realtimeproducts/deleteProduct/${addProduct._id}">Eliminar
-                    Producto</button>
+            <h5 class="card-title">${products.title}</h5>
+            <p class="card-text">${products.brand}</p>
+            <p class="card-text">${products.description}</p>
+            <p class="card-text">Precio: $${products.price}</p>
+            <p class="card-text">Stock: ${products.stock}</p>
+            <p class="card-text">Categoría: ${products.category}</p>
+            <button class="btn btn-danger delete-btn" data-product-id="${products._id}">Eliminar Producto</button>
             </div>
         </div>`;
     productList.appendChild(productElement);
+};
+    
+
+    socket.on('addProduct', (addProduct) => {
+    renderProducts(addProduct); 
 });
 
 // Manejar el envío del formulario para agregar un producto
@@ -54,48 +61,35 @@ document.getElementById('addProductForm').addEventListener('submit', async (even
     }
 });
 
-socket.on('deleteProduct', (deletedProductId) => {
-    // Lógica para eliminar el producto de la interfaz de usuario
-    const deletedProductElement = document.getElementById(deletedProductId);
-    if (deletedProductElement) {
-        deletedProductElement.remove();
+    // Función para manejar el evento de hacer clic en el botón "Eliminar Producto"
+    function handleDeleteProduct(event) {
+    if (!event.target.classList.contains('delete-btn')) {
+        return;
     }
-});
 
 
-// Manejar la eliminación de un producto
-document.getElementById('productList').addEventListener('click', async (event) => {
-    // Verificar si el clic ocurrió en un botón de eliminación
-    if (event.target.classList.contains('delete-btn')) {
-        // Obtener el ID del producto del atributo 'data-product-id'
-        const id = event.target.getAttribute('data-product-id');
+
+    const productId = event.target.getAttribute('data-product-id');
         
-
-        try {
-            const response = await fetch(`http://localhost:8080/api/products/deleteProduct/${id}`, {
-                method: 'DELETE'
-            });
-
-            if (!response.ok) {
-                throw new Error('No se pudo eliminar el producto');
-            }
-
-            // Emitir un evento de socket para indicar la eliminación del producto
-            socket.emit('deleteProduct', id);
-
-            // Eliminar el producto de la interfaz de usuario
-            const deletedProductElement = document.getElementById(id);
-            if (deletedProductElement) {
-                deletedProductElement.remove();
-            }
-
-            console.log('Producto eliminado exitosamente');
-
-            location.reload();
-        }   catch(error) {
-            console.error('Error al eliminar el producto:', error);
-        }
+    // Emitir el evento "deleteProduct" al servidor con el ID del producto a eliminar
+    socket.emit('deleteProduct', productId);
+}
+        
+    // Agregar un event listener para el evento click en el contenedor productList
+    ocument.getElementById('productList').addEventListener('click', handleDeleteProduct);
+            
+    // Manejar el evento de producto borrado desde el servidor
+    socket.on('deleteProduct', (deletedProductId) => {
+    // Eliminar el producto de la interfaz
+    const productElement = document.querySelector(`[data-product-id="${deletedProductId}"]`);
+    if (productElement) {
+        productElement.parentElement.parentElement.remove();
+        console.log(`Producto con ID ${deletedProductId} eliminado`);
+    } else {
+        console.log(`No se encontró el producto con ID ${deletedProductId}`);
     }
+
+    
 });
 
 
