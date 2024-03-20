@@ -2,23 +2,7 @@ import mongoose from "mongoose";
 
 const messageSchema = new mongoose.Schema({
     user: String,
-    message: String,
-    date: {
-        type: Date,
-        default: Date.now,
-    },
-    product: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Product'
-    },
-    responses: [{
-        user: String,
-        message: String,
-        date: {
-            type: Date,
-            default: Date.now,
-        }
-    }]
+    text: String
 });
 
 const Message = mongoose.model("Message", messageSchema);

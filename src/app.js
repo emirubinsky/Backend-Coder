@@ -18,7 +18,10 @@ app.use(express.json());
 //app.use("/api/products", productRouter);
 //app.use("/api/carts", cartRouter);
 
-mongoose.connect("mongodb://localhost:27017/ecommerce");
+mongoose.connect("mongodb+srv://rubinskyemiliano:mongo1020@codercluster.k6ioe0m.mongodb.net/?retryWrites=true&w=majority&appName=CoderCluster", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+});
 
 
 const db = mongoose.connection;
@@ -41,7 +44,7 @@ app.engine("handlebars", handlebars.engine());
 app.set("views", __dirname + "/views");
 app.set("view engine", "handlebars");
 app.use(express.static(path.join(__dirname, 'public')));
-app.use("/", router);
+app.use("/api/", router);
 
 const PORT = 8080;
 
@@ -67,7 +70,7 @@ io.on('connection', socket => {
     });
 
     socket.on("addMessage", (addMessage) => {
-        console.log("Mensaje agregado");
+        console.log("Mensaje agregado", addMessage);
         io.emit("addMessage", addMessage);
     
     })
