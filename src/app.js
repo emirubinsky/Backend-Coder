@@ -9,7 +9,9 @@ import path from "path";
 import router from "./routes.js";
 
 const app = express();
-const httpServer = http.createServer(app);
+const httpServer = http.createServer(app); 
+//app.listen(8080, () => console.log("Escuchando puerto 8080!")); 
+    //http.createServer(app);
 
 // Middleware para analizar el cuerpo de la solicitud JSON
 app.use(express.json());

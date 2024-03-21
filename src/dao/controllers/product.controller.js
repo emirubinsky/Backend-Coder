@@ -4,11 +4,17 @@ import Product from "../models/product.model.js";
 const productController = {
     getProducts: async (req, res) => {
         try {
+
+            console.log("hola")
+
             const products = await Product.find().lean();
+
+            console.log("GET > getProducts",  {products })
 
             if (req.accepts('html')) {
                 return res.render('realTimeProducts', { products });
             }
+
             return res.json(products);
         } catch (err) {
             console.error('Error:', err);
@@ -19,6 +25,13 @@ const productController = {
     addProduct: async (req, res) => {
         const { title, brand, description, price, stock, category } = req.body;
         // Lógica para agregar un producto
+
+        console.log("TODO - Disculpa, aun no he sido implementado, pero mira lo que ha llegado",
+        {
+            title, brand, description, price, stock, category
+        })
+
+        return res.status(200).json({message: "FALTA CODEAR ESTO"});
     },
 
     deleteProduct: async (req, res) => {
