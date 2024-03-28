@@ -1,12 +1,9 @@
 <div>
-    <h1>Home</h1>
-    <input id="chatbox">
-    {{#each msg as |obj|}}
-    {{obj.socketid}}: {{obj.message}}
-    {{/each}}
-    <p id="log"></p>
+    conectado a web socket
+
+    <a href="/api/products/realtimeproducts" class="btn btn-primary">Ver los productos</a>
+    <a href="/api/messages/" class="btn btn-primary">Ver chat</a>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/home.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

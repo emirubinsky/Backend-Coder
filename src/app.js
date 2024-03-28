@@ -9,73 +9,62 @@ import path from "path";
 import router from "./routes.js";
 
 const app = express();
-const httpServer = http.createServer(app); 
-//app.listen(8080, () => console.log("Escuchando puerto 8080!")); 
-    //http.createServer(app);
+const httpServer = http.createServer(app);
 
 // Middleware para analizar el cuerpo de la solicitud JSON
 app.use(express.json());
 
-// Rutas para productos y carritos
-//app.use("/api/products", productRouter);
-//app.use("/api/carts", cartRouter);
-
-mongoose.connect("mongodb+srv://rubinskyemiliano:mongo1020@codercluster.k6ioe0m.mongodb.net/?retryWrites=true&w=majority&appName=CoderCluster", {
-    
-});
-
+mongoose.connect(
+  "mongodb+srv://rubinskyemiliano:mongo1020@codercluster.k6ioe0m.mongodb.net/?retryWrites=true&w=majority&appName=CoderCluster",
+  {}
+);
 
 const db = mongoose.connection;
 
 db.on("error", (err) => {
-    console.error("Error de conexión a MongoDB:", err);
+  console.error("Error de conexión a MongoDB:", err);
 });
 
 db.once("open", () => {
-    console.log("Conexión a MongoDB exitosa");
+  console.log("Conexión a MongoDB exitosa");
 });
 
 // Middleware adicional para analizar el cuerpo de la solicitud JSON en cartRouter
 app.use(bodyParser.json());
-
 app.use(express.urlencoded({ extended: true }));
 
 // Middleware para utilizar plantillas html
 app.engine("handlebars", handlebars.engine());
 app.set("views", __dirname + "/views");
 app.set("view engine", "handlebars");
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "public")));
 app.use("/api/", router);
 
 const PORT = 8080;
 
 // Servidor HTTP
 httpServer.listen(PORT, () => {
-    console.log("Servidor conectado!!");
+  console.log("Servidor conectado!!");
 });
 
 // Servidor WebSocket
 const io = new Server(httpServer);
 
-io.on('connection', socket => {
-    console.log("Nuevo cliente conectado!!");
+io.on("connection", (socket) => {
+  console.log("Nuevo cliente conectado!!");
 
-    socket.on("deleteProduct", (deleteProductId) => {
-        console.log("Producto borrado:", deleteProductId);
-        io.emit("deleteProduct", deleteProductId);
-        
-    });
+  socket.on("deleteProduct", (deleteProductId) => {
+    console.log("Producto borrado:", deleteProductId);
+    io.emit("deleteProduct", deleteProductId);
+  });
 
-   
+  socket.on("addProduct", (addProduct) => {
+    console.log("Producto agregado:", addProduct);
+    io.emit("addProduct", addProduct);
+  });
 
-    socket.on("addProduct", (addProduct) => {
-        console.log("Producto agregado:", addProduct);
-        io.emit("addProduct", addProduct);
-    });
-
-    socket.on("addMessage", (addMessage) => {
-        console.log("Mensaje agregado", addMessage);
-        io.emit("addMessage", addMessage);
-    
-    })
-})
+  socket.on("addMessage", (addMessage) => {
+    console.log("Mensaje agregado", addMessage);
+    io.emit("addMessage", addMessage);
+  });
+});
