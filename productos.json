@@ -1,13 +1,14 @@
 [
   {
-  "brand": "Sony",
-  "description": "PS5",
-  "price": 900000,
-  "stock": 10,
-  "category": "tecnologia",
-  "image": "PS5.jpg",
-  "_id": "6600676ccf242ca23087c1f8",
-  "__v": 0
-}
+    "title":"PS5",
+    "brand": "Sony",
+    "description": "ps5",
+    "price": 900000,
+    "stock": 10,
+    "category": "tecnologia",
+    "image": "PS5.jpg",
+    "_id": "6600676ccf242ca23087c1f8",
+    "__v": 0
+  }
 ]
  

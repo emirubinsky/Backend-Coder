@@ -1,6 +1,7 @@
 import { fileURLToPath } from "url";
 import path, { dirname } from "path";
 import multer from "multer";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -21,6 +22,8 @@ export function configureProductMulter() {
             cb(null, file.originalname);
         },
     });    
+
     return multer({ storage: storage });
 }
+
 export default __dirname;

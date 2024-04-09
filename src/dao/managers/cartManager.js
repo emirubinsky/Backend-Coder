@@ -23,99 +23,92 @@ const writeJsonFile = (data) => {
   }
 };
 
+
 class cartManager {
-  async createCart(req, res) {
-    try {
-      const carritos = readJsonFile(jsonFilePath);
+    async createCart(req, res) {
+        try {
+            const carritos = readJsonFile(jsonFilePath);
+            
+            const newCartId = Math.max(...carritos.map(cart => cart.id), 0) + 1;
+            
+            const newCart = {
+                id: newCartId,
+                products: [] 
+            };
+            
+            carritos.push(newCart);
+            
+            writeJsonFile(jsonFilePath, carritos);
 
-      const newCartId = Math.max(...carritos.map((cart) => cart.id), 0) + 1;
-
-      const newCart = {
-        id: newCartId,
-        products: [],
-      };
-
-      carritos.push(newCart);
-
-      writeJsonFile(jsonFilePath, carritos);
-
-      res
-        .status(201)
-        .json({ message: "Carrito creado exitosamente", cart: newCart });
-    } catch (error) {
-      console.error("Error al crear el carrito:", error);
-      res.status(500).json({ error: "Internal Server Error" });
+            res.status(201).json({ message: "Carrito creado exitosamente", cart: newCart });
+        } catch (error) {
+            console.error("Error al crear el carrito:", error);
+            res.status(500).json({ error: "Internal Server Error" });
+        }
     }
-  }
 
-  async getAllCarts(req, res) {
-    try {
-      const carritos = readJsonFile(jsonFilePath);
-      res.json(carritos);
-    } catch (error) {
-      res.status(500).json({ error: "Internal Server Error" });
+    async getAllCarts(req, res) {
+        try {
+            const carritos = readJsonFile(jsonFilePath);
+            res.json(carritos);
+        } catch (error) {
+            res.status(500).json({ error: "Internal Server Error" });
+        }
     }
-  }
 
-  async getCartById(req, res) {
-    try {
-      const cid = parseInt(req.params.cid);
-      const carritos = readJsonFile(jsonFilePath);
-      const cart = carritos.find((cart) => cart.id === cid);
-      if (!cart) {
-        res.status(404).json({ error: "Carrito no encontrado" });
-      } else {
-        res.json(cart);
-      }
-    } catch (error) {
-      res.status(500).json({ error: "Internal Server Error" });
+    async getCartById(req, res) {
+        try {
+            const cid = parseInt(req.params.cid);
+            const carritos = readJsonFile(jsonFilePath);
+            const cart = carritos.find(cart => cart.id === cid);
+            if (!cart) {
+                res.status(404).json({ error: "Carrito no encontrado" });
+            } else {
+                res.json(cart);
+            }
+        } catch (error) {
+            res.status(500).json({ error: "Internal Server Error" });
+        }
     }
-  }
 
-  async addProductToCart(req, res) {
-    try {
-      const cid = parseInt(req.params.cid);
-      const pid = parseInt(req.params.pid);
-      const { quantity } = req.body;
+    async addProductToCart(req, res) {
+        try {
+            const cid = parseInt(req.params.cid);
+            const pid = parseInt(req.params.pid);
+            const { quantity } = req.body;
 
-      if (!quantity || isNaN(quantity) || quantity <= 0) {
-        return res.status(400).json({ error: "Cantidad invalida" });
-      }
+            if (!quantity || isNaN(quantity) || quantity <= 0) {
+                return res.status(400).json({ error: "Cantidad invalida" });
+            }
 
-      let carritos = readJsonFile(jsonFilePath);
+            let carritos = readJsonFile(jsonFilePath);
 
-      const cartIndex = carritos.findIndex((cart) => cart.id === cid);
+            const cartIndex = carritos.findIndex(cart => cart.id === cid);
 
-      if (cartIndex === -1) {
-        return res.status(404).json({ error: "Carrito no encontrado" });
-      }
+            if (cartIndex === -1) {
+                return res.status(404).json({ error: "Carrito no encontrado" });
+            }
 
-      const productToAdd = {
-        product: pid,
-        quantity: parseInt(quantity),
-      };
+            const productToAdd = {
+                product: pid,
+                quantity: parseInt(quantity)
+            };
 
-      const existingProductIndex = carritos[cartIndex].products.findIndex(
-        (item) => item.product === pid
-      );
+            const existingProductIndex = carritos[cartIndex].products.findIndex(item => item.product === pid);
 
-      if (existingProductIndex !== -1) {
-        carritos[cartIndex].products[existingProductIndex].quantity +=
-          parseInt(quantity);
-      } else {
-        carritos[cartIndex].products.push(productToAdd);
-      }
+            if (existingProductIndex !== -1) {
+                carritos[cartIndex].products[existingProductIndex].quantity += parseInt(quantity);
+            } else {
+                carritos[cartIndex].products.push(productToAdd);
+            }
 
-      writeJsonFile(jsonFilePath, carritos);
+            writeJsonFile(jsonFilePath, carritos);
 
-      res.json({
-        message: "Producto agregado al carrito exitosamente",
-        cart: carritos[cartIndex],
-      });
-    } catch (error) {
-      res.status(500).json({ error: "Internal Server Error" });
+            res.json({ message: "Producto agregado al carrito exitosamente", cart: carritos[cartIndex] });
+        } catch (error) {
+            res.status(500).json({ error: "Internal Server Error" });
+        }
     }
-  }
 }
 
 export default cartManager;
