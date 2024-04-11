@@ -30,7 +30,8 @@ app.use(cookieParser());
 // Middleware para usar el session para autenticaciones de usuarios
 app.use(session({
     store: MongoStore.create({
-        mongoUrl: `mongodb+srv://rubinskyemiliano:magicgoro8@codercluster.k6ioe0m.mongodb.net/`,
+        mongoUrl: "mongodb+srv://emilianorubinskyadmin:mongototaladmin@codercluster.k6ioe0m.mongodb.net/test"
+        ,
         ttl: 15,
     }),
     secret: "secret_key",
@@ -42,7 +43,8 @@ app.use(session({
 //app.use("/api/products", productRouter);
 //app.use("/api/carts", cartRouter);
 
-mongoose.connect(`mongodb+srv://rubinskyemiliano:magicgoro8@codercluster.k6ioe0m.mongodb.net/`, {
+mongoose.connect("mongodb+srv://emilianorubinskyadmin:mongototaladmin@codercluster.k6ioe0m.mongodb.net/test"
+, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
