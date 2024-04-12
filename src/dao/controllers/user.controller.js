@@ -1,5 +1,7 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcrypt";
+import auth from "../../config/auth.js";
+import passport from "passport";
 
 const userController = {
     /* Metodo para el proyecto en algun futuro
@@ -26,35 +28,36 @@ const userController = {
         res.render("login");
     },
 
-    login: async (req, res) => {
+    login: async (req, res, next) => {
         const { email, password } = req.body;
 
         try {
-            const user = await User.findOne({ email });
+            passport.authenticate("local", (err, user, info) => {
+                if (err) {
+                    return next(err);
+                }
+                if (!user) {
+                    return res.status(401).json({ error: "Credenciales inválidas" });
+                }
+                if (email === "adminCoder@coder.com" && password === "adminCod3er123") {
+                    user.role = "admin";
+                }
 
-            if (!user) {
-                return res.status(401).json({ error: "Credenciales invalidas" });
-            }
+                // Generar token JWT
+                const token = auth.generateAuthToken(user);
 
-            const validPassword = await bcrypt.compare(password, user.password);
+                res.cookie("jwt", token, { httpOnly: true });
 
-            if (!validPassword) {
-                return res.status(401).json({ error: "Credenciales invalidas" });
-            }
+                req.session.userId = user._id;
 
-            if (email === "adminCoder@coder.com" && password === "adminCod3er123") {
-                user.role = "admin";
-            }
+                req.session.user = user;
 
-            res.cookie("user_id", user._id, { maxAge: 100000, httpOnly: true });
+                req.session.isAuthenticated = true;
 
-            req.session.userId = user._id;
+                console.log("Datos del login:", user, "token:", token);
 
-            req.session.user = user;
-
-            req.session.isAuthenticated = true;
-
-            return res.redirect("/api/products");
+                return res.redirect("/api/products/");
+            })(req, res, next);
 
         } catch (error) {
             console.error("Error al iniciar sesión:", error);
@@ -91,13 +94,17 @@ const userController = {
 
             await newUser.save();
 
-            res.cookie("user_id", newUser._id, { maxAge: 100000, httpOnly: true });
+            const token = auth.generateAuthToken(newUser);
+
+            res.cookie("jwt", token, { httpOnly: true });
 
             req.session.userId = newUser._id;
 
             req.session.user = newUser;
 
             req.session.isAuthenticated = true;
+
+            console.log("Datos del registro:", newUser, "token:", token);
 
             return res.redirect("/api/products");
 
@@ -110,7 +117,7 @@ const userController = {
 
     logOut: async (req, res) => {
         try {
-            res.clearCookie("user_id");
+            res.clearCookie("jwt");
             req.session.userId = null;
             return res.redirect("/api/users/login");
         } catch (error) {
