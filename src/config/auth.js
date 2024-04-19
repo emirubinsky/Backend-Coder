@@ -3,8 +3,8 @@ import { Strategy as LocalStrategy } from "passport-local";
 import GitHubStrategy from "passport-github2";
 import jwt from "jsonwebtoken";
 import User from "../dao/models/user.model.js";
-import config from "./config.js";
 import bcrypt from "bcrypt";
+import { JWT_SECRET, CLIENT_ID, CLIENT_SECRET, CALLBACK_URL } from "../util.js";
 
 const initializePassport = () => {
     // Configurar estrategia de autenticación local
@@ -32,9 +32,10 @@ const initializePassport = () => {
         "github",
         new GitHubStrategy(
             {
-                clientID: "Iv1.f60f672a1689aa16",//id de la app en github
-                clientSecret: "8b94a8adb2d9d006e9c23221eec10749f43918094",//clave secreta de github
-                callbackURL: "http://localhost:8080/users/githubcallback",//url callback de github
+                clientID: CLIENT_ID,                      //clientID: "Iv1.f60f672a1689aa16",//id de la app en github 
+                clientSecret: CLIENT_SECRET,               // clientSecret: "8b94a8adb2d9d006e9c23221eec10749f43918094",//clave secreta de github
+                callbackURL: CALLBACK_URL,                 //callbackURL: "http://localhost:8080/users/githubcallback",//url callback de github
+                            
             },
             async (accessToken, refreshToken, profile, done) => {
                 try {
@@ -86,12 +87,12 @@ const initializePassport = () => {
 
 
 
-const generateAuthToken = (user) => {
-    const token = jwt.sign({ _id: user._id }, config.jwtSecret, { expiresIn: '1h' });
+export const generateAuthToken = (user) => {
+    const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '1h' });
     return token;
 };
 
-const authToken = (req, res, next) => {
+export const authToken = (req, res, next) => {
     const authHeader = req.headers.authorization;
 
     if (!authHeader) {
@@ -103,11 +104,13 @@ const authToken = (req, res, next) => {
     const token = authHeader.split(" ")[1];
 
     // Error para ver, cada vez que realizo un logout, se produce el error de JsonWebTokenError: jwt malformed
-    jwt.verify(token, config.jwtSecret, (error, credentials) => {
+    jwt.verify(token, JWT_SECRET, (error, credentials) => {
         console.log(error);
 
         if (error) {
-            return res.status(201).send({ status: "error", message: "No autorizado" });
+            console.error('JWT Verification Error:', error);
+            // Handle the error appropriately
+            return res.status(401).send({ status: "error", message: "Unauthorized" });
         }
 
         req.user = credentials.user;
@@ -119,8 +122,6 @@ const authToken = (req, res, next) => {
 
 const auth = {
     initializePassport,
-    generateAuthToken,
-    authToken,
 };
 
 export default auth;
