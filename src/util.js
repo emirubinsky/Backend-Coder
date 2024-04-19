@@ -1,7 +1,7 @@
 import { fileURLToPath } from "url";
 import path, { dirname } from "path";
 import multer from "multer";
-import dotenv from "dotenv"
+import dotenv from "dotenv";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -9,10 +9,10 @@ const __dirname = dirname(__filename);
 dotenv.config({ path: path.resolve(__dirname, './.env') });
 
 export const MONGO_URL = process.env.MONGO_URL;
-export const JWT_SECRET = process.env.jwtSecret;
-export const CLIENT_ID = process.env.clientId;
-export const CLIENT_SECRET = process.env.clientSecret;
-export const CALLBACK_URL = process.env.callbackURL;
+export const JWT_SECRET = process.env.JWT_SECRET; 
+export const CLIENT_ID = process.env.CLIENT_ID;
+export const CLIENT_SECRET = process.env.CLIENT_SECRET;
+export const CALLBACK_URL = process.env.CALLBACK_URL;
 
 export function getProductsFilePath() {
     return path.join(__dirname, "../productos.json");

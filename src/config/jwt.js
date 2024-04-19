@@ -10,16 +10,16 @@ const jwtOptions = {
     secretOrKey: JWT_SECRET,
 };
 
-const strategy = new JwtStrategy(jwtOptions, (jwt_payload, next) => {
+const strategy = new JwtStrategy(jwtOptions, (jwt_payload, done) => {
     try {
         if (jwt_payload) {
-            return next(null, jwt_payload);
+            return done(null, jwt_payload);
         } else {
-            return next(null, false);
+            return done(null, false);
         }
     } catch (error) {
         console.error('Error en el middleware de Passport JWT:', error);
-        return next(error, false);
+        return done(error, false);
     }
 });
 
