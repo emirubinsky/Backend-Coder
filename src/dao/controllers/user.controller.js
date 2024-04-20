@@ -56,7 +56,12 @@ const userController = {
 
                 console.log("Datos del login:", user, "token:", access_token);
 
-                return res.redirect("/api/products/");
+                if (req.accepts("html")) {
+                    res.redirect("/api/products/");
+                }
+                else {
+                    res.json({message: "Success", newUser, access_token});
+                }
             })(req, res, next);
 
         } catch (error) {
@@ -96,7 +101,7 @@ const userController = {
 
             const access_token = generateAuthToken(newUser);
 
-            res.cookie("jwt", access_token, { httpOnly: true });
+            
 
             req.session.userId = newUser._id;
 
@@ -106,7 +111,12 @@ const userController = {
 
             console.log("Datos del registro:", newUser, "token:", access_token);
 
-            return res.redirect("/api/products");
+            if (req.accepts("html")) {
+                res.redirect("/api/products/");
+            }
+            else {
+                res.json({message: "Success", newUser, access_token});
+            }
 
         } catch (error) {
             console.error("Error al registrar usuario:", error);
@@ -122,21 +132,24 @@ const userController = {
     handleGitHubCallback: async (req, res) => {
         const access_token = generateAuthToken(req.user);
 
-        // Establecer la cookie jwt con el token
-        res.cookie("jwt", access_token, { httpOnly: true });
+       
 
         // Establecer la sesión del usuario
         req.session.userId = req.user._id;
         req.session.user = req.user;
         req.session.isAuthenticated = true;
 
-        // Redirigir al usuario a una página después de la autenticación exitosa
-        res.redirect("/api/products");
+        if (req.accepts("html")) {
+            res.redirect("/api/products/");
+        }
+        else {
+            res.json({message: "Success", access_token});
+        }
     },
 
     logOut: async (req, res) => {
         try {
-            res.clearCookie("jwt");
+            
             req.session.userId = null;
             req.session.user = null;
             req.session.isAuthenticated = false;
