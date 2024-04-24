@@ -6,7 +6,7 @@
 
 <div class="container mt-5">
     <div class="row" id="productList">
-         {{#each response.Category}}
+        {{#each response.Category}}
         <div class="col-md-4 mb-4">
             <div class="card">
                 <img src="/img/{{this.image}}" class="card-img-top img-fluid" alt="{{this.title}}"
@@ -32,18 +32,22 @@
                 <ul class="pagination justify-content-center">
                     {{#if response.Query.prevLink}}
                     <li class="page-item">
-                       <a class="page-link" href="{{response.Query.prevLink}}{{#if response.Query.Category}}&category={{response.Query.Category}}{{/if}}" tabindex="-1" aria-disabled="true">Anterior</a>
+                        <a class="page-link"
+                            href="{{response.Query.prevLink}}{{#if response.Query.Category}}&category={{response.Query.Category}}{{/if}}"
+                            tabindex="-1" aria-disabled="true">Anterior</a>
                     </li>
                     {{/if}}
-                   <li class="page-item disabled">
+                    <li class="page-item disabled">
                         <span class="page-link">Página {{response.Query.page}}</span>
                     </li>
                     {{#if response.Query.nextLink}}
                     <li class="page-item">
-                       <a class="page-link" href="{{response.Query.nextLink}}{{#if response.Query.Category}}&category={{response.Query.Category}}{{/if}}">Siguiente</a>
+                        <a class="page-link"
+                            href="{{response.Query.nextLink}}{{#if response.Query.Category}}&category={{response.Query.Category}}{{/if}}">Siguiente</a>
                     </li>
                     {{/if}}
                 </ul>
             </nav>
         </div>
     </div>
+</div>

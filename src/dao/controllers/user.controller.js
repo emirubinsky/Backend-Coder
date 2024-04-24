@@ -1,7 +1,9 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcrypt";
-import { generateAuthToken } from "../../config/auth.js";
 import passport from "passport";
+import jwt from 'jsonwebtoken'
+
+import { JWT_SECRET } from "../../util.js"
 
 const userController = {
     /* Metodo para el proyecto en algun futuro
@@ -32,6 +34,7 @@ const userController = {
         const { email, password } = req.body;
 
         try {
+            console.log("login > ", { email, password })
             passport.authenticate("local", (err, user, info) => {
                 if (err) {
                     return next(err);
@@ -115,6 +118,8 @@ const userController = {
     // Redirige al usuario a la página de inicio después de iniciar sesión con GitHub
     handleGitHubCallback: async (req, res) => {
         try {
+            // console.log("handleGitHubCallback", { req, res })
+
             // Genera el token de acceso
             const access_token = generateAuthToken(req.user);
 
@@ -128,7 +133,7 @@ const userController = {
             // Envia la respuesta con el token de acceso al frontend
             res.redirect("/api/products/");
         } catch (error) {
-            console.error('Error en el callback de GitHub:', error);
+            console.log('Error en el callback de GitHub:', error);
             res.status(500).json({ error: "Error interno del servidor" });
         }
     },
@@ -147,3 +152,9 @@ const userController = {
 }
 
 export default userController;
+
+export const generateAuthToken = (user) => {
+    const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '1h' });
+    //const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '1h' });
+    return token;
+};

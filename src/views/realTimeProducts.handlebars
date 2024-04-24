@@ -1,4 +1,4 @@
- <h1 class="text-center">Productos en tiempo real</h1>
+<h1 class="text-center">Productos en tiempo real</h1>
 
 <div class="container">
     <!-- Mostrar un mensaje de bienvenida si el usuario está autenticado -->
@@ -32,7 +32,7 @@
 <div class="container mt-5">
     <div class="row">
         <div class="col-md-6 offset-md-3">
-             <form action="/api/products/" method="POST" id="addProductForm" enctype="multipart/form-data"></form>
+            <form action="/api/products/" method="POST" id="addProductForm" enctype="multipart/form-data">
                 <div class="mb-3">
                     <input type="text" class="form-control" name="title" id="title" placeholder="Título" required>
                 </div>
@@ -89,7 +89,7 @@
 
 <div class="container mt-5">
     <div class="row" id="productList">
-         {{#each response.Products}}
+        {{#each response.Products}}
         <div class="col-md-4 mb-4">
             <div class="card">
                 <img src="/img/{{this.image}}" class="card-img-top img-fluid" alt="{{this.title}}"
@@ -118,7 +118,8 @@
                 <ul class="pagination justify-content-center">
                     {{#if response.Query.prevLink}}
                     <li class="page-item">
-                       <a class="page-link" href="{{response.Query.prevLink}}" tabindex="-1" aria-disabled="true">Anterior</a> 
+                        <a class="page-link" href="{{response.Query.prevLink}}" tabindex="-1"
+                            aria-disabled="true">Anterior</a>
                     </li>
                     {{/if}}
                     <li class="page-item disabled">
@@ -126,7 +127,7 @@
                     </li>
                     {{#if response.Query.nextLink}}
                     <li class="page-item">
-                           <a class="page-link" href="{{response.Query.nextLink}}">Siguiente</a>
+                        <a class="page-link" href="{{response.Query.nextLink}}">Siguiente</a>
                     </li>
                     {{/if}}
                 </ul>
@@ -134,6 +135,7 @@
         </div>
     </div>
 </div>
+
 
 <script src="/socket.io/socket.io.js"></script>
 <script type="module" src="/js/realTimeProducts.js"></script>

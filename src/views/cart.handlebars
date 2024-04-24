@@ -16,10 +16,13 @@
                     {{#each cart.products}}
                     <tr>
                         <td>{{this.product}}</td>
-                        <td>${{this.productPrice}}</td> 
-                        <td>{{this.productQuantity}}</td> 
-                        <td>${{this.productTotal}}</td> 
-                        <td><button class="btn btn-danger delete-btn" data-product-id="{{this._id}}" data-delete-url="http://localhost:8080/api/carts/{{../cid}}/products/{{this._id}}" onclick="deleteProductFromCart('{{../cid}}', '{{this._id}}')">Eliminar producto</button></td>
+                        <td>${{this.productPrice}}</td>
+                        <td>{{this.productQuantity}}</td>
+                        <td>${{this.productTotal}}</td>
+                        <td><button class="btn btn-danger delete-btn" data-product-id="{{this._id}}"
+                                data-delete-url="http://localhost:8080/api/carts/{{../cid}}/products/{{this._id}}"
+                                onclick="deleteProductFromCart('{{../cid}}', '{{this._id}}')">Eliminar producto</button>
+                        </td>
                     </tr>
                     {{/each}}
                 </tbody>
