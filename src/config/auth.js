@@ -33,10 +33,9 @@ const initializePassport = () => {
         "github",
         new GitHubStrategy(
             {
-                clientID: CLIENT_ID,                      //clientID: "Iv1.f60f672a1689aa16",//id de la app en github 
-                clientSecret: CLIENT_SECRET,               // clientSecret: "8b94a8adb2d9d006e9c23221eec10749f43918094",//clave secreta de github
-                callbackURL: CALLBACK_URL,                 //callbackURL: "http://localhost:8080/users/githubcallback",//url callback de github
-                            
+                clientID: CLIENT_ID,
+                clientSecret: CLIENT_SECRET,
+                callbackURL: CALLBACK_URL,
             },
             async (accessToken, refreshToken, profile, done) => {
                 try {
@@ -68,7 +67,6 @@ const initializePassport = () => {
         )
     );
 
-
     // Serializar y deserializar usuario para guardar en sesión
     passport.serializeUser((user, done) => {
         done(null, user._id);
@@ -83,10 +81,6 @@ const initializePassport = () => {
         }
     });
 };
-
-
-
-
 
 export const generateAuthToken = (user) => {
     const token = jwt.sign({ _id: user._id }, config.jwtSecret, { expiresIn: '1h' });
@@ -118,8 +112,6 @@ export const authToken = (req, res, next) => {
         next();
     })
 }
-
-
 
 const auth = {
     initializePassport,

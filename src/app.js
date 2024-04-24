@@ -37,7 +37,6 @@ app.use(cookieParser());
 app.use(session({
     store: MongoStore.create({
         mongoUrl: MONGO_URL,
-        
         ttl: 15,
     }),
     secret: "secret_key",
@@ -49,8 +48,7 @@ app.use(session({
 //app.use("/api/products", productRouter);
 //app.use("/api/carts", cartRouter);
 
-mongoose.connect(MONGO_URL, {                                          //mongoose.connect("mongodb+srv://emilianorubinskyadmin:mongototaladmin@codercluster.k6ioe0m.mongodb.net/test"//
-
+mongoose.connect(MONGO_URL, {                                         
     useNewUrlParser: true,
     useUnifiedTopology: true
 });

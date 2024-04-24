@@ -1,5 +1,8 @@
+import { JWT_SECRET } from "../util.js";
+
+const CoderKeyQueFuncionaComoUnSecret = "valor_secreto_aqui";
 const config = {
-    jwtSecret: 'tu_secreto_jwt_aqui',
+    jwtSecret: CoderKeyQueFuncionaComoUnSecret,
 }
 
 export default config;
