@@ -131,7 +131,7 @@ const userController = {
             console.log("Token login github:", access_token);
 
             // Envia la respuesta con el token de acceso al frontend
-            res.redirect("/api/products/");
+            res.redirect("/home");
         } catch (error) {
             console.log('Error en el callback de GitHub:', error);
             res.status(500).json({ error: "Error interno del servidor" });
