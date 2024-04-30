@@ -13,7 +13,7 @@
 <body>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
-            <a class="navbar-brand" href="http://localhost:8080/api/products/">Ecommerce</a>
+            <a class="navbar-brand" href="http://localhost:8080/api/products/">Organica - Ecommerce </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                 aria-label="Toggle navigation">
@@ -41,12 +41,16 @@
                     </li>
                     {{#if isAuthenticated}}
                     <ul class="navbar-nav ml-auto">
-                         <li class="nav-item"><button id="logoutButton" class="nav-link">Logout</button></li>
+                        <li class="nav-item"><button id="logoutButton" class="nav-link">Logout</button></li>
                     </ul>
                     {{else}}
                     <ul class="navbar-nav ml-auto">
-                        <li class="nav-item"><a href="http://localhost:8080/users/login" class="nav-link"><box-icon
-                                    type='solid' name='user-circle'></box-icon></a></li>
+                        <li class="nav-item">
+                            <a href="http://localhost:8080/users/login" class="nav-link">
+                                <box-icontype='solid' name='user-circle'>
+                                    </box-icon>
+                            </a>
+                        </li>
                     </ul>
                     {{/if}}
                 </ul>
@@ -55,7 +59,12 @@
     </nav>
 
     {{{body}}}
-    
+
+    <footer class="footer py-3 bg-body-tertiary fixed-bottom">
+        <div class="container">
+            <span class="text-muted">Emiliano Rubinsky</span>
+        </div>
+    </footer>
 
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"

@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import passport from "passport";
 import jwt from 'jsonwebtoken'
 
-import { JWT_SECRET } from "../../util.js"
+import { JWT_SECRET } from "../util.js"
 
 const userController = {
     /* Metodo para el proyecto en algun futuro

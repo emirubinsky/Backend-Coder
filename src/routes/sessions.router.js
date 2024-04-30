@@ -1,7 +1,7 @@
 import { Router } from "express";
 // import userService from "../models/Users.model.js";      // IMPORTANTE: El profe en clase22 no aloja controllers, managers y models adentro de DAO, lo deja afuera
 // Nosotros tenemos que usarlo así
-import User from "../dao/models/user.model.js";
+import User from "../models/user.model.js";
 
 import { createHash, isValidPassword } from "../util.js";  // IMPORTANTE: El profe en clase22 no usa util.js sino utils.js (plural)
 

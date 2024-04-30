@@ -1,25 +1,28 @@
 import express from "express"
 import passport from "passport";
 import { configureProductMulter } from "../util.js";
-import productController from "../dao/controllers/product.controller.js";
+import ProductController from "../controllers/product.controller.js";
 
 const productRouter = express.Router();
-const imgUpload = configureProductMulter();
+const imgUpload = configureProductMulter(); // TODO - Esto estaría bueno llevarlo a otra parte, para que ya esta configurado y facil de acceder
 // Para rutas protegidas const protectWithJWT = passport.authenticate("jwt", { session: false });
 
-// Ruta para renderizar la vista de productos en tiempo real
-productRouter.get("/", productController.getProducts);
+// Maneja la solicitud para ver los detalles de UN producto
+productRouter.get("/:id", ProductController.getOne);
 
-// Maneja la solicitud para ver los detalles del producto
-productRouter.get("/:pid", productController.getProductDetail);
+// Ruta para renderizar la vista de productos en tiempo real
+productRouter.get("/", ProductController.getAll);
 
 // Maneja la solicitud para ver las categorias de los productos
-productRouter.get("/category/:category", productController.getProductCategory);
+// productRouter.get("/category/:category", productController.getProductCategory);
 
 // Manejar la solicitud para agregar un producto en tiempo real
-productRouter.post("/", imgUpload.single("image"), productController.addProduct);
+productRouter.post("/", imgUpload.single("image"), ProductController.add);
+
+// Manejar la solicitud para actualizar
+productRouter.put("/:id", imgUpload.single("image"), ProductController.update);
 
 // Manejar la solicitud para la eliminación de un producto en tiempo real
-productRouter.delete('/:pid', productController.deleteProduct);
+productRouter.delete('/:id', ProductController.delete);
 
 export default productRouter;

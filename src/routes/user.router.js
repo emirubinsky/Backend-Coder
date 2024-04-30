@@ -1,10 +1,10 @@
 import express from "express";
-import userController from "../dao/controllers/user.controller.js";
+import userController from "../controllers/user.controller.js";
 import { authToken } from "../middlewares/auth.js";
 
 const userRouter = express.Router();
 // Maneja la solicitud para cerrar la sesión del usuario
-userRouter.get("/logout", authToken, userController.logOut);
+userRouter.get("/logout", userController.logOut);
 
 // Maneja el renderizado del login
 userRouter.get("/login", userController.getLogin);
