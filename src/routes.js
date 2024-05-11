@@ -23,6 +23,6 @@ router.use("/api/messages", messageRouter);
 router.use("/users", userRouter);
 
 router.use("/", viewsRouter)
-//router.use("/api/sessions", sessionsRouter); 
+router.use("/api/sessions", sessionsRouter); 
 
 export default router;

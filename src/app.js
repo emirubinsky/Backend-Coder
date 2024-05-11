@@ -1,7 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import http from "http";
-import Handlebars from "handlebars";
+import HandleBarsRegister from "./appHelpers/handleBarsRegister.js";
 import handlebars from "express-handlebars";
 import { Server } from "socket.io";
 import bodyParser from "body-parser";
@@ -9,7 +9,6 @@ import __dirname from "./util.js";
 import path from "path";
 import cookieParser from "cookie-parser";
 import session from "express-session";
-import FileStore from "session-file-store";
 import MongoStore from "connect-mongo";
 import cors from "cors";
 
@@ -35,21 +34,15 @@ import router from "./routes.js";
 /**
  * Esta funcion que importamos se encarga de configurar TODAS las estrategias posibles
  */
-import initilizePassport from "./config/passport.config.js"; 
+import initilizePassport from "./config/passport.config.js";
 import passport from 'passport'
 // import auth from "./config/auth.js"; // Esto no lo usamos más. Esta todo en ./config/passport.config.js
 
 import { MONGO_URL } from "./util.js";
 const PORT = 8080;
 
-/* Esto es usado como una "directiva" especial
- * Ejemplo en donde se usa: realTimeProducts.handlebars
- */
-Handlebars.registerHelper('eq', function (a, b, options) {
-    return a === b ? options.fn(this) : options.inverse(this);
-});
-
-const fileStore = FileStore(session); // TODO: Estamos usando el FileStore?
+// FileStore fue la primera version de session que usamos. CLASE 19
+// const fileStore = FileStore(session); // TODO: Estamos usando el FileStore?
 const app = express();
 const httpServer = http.createServer(app); // INFO: Esto no sería necesario, Express automatiza esta parte.
 
@@ -68,6 +61,8 @@ app.use(
         store: new MongoStore({
             mongoUrl: MONGO_URL,
             ttl: 3600,
+            useNewUrlParser: true,
+            useUnifiedTopology: true
         }),
         secret: "CoderSecrets",//process.env.APP_SESSION_SECRET, //CoderSecrets
         resave: false,
@@ -105,6 +100,10 @@ app.use(passport.initialize()); // Esto llama al middleware y lo inicializa
 app.use(passport.session()); // Info: alters the request object and change the 'user' value that is currently the session id (from the client cookie)
 
 
+/* MOTOR DE VISTAS > CLASE: */
+// Llamamos a helper para registrar nuevas directivas.
+HandleBarsRegister.registerHelpers()
+
 // Middleware para utilizar plantillas html
 app.engine("handlebars", handlebars.engine());
 app.set("views", __dirname + "/views");
@@ -112,6 +111,14 @@ app.set("view engine", "handlebars");
 
 // Middleware para los archivos?
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Middleware to set Content-Type for .js files
+app.use((req, res, next) => {
+    if (req.originalUrl.endsWith('.js')) {
+        res.setHeader('Content-Type', 'application/javascript');
+    }
+    next();
+});
 
 // Middlewares para el enrutamiento
 app.use("/", router);

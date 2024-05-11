@@ -29,7 +29,7 @@ class ProductController {
             const { category, brand, sort } = req.query;
 
             const {
-                limit = 10,
+                limit = 5,
                 page = 1,
             } = req.query != null ? req.query : {};
 
@@ -51,7 +51,12 @@ class ProductController {
                 page,
                 sort: { price: sort === 'asc' ? 1 : -1 }
             };
-            console.log(options)
+            console.log({
+                host: req.get('host'),
+                protocol: req.protocol,
+                baseUrl: req.baseUrl,
+                options
+              })
             // Llamada a la capa de negocio
             const managerOutput = await ProductManager.getAll({
                 host: req.get('host'),

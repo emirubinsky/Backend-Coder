@@ -80,7 +80,7 @@ const userController = {
 
             const hashedPassword = await bcrypt.hash(password, 10);
 
-            const role = email === "adminCoder@coder.com" ? "admin" : "user";
+            const role = email.includes("admin") ? "admin" : "user";
 
             const newUser = new User({
                 first_name: first_name,
@@ -129,6 +129,7 @@ const userController = {
             req.session.isAuthenticated = true;
 
             console.log("Token login github:", access_token);
+            res.cookie('jwt', access_token); // Set JWT token in cookie
 
             // Envia la respuesta con el token de acceso al frontend
             res.redirect("/home");

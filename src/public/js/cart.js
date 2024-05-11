@@ -1,3 +1,4 @@
+import io from "socket.io-client";
 const socket = io.connect('http://localhost:8080');
 
 // Función para eliminar un producto del carrito usando Fetch

@@ -48,7 +48,7 @@ const initializePassport = () => {
     });
 
     //Registrar ususario localmente
-    
+
     passport.use(
         "register",
         new LocalStrategy(
@@ -80,12 +80,12 @@ const initializePassport = () => {
             }
         )
     );
-    
+
 
     //estrategia local para iniciar sesión
-    
+
     passport.use(
-        "login",
+        "local",
         new LocalStrategy(
             { usernameField: "email" },
             async (username, password, done) => {
@@ -102,7 +102,7 @@ const initializePassport = () => {
             }
         )
     );
-    
+
 
     //Estrategia para iniciar sesión con github
     passport.use(
@@ -146,7 +146,6 @@ const initializePassport = () => {
     );
 
     //Estrategia para jwt
-    /*
     passport.use(
         "jwt",
         new JWTStrategy(
@@ -164,9 +163,6 @@ const initializePassport = () => {
             }
         )
     );
-    */
-
-
 };
 
 export default initializePassport;

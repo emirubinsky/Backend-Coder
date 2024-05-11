@@ -1,6 +1,7 @@
 import express from "express"
-import passport from "passport";
+
 import { configureProductMulter } from "../util.js";
+
 import ProductController from "../controllers/product.controller.js";
 
 const productRouter = express.Router();

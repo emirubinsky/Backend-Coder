@@ -1,53 +1,8 @@
-const socket = io.connect('http://localhost:8080');
+// TODO > Esto seria mas para un rol ADMIN
 
-const token = localStorage.getItem("token");
-console.log("Token:", token);
-
-function handleAddToCart(event) {
-    if (!event.target.classList.contains('cart-btn')) {
-        return;
-    }
-
-    const productId = event.target.getAttribute('data-product-id');
-
-    // Realizar una solicitud HTTP POST para agregar el producto al carrito
-    fetch("http://localhost:8080/api/carts/", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ productId })
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error al agregar el producto al carrito');
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Producto agregado al carrito:', data);
-        })
-        .catch(error => {
-            console.error('Error al agregar el producto al carrito:', error);
-        });
-}
-
-const goToCartBtn = document.getElementById('goToCartBtn');
+// import io from "socket.io-client";
+// const socket = io.connect('http://localhost:8080');
 const cartForm = document.getElementById('cartForm');
-
-// Agregar un evento de clic al botón
-goToCartBtn.addEventListener('click', () => {
-    // Obtener el valor seleccionado en el select
-    const selectedCartId = document.getElementById('cart').value;
-    // Construir la URL del carrito utilizando el ID seleccionado
-    const cartUrl = `http://localhost:8080/api/carts/${selectedCartId}`;
-    // Redireccionar al usuario a la URL del carrito
-    window.location.href = cartUrl;
-});
-
-
-// Agregar un event listener para el evento click en el contenedor productList
-document.getElementById('productList').addEventListener('click', handleAddToCart);
 
 async function renderProducts(products) {
     if (!products || !products.image) {
@@ -77,9 +32,13 @@ async function renderProducts(products) {
     productList.appendChild(productElement);
 }
 
+
+
+/*
 socket.on('addProduct', (addProduct) => {
     renderProducts(addProduct);
 });
+*/
 
 // Manejar el envío del formulario para agregar un producto
 document.getElementById('addProductForm').addEventListener('submit', async (event) => {
@@ -99,7 +58,7 @@ document.getElementById('addProductForm').addEventListener('submit', async (even
         }
 
         const data = await response.json();
-        socket.emit("addProduct", data.Product);
+        //socket.emit("addProduct", data.Product);
         console.log('Producto agregado:', data.Product);
 
         // Limpiar el formulario después de agregar el producto

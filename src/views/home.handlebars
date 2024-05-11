@@ -1,9 +1,63 @@
-<div>
-    conectado a web socket
-</div>
-<div>
-    <a href="/api/products/" class="btn btn-primary">Ver los productos</a>
-    <a href="/api/messages/" class="btn btn-primary">Ver chat</a>
+
+<div class="text-center">
+    <div class="container mt-5">
+        <h1 class="mb-4">Bienvenido {{user.name}}</h1>
+        
+        {{#eq user.role "ADMIN"}}
+        <!-- If user is ADMIN -->
+        <div class="row justify-content-center">
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">See Products</h5>
+                        <p class="card-text">View all products</p>
+                        <a href="/products" class="btn btn-primary btn-block">Go to Products</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Add Product</h5>
+                        <p class="card-text">Add a new product</p>
+                        <a href="/product/add" class="btn btn-success btn-block">Add Product</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/eq}}
+        
+        <!-- If user is CLIENT -->
+        <div class="row justify-content-center">
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Go Shopping</h5>
+                        <p class="card-text">Browse available products</p>
+                        <a href="/products" class="btn btn-primary btn-block">Go to Products</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">See Carts</h5>
+                        <p class="card-text">View shopping carts</p>
+                        <a href="/carts" class="btn btn-info btn-block">Go to Carts</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">See Profile</h5>
+                        <p class="card-text">View and edit profile</p>
+                        <a href="/profile" class="btn btn-secondary btn-block">Go to Profile</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>

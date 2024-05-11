@@ -6,9 +6,9 @@
                 <thead>
                     <tr>
                         <th scope="col">Producto</th>
-                        <th scope="col">Precio Unitario</th>
+                        <!-- <th scope="col">Precio Unitario</th> -->
                         <th scope="col">Cantidad</th>
-                        <th scope="col">Subtotal</th>
+                        <!-- <th scope="col">Subtotal</th> -->
                         <th scope="col">Borrar</th>
                     </tr>
                 </thead>
@@ -16,10 +16,11 @@
                     {{#each cart.products}}
                     <tr>
                         <td>{{this.product}}</td>
-                        <td>${{this.productPrice}}</td>
-                        <td>{{this.productQuantity}}</td>
-                        <td>${{this.productTotal}}</td>
-                        <td><button class="btn btn-danger delete-btn" data-product-id="{{this._id}}"
+                        <!-- <td>${{this.price}}</td> -->
+                        <td>{{this.quantity}}</td>
+                        <!-- <td>${{this.productTotal}}</td> -->
+                        <td>
+                            <button class="btn btn-danger delete-btn" data-product-id="{{this._id}}"
                                 data-delete-url="http://localhost:8080/api/carts/{{../cid}}/products/{{this._id}}"
                                 onclick="deleteProductFromCart('{{../cid}}', '{{this._id}}')">Eliminar producto</button>
                         </td>
@@ -28,6 +29,12 @@
                 </tbody>
             </table>
         </div>
+
+        <div>
+            <a href="#" class="btn btn-primary">Guardar Carro</a>
+        </div>
+
+        <!-- 
         <div class="col-md-4">
             <div class="card">
                 <div class="card-body">
@@ -38,6 +45,7 @@
                 </div>
             </div>
         </div>
+        -->
     </div>
 </div>
 
