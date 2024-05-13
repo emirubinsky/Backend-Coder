@@ -60,10 +60,12 @@ const productSchema = new mongoose.Schema({
         require: true
     },
 
+    /*
     cart: {
         type: mongoose.Schema.Types.ObjectId,
         ref: MONGO_COLLECTIONS_NAME_CART
     },
+    */
 });
 productSchema.plugin(mongoosePaginate);
 const Product = mongoose.model(MONGO_COLLECTIONS_NAME_PRODUCT, productSchema);

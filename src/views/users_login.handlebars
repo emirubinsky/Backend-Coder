@@ -8,11 +8,12 @@
         <input type="email" id="email" name="email" class="form-control mb-2" placeholder="johndoe@gmail.com" required
             autofocus>
         <label for="password" class="sr-only">Password</label>
-        <input type="password" id="password" name="password" class="form-control mb-3" placeholder="mySecretPassword123" required>
+        <input type="password" id="password" name="password" class="form-control mb-3" placeholder="mySecretPassword123"
+            required>
 
         <div class="row justify-content-center">
             <div class="col-6">
-                <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+                <button class="btn btn-lg btn-primary btn-block" type="submit" id="local_login">Sign in</button>
             </div>
             <div class="col-6">
                 <a href="/forgot-password" class="btn btn-lg btn-outline-dark btn-block mb-3">Recover</a>
@@ -28,9 +29,10 @@
             <p class="text-muted mb-3">Sign in with:</p>
             <div class="row justify-content-center">
                 <div class="col-6">
-                    <a href="http://localhost:8080/users/github" class="btn btn-lg btn-outline-dark btn-block"><i class="fab fa-github mr-2"></i>
+                    <a href="http://localhost:8080/users/github" class="btn btn-lg btn-outline-danger btn-block"><i class="fab fa-google mr-2"></i>
                         GitHub</a>
                 </div>
+
                 <div class="col-6">
                     <a href="#" class="btn btn-lg btn-outline-danger btn-block"><i class="fab fa-google mr-2"></i>
                         Google</a>

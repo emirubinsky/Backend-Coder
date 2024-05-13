@@ -8,17 +8,18 @@ const model = Cart
 // Clase: 16
 // Peligro, hay que definirlo en el modelo, y es GLOBAL a todas las operaciones.
 export async function getOne(id, populate = false) {
-    const product = populate ?
+
+    const result = populate ?
         await model
         .findOne({ _id: id })
-        .populate('products')
+        .populate('products.product')
         .lean() :
         await model
         .findOne({ _id: id })
         .lean()
 
 
-    return product
+    return result
 }
 
 export async function getAll({
@@ -32,10 +33,11 @@ export async function getAll({
     return entities;
 }
 
-export async function insert({ products }) {
+export async function insert({ products, user }) {
 
     const newEntity = new Cart({
-        products
+        products,
+        user
     });
 
     const newInsertedDoc = await newEntity.save()

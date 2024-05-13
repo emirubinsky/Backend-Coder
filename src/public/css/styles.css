@@ -230,3 +230,17 @@ body {
 .cart-button {
     background-color: #557f7b; /* Main color for cart button */
 }
+
+
+/* Override the estilos Boostrap */
+.card{
+    background-color: #f5f5f554;
+}
+
+.table{
+    background-color: #f5f5f554;
+}
+.table
+> :not(caption) > * > * {
+    background-color: #f5f5f554;
+}

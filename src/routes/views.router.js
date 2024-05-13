@@ -3,6 +3,7 @@ import { auth } from "../middlewares/auth.js";
 
 import ProductManager from '../managers/product.manager.js'
 import CartManager from '../managers/cart.manager.js'
+import TicketManager from '../managers/ticket.manager.js'
 
 const router = Router();
 
@@ -16,6 +17,12 @@ router.get("/login", (req, res) => {
 
 router.get("/profile", auth, (req, res) => {
   res.render("users_profile", {
+    user: req.session.user,
+  });
+});
+
+router.get("/", auth, (req, res) => {
+  res.render("home", {
     user: req.session.user,
   });
 });
@@ -202,29 +209,104 @@ router.get("/cart/:id", auth, async (req, res) => {
     // Procesamos request-response
     // Obtención de parametros desde el body.
 
-    const id = req.params.id 
+    const id = req.params.id
 
-    if(id === -1){
-      res.render("cart", { 
-        useMemory: true 
-      })  
+    if (id === -1) {
+      res.render("cart", {
+        useMemory: true
+      })
     }
 
     // Llamamos a los managers > services para obtener datos
     // Llamada a la capa de negocio
-    const cart = await CartManager.getOne(id);
+    const populate = true
+    const cart = await CartManager.getOne(id, populate);
 
     // Construir la respuesta JSON
     const response = {
       status: "SUCCESS",
-      Product: product
+      Cart: cart
     };
     console.log(response)
 
     // Presentamos datos y los mandamos a traves del renderizado
-    res.render("cart", { 
-      useMemory: false,
+    res.render("cart", {
       cart
+    })
+
+  } catch (error) {
+    console.error(`Error loading product: ${error}`, error);
+    res.status(500).json({ errorx: 'Error retrieving product', error });
+  }
+
+})
+
+router.get("/carts", auth, async (req, res) => {
+
+  try {
+
+    // TODO: Solo debería estar habilitada para el ADMIN.
+
+    // Procesamos request-response
+    // Obtención de parametros desde el body.
+
+    // Llamamos a los managers > services para obtener datos
+    // Llamada a la capa de negocio
+
+    // const user = req.session.user;
+
+    const {
+      limit = 10,
+      page = 1,
+    } = req.query != null ? req.query : {};
+
+    // Obtención de parametros desde el queryString
+
+    // Formacion del objeto query para perfeccionar la query.
+    const query = {
+      user: req.session.userId
+    };
+
+    const options = {
+      limit,
+      page,
+      populate: {
+        path: 'products.product',
+        select: 'title price'
+      }
+      // TODO: Agregar algun sorting luego
+    };
+
+    console.log("/carts > call manager", {
+      host: req.get('host'),
+      protocol: req.protocol,
+      baseUrl: req.baseUrl,
+      query,
+      options
+    })
+
+    // Llamada a la capa de negocio
+    const managerOutput = await CartManager.getAll({
+      host: req.get('host'),
+      protocol: req.protocol,
+      baseUrl: req.baseUrl,
+      query,
+      options
+    });
+
+    // Construir la respuesta JSON
+    const response = {
+      status: "SUCCESS",
+      Carts: managerOutput.carts,
+      Query: managerOutput.pagination,
+    };
+
+
+    console.log("/carts > response", response)
+
+    // Presentamos datos y los mandamos a traves del renderizado
+    res.render("carts", {
+      response
     })
 
   } catch (error) {
@@ -237,6 +319,84 @@ router.get("/cart/:id", auth, async (req, res) => {
 /**
  * Finalizar compras
  */
+
+
+/**
+ * Rutas de Tickets
+ */
+
+router.get("/tickets", auth, async (req, res) => {
+  try {
+
+    // TODO: Solo debería estar habilitada para el ADMIN.
+
+    // Procesamos request-response
+    // Obtención de parametros desde el body.
+
+    // Llamamos a los managers > services para obtener datos
+    // Llamada a la capa de negocio
+
+    // const user = req.session.user;
+
+    const {
+      limit = 10,
+      page = 1,
+    } = req.query != null ? req.query : {};
+
+    // Obtención de parametros desde el queryString
+
+    // Formacion del objeto query para perfeccionar la query.
+    const query = {
+      user: req.session.userId
+    };
+
+    const options = {
+      limit,
+      page,
+      populate: {
+        path: 'cart',
+        select: 'products'
+      }
+      // TODO: Agregar algun sorting luego
+    };
+
+    console.log("/tickets > tickets manager", {
+      host: req.get('host'),
+      protocol: req.protocol,
+      baseUrl: req.baseUrl,
+      query,
+      options
+    })
+
+    // Llamada a la capa de negocio
+    const managerOutput = await TicketManager.getAll({
+      host: req.get('host'),
+      protocol: req.protocol,
+      baseUrl: req.baseUrl,
+      query,
+      options
+    });
+
+    // Construir la respuesta JSON
+    const response = {
+      status: "SUCCESS",
+      Tickets: managerOutput.tickets,
+      Query: managerOutput.pagination,
+    };
+
+
+    console.log("/tickets > response", response)
+
+    // Presentamos datos y los mandamos a traves del renderizado
+    res.render("tickets", {
+      response
+    })
+
+  } catch (error) {
+    console.error(`Error loading product: ${error}`, error);
+    res.status(500).json({ errorx: 'Error retrieving product', error });
+  }
+})
 
 
 // ruta generica para copiar y pegar....

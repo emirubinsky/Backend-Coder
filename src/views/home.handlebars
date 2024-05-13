@@ -9,9 +9,9 @@
             <div class="col-md-4 mb-4">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">See Products</h5>
-                        <p class="card-text">View all products</p>
-                        <a href="/products" class="btn btn-primary btn-block">Go to Products</a>
+                        <h5 class="card-title">Productos</h5>
+                        <p class="card-text">Administrar productos</p>
+                        <a href="/products" class="btn btn-primary btn-block">Ir a Comprar</a>
                     </div>
                 </div>
             </div>
@@ -20,7 +20,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Add Product</h5>
                         <p class="card-text">Add a new product</p>
-                        <a href="/product/add" class="btn btn-success btn-block">Add Product</a>
+                        <a href="/product/add" class="btn btn-primary btn-block">Add Product</a>
                     </div>
                 </div>
             </div>
@@ -32,27 +32,45 @@
             <div class="col-md-4 mb-4">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Go Shopping</h5>
-                        <p class="card-text">Browse available products</p>
-                        <a href="/products" class="btn btn-primary btn-block">Go to Products</a>
+                        <h5 class="card-title">Productos</h5>
+                        <p class="card-text">Mostrar productos disponibles</p>
+                        <a href="/products" class="btn btn-primary btn-block">Ir a Comprar</a>
                     </div>
                 </div>
             </div>
             <div class="col-md-4 mb-4">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">See Carts</h5>
-                        <p class="card-text">View shopping carts</p>
-                        <a href="/carts" class="btn btn-info btn-block">Go to Carts</a>
+                        <h5 class="card-title">Ver Carritos</h5>
+                        <p class="card-text">Ver carritos no confirmados</p>
+                        <a href="/carts" class="btn btn-primary btn-block">Ir a Carritos</a>
                     </div>
                 </div>
             </div>
             <div class="col-md-4 mb-4">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">See Profile</h5>
-                        <p class="card-text">View and edit profile</p>
-                        <a href="/profile" class="btn btn-secondary btn-block">Go to Profile</a>
+                        <h5 class="card-title">Ver Tickets</h5>
+                        <p class="card-text">Ver tickets de compras</p>
+                        <a href="/tickets" class="btn btn-primary btn-block">Ir a Tickets</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Mi Perfil</h5>
+                        <p class="card-text">Revisar datos personales</p>
+                        <a href="/profile" class="btn btn-primary btn-block">Ir al Perfil</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Terminar Session</h5>
+                        <p class="card-text">Salir</p>
+                        <a href="/users/logout" class="btn btn-primary btn-block">Logout</a>
                     </div>
                 </div>
             </div>
@@ -61,4 +79,5 @@
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
-<script src="/js/home.js"></script>
+
+<script type="module" src="/js/home.js"></script>

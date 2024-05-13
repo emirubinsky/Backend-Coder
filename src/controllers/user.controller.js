@@ -124,15 +124,28 @@ const userController = {
             const access_token = generateAuthToken(req.user);
 
             // Establece la sesión del usuario
+            req.session.token = access_token;
             req.session.userId = req.user._id;
             req.session.user = req.user;
             req.session.isAuthenticated = true;
 
             console.log("Token login github:", access_token);
-            res.cookie('jwt', access_token); // Set JWT token in cookie
+            //res.cookie('jwt', access_token); // Set JWT token in cookie
 
             // Envia la respuesta con el token de acceso al frontend
             res.redirect("/home");
+
+            // TODO: luego
+            res.cookie("jwt", access_token, {
+                httpOnly: true,
+            }).send({
+                status: "Success",
+                message: req.user,
+                access_token,
+                userId: req.user._id
+            });
+
+
         } catch (error) {
             console.log('Error en el callback de GitHub:', error);
             res.status(500).json({ error: "Error interno del servidor" });
@@ -144,7 +157,9 @@ const userController = {
             req.session.userId = null;
             req.session.user = null;
             req.session.isAuthenticated = false;
-            return res.json({ message: "Logout funciona" });
+            return res.render("home")
+            
+            //res.json({ message: "Logout funciona" });
         } catch (error) {
             console.error("Error al cerrar sesión:", error);
             res.status(500).json({ error: "Error interno del servidor" });

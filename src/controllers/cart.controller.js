@@ -10,9 +10,10 @@ class CartController {
         try {
             const id = req.params.cid
 
-            const cart = await CartManager.getOne(id);
+            const cart = await CartManager.getOne(id, true);
 
             if (cart) {
+                console.log({cart})
                 res.status(200).json({ cart });
             } else {
                 res.status(404).json({ error: `Cart with ID: ${id} not found` });
@@ -80,7 +81,8 @@ class CartController {
             }
 
             const newCart = await CartManager.add({
-                ...req.body
+                ...req.body,
+                user: req.session.userId
             });
 
             return res.json({
@@ -151,7 +153,7 @@ class CartController {
     }
 
     static async updateProductQuantity(req, res) {
-        
+
         const {
             cid: cartId,
             pid: productId
@@ -160,7 +162,7 @@ class CartController {
         const { quantity } = req.body
 
         try {
-            const parameterValidation = CartController.validateProductInsertion({...req.query, ...req.body})
+            const parameterValidation = CartController.validateProductInsertion({ ...req.query, ...req.body })
 
             if (!parameterValidation) {
                 return res.status(400).json({

@@ -27,4 +27,5 @@ cartRouter.put("/:cid/products/:pid", CartController.updateProductQuantity);
 // Maneja la solicitud para borrar el producto seleccionado del carrito
 cartRouter.delete("/:cid/products/:pid", CartController.removeProduct);
 
+
 export default cartRouter;

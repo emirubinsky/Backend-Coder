@@ -1,10 +1,10 @@
-import Cart from '../js/cartInMemory.js'
+const socket = io.connect('http://localhost:8080');
 
 /**
  * Funciones asociados a la view the product_list
  * - Agregar un producto al carro (en memoria)
  */
-
+console.log("HOLA SOY PRODUCT LIST JS")
 const token = localStorage.getItem("token");
 console.log("Token:", token);
 
@@ -18,34 +18,30 @@ for (var i = 0; i < everyAddToCartButton.length; i++) {
     everyAddToCartButton[i].addEventListener('click', handleAddToCart, false);
 }
 
-function handleAddToCart(event){
+function handleAddToCart(event) {
 
-    const productId = event.target.getAttribute('data-product-id');
-    const name = event.target.getAttribute('data-product-name');
+    const token = localStorage.getItem('token');
 
-    const inMemoryProduct = {
-        productId,
-        name
+    if (!token) {
+        console.log("Usuario no logueado o registrado");
+        window.location.href = "http://localhost:8080/"
     }
 
-    Cart.addItemForUser(token, inMemoryProduct); // Assuming 'currentProduct' is the product being viewed
-    alert('Product added to cart!');
-}
-
-function handleAddToCart_deprecated(event) {
-    if (!event.target.classList.contains('cart-btn')) {
-        return;
-    }
+    const userId = localStorage.getItem('userId');
+    const cartId = localStorage.getItem('cartId');
 
     const productId = event.target.getAttribute('data-product-id');
+    const quantity = 1
 
     // Realizar una solicitud HTTP POST para agregar el producto al carrito
-    fetch("http://localhost:8080/api/carts/", {
-        method: 'POST',
+    const url = `http://localhost:8080/api/carts/${cartId}/products/${productId}` 
+
+    fetch(url, {
+        method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ productId })
+        body: JSON.stringify({ userId, cartId, productId, quantity })
     })
         .then(response => {
             if (!response.ok) {
@@ -61,27 +57,16 @@ function handleAddToCart_deprecated(event) {
         });
 }
 
+
+/* Boton de ir al carrito */ 
+
 const goToCartBtn = document.getElementById('goToCartBtn');
-
-// Agregar un evento de clic al botón
-goToCartBtn.addEventListener('click', (event) => {
-
-    let cartId = event.target.getAttribute('data-cart-id');
-
-    if(cartId === ''){
-        cartId = -1
-    }
-
-    const currentInMemoryCart = Cart.getCartItemsForUser(token)
-
-    console.log("currentInMemoryCart", currentInMemoryCart)
-
+goToCartBtn.addEventListener('click', () => {
+    const cartId = localStorage.getItem('cartId')
+    
     // Construir la URL del carrito utilizando el ID seleccionado
     const cartUrl = `http://localhost:8080/cart/${cartId}`;
+
     // Redireccionar al usuario a la URL del carrito
     window.location.href = cartUrl;
 });
-
-
-
-

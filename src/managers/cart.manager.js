@@ -8,7 +8,7 @@ class CartManager {
         // Nothing...
 
         // Call service layer for database interactions
-        const result = await service.getOne(id)
+        const result = await service.getOne(id, populate)
 
         return result;
 
@@ -17,6 +17,23 @@ class CartManager {
     static async getAll({ host, protocol, baseUrl, query, options }) {
 
         const serviceOutput = await service.getAll({ query, options });
+
+        //
+        //console.log('Paginated Carts:', serviceOutput);
+        // Access paginated carts with populated 'items'
+        // Access paginated carts with populated 'products'
+        serviceOutput.docs.forEach((cart) => {
+            console.log('Cart ID:', cart._id);
+            console.log('User ID:', cart.user);
+            console.log('Products:');
+            cart.products.forEach((cartProduct) => {
+                console.log('Product ID:', cartProduct.product._id);
+                console.log('Product Name:', cartProduct.product.name);
+                console.log('Product Title:', cartProduct.product.title);
+                console.log('Quantity:', cartProduct.quantity);
+            });
+        });
+        //
 
         const carts = serviceOutput.docs.map(cart => cart.toObject());
 
@@ -52,11 +69,18 @@ class CartManager {
 
     static async add(newCartDetail) {
 
-        // TODO: Poner mas validaciones...
+        try {
+            console.log({ newCartDetail })
 
-        const serviceOutput = await service.insert(newCartDetail);
+            const validation = await this.validateCart(newCartDetail)
 
-        return serviceOutput
+            const serviceOutput = await service.insert(newCartDetail);
+
+            return serviceOutput
+        } catch (error) {
+            return error
+        }
+
     }
 
     /**
@@ -65,12 +89,17 @@ class CartManager {
      * - Y un puñado de props para actualizar (opcional)
      */
     static async update(cartToUpdate) {
+        try {
+            console.log({ cartToUpdate })
 
-        console.log({ cartToUpdate })
-        const serviceOutput = await service.update(cartToUpdate);
+            const validation = await this.validateCart(cartToUpdate)
 
-        return serviceOutput
+            const serviceOutput = await service.update(cartToUpdate);
 
+            return serviceOutput
+        } catch (error) {
+            return error
+        }
     }
 
     static async delete(id) {
@@ -79,25 +108,31 @@ class CartManager {
 
     static async updateProductQuantity({ cartToUpdate, product, newQuantity }) {
 
-        // Check if product already exists in the cart
-        console.log("productos antes de", cartToUpdate.products)
-        const existingProduct = cartToUpdate.products.find(item => item.product.equals(product._id));
+        try {
+            const validation = await this.validateCartProduct(product, newQuantity)
 
-        if (existingProduct) {
-            existingProduct.quantity = newQuantity;
-        } else {
-            cartToUpdate.products.push({
-                product: product._id,
-                quantity: newQuantity
-            });
+            // Check if product already exists in the cart
+            console.log("productos antes de", cartToUpdate.products)
+            const existingProduct = cartToUpdate.products.find(item => item.product.equals(product._id));
+
+            if (existingProduct) {
+                existingProduct.quantity = newQuantity;
+            } else {
+                cartToUpdate.products.push({
+                    product: product._id,
+                    quantity: newQuantity
+                });
+            }
+
+            // TODO - unificar bien el tema _id
+            cartToUpdate.id = cartToUpdate._id
+
+            console.log("productos despues de", cartToUpdate.products)
+
+            return await CartManager.update(cartToUpdate)
+        } catch (error) {
+            return error
         }
-
-        // TODO - unificar bien el tema _id
-        cartToUpdate.id = cartToUpdate._id
-
-        console.log("productos despues de", cartToUpdate.products)
-
-        return await CartManager.update(cartToUpdate)
     }
 
     static async removeProductFromCart({ cartToUpdate, product }) {
@@ -110,6 +145,62 @@ class CartManager {
         return await CartManager.update(cartToUpdate)
     }
 
+
+    static async validateCart(cardDetail) {
+
+        try {
+            // Validamos usuario
+            // TODO: Deberíamos crear un UserManager para estas cosas?
+            // const user = await User.findById(cardDetail.userId);
+
+            // Validamos cada producto
+            // Existencia y luego stock
+
+            for (const cartProduct of cardDetail.products) {
+                const result = await this.validateCartProduct(
+                    cartProduct.product,
+                    cartProduct.quantity
+                );
+                // Handle `result` here if needed
+            }
+
+            return {
+                success: true
+            }
+        } catch (error) {
+            return {
+                success: false,
+                reason: error
+            }
+        }
+    }
+
+    static async validateCartProduct(productId, quantity) {
+        try {
+            const product = await ProductManager.getOne(productId);
+
+            if (!product) {
+                throw new Error("Producto no encontrado");
+            }
+
+            if (product.stock < 1) {
+                throw new Error("Producto fuera de stock");
+            }
+
+            if (product.stock < quantity) {
+                throw new Error("Producto no posee suficiente stock");
+            }
+
+            return {
+                success: true
+            }
+        } catch (error) {
+            return {
+                success: false,
+                reason: error
+            }
+        }
+    }
 }
 
 
