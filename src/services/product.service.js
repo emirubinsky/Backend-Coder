@@ -29,7 +29,7 @@ export async function insert({ title, brand, description, code, price, stock, st
         code,
         price,
         stock,
-        status,
+        status: true,
         category,
         image,
       });

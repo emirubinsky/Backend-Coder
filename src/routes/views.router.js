@@ -54,7 +54,85 @@ router.get("/restore", (req, res) => {
  * Rutas de Productos
  */
 
-// Obtener todos los productos
+// Obtener todos los productos para administrar
+router.get("/products/list", auth, async (req, res) => {
+
+  // TODO: esto debería estar en un viewController.js
+  try {
+
+    // Procesamos request-response
+    // Obtención de parametros desde el body.
+    const { category, brand, sort } = req.query;
+
+    const {
+      limit = 5,
+      page = 1,
+    } = req.query != null ? req.query : {};
+
+    // Obtención de parametros desde el queryString
+
+    // Formacion del objeto query para perfeccionar la query.
+    const query = {};
+
+    if (category) {
+      query.category = category;
+    }
+
+    if (brand) {
+      query.brand = brand;
+    }
+
+    const options = {
+      limit,
+      page,
+      sort: { price: sort === 'asc' ? 1 : -1 }
+    };
+    console.log(options)
+
+    // Llamamos a los managers > services para obtener datos
+    // Llamada a la capa de negocio
+    console.log({
+      host: req.get('host'),
+      protocol: req.protocol,
+      baseUrl: req.baseUrl || "/products/list"
+    })
+    const managerOutput = await ProductManager.getAll({
+      host: req.get('host'),
+      protocol: req.protocol,
+      baseUrl: req.baseUrl || "/products/list",
+      query,
+      options,
+    });
+
+    // Construir la respuesta JSON
+    const response = {
+      status: "SUCCESS",
+      Products: managerOutput.products,
+      Query: managerOutput.pagination,
+
+    };
+
+    console.log(response.Query)
+
+    // Presentamos datos y los mandamos a traves del renderizado
+    res.render("product_list", {
+      response,
+      // TODO cosas que faltan
+      /**
+       * user 
+       * Carts
+       */
+    });
+
+  } catch (error) {
+    console.error(`Error loading product: ${error}`, error);
+    res.status(500).json({ error: 'Error retrieving product' });
+  }
+
+});
+
+
+// Obtener todos los productos para ir a comprar
 router.get("/products", auth, async (req, res) => {
 
   // TODO: esto debería estar en un viewController.js
@@ -115,7 +193,7 @@ router.get("/products", auth, async (req, res) => {
     console.log(response.Query)
 
     // Presentamos datos y los mandamos a traves del renderizado
-    res.render("product_list2", {
+    res.render("product_shopping", {
       response,
       // TODO cosas que faltan
       /**

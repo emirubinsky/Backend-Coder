@@ -132,9 +132,6 @@ const userController = {
             console.log("Token login github:", access_token);
             //res.cookie('jwt', access_token); // Set JWT token in cookie
 
-            // Envia la respuesta con el token de acceso al frontend
-            res.redirect("/home");
-
             // TODO: luego
             res.cookie("jwt", access_token, {
                 httpOnly: true,
@@ -145,6 +142,8 @@ const userController = {
                 userId: req.user._id
             });
 
+            // Envia la respuesta con el token de acceso al frontend
+            res.redirect("/home");
 
         } catch (error) {
             console.log('Error en el callback de GitHub:', error);
@@ -157,7 +156,7 @@ const userController = {
             req.session.userId = null;
             req.session.user = null;
             req.session.isAuthenticated = false;
-            return res.render("home")
+            return res.render("users_login")
             
             //res.json({ message: "Logout funciona" });
         } catch (error) {

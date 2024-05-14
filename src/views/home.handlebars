@@ -1,34 +1,32 @@
 
 <div class="text-center">
     <div class="container mt-5">
-        <h1 class="mb-4">Bienvenido {{user.name}}</h1>
-        
-        {{#eq user.role "ADMIN"}}
-        <!-- If user is ADMIN -->
+        <h1 class="mb-4">Bienvenido {{user.first_name}} - Rol: {{user.role}}</h1>
         <div class="row justify-content-center">
+            {{#eq user.role "admin"}}
+            <!-- If user is ADMIN -->
             <div class="col-md-4 mb-4">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Productos</h5>
-                        <p class="card-text">Administrar productos</p>
-                        <a href="/products" class="btn btn-primary btn-block">Ir a Comprar</a>
+                        <h5 class="card-title">Listar Productos</h5>
+                        <p class="card-text">Administrar los productos</p>
+                        <a href="/products/list" class="btn btn-primary btn-block">Ver Listado</a>
                     </div>
                 </div>
             </div>
             <div class="col-md-4 mb-4">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Add Product</h5>
-                        <p class="card-text">Add a new product</p>
-                        <a href="/product/add" class="btn btn-primary btn-block">Add Product</a>
+                        <h5 class="card-title">Agregar Producto</h5>
+                        <p class="card-text">Nuevo inventario</p>
+                        <a href="/product/add" class="btn btn-primary btn-block">Crear</a>
                     </div>
                 </div>
             </div>
-        </div>
-        {{/eq}}
+            {{/eq}}
         
-        <!-- If user is CLIENT -->
-        <div class="row justify-content-center">
+            {{#eq user.role "user"}}
+            <!-- If user is CLIENT -->
             <div class="col-md-4 mb-4">
                 <div class="card">
                     <div class="card-body">
@@ -56,6 +54,8 @@
                     </div>
                 </div>
             </div>
+            {{/eq}}
+
             <div class="col-md-4 mb-4">
                 <div class="card">
                     <div class="card-body">
