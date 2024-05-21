@@ -244,3 +244,52 @@ body {
 > :not(caption) > * > * {
     background-color: #f5f5f554;
 }
+
+
+/* */
+/* Custom CSS for product page - Intento carousel*/
+.thumbnail-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover; /* Ensure the entire image is visible within the square */
+    border: 1px solid #dee2e6; /* Add a light border around each thumbnail */
+}
+
+
+.product-image {
+    max-width: 40%; /* Restrict maximum width of main product image */
+    height: auto; /* Maintain aspect ratio */
+    display: block; /* Ensure image is displayed as a block element */
+    margin: 0 auto; /* Center the image horizontally */
+}
+
+.thumbnail-image-old {
+    max-width: 30%; /* Restrict maximum width of thumbnails */
+    height: auto; /* Maintain aspect ratio */
+}
+
+.carousel-item img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    width: auto;
+    padding: 0;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    height: 100%;
+    width: 100%;
+}
+
+.carousel-control-prev {
+    margin-left: -30px; /* Adjust spacing of previous button */
+}
+
+.carousel-control-next {
+    margin-right: -30px; /* Adjust spacing of next button */
+}

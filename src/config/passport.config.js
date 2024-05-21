@@ -5,7 +5,8 @@ import jwt from "passport-jwt"; ////estrategia de jwt
 
 // import userService from "../models/Users.model.js";      // IMPORTANTE: El profe en clase22 no aloja controllers, managers y models adentro de DAO, lo deja afuera
 // Nosotros tenemos que usarlo así
-import User from "../models/user.model.js";
+// TODO hacer todo el camino de mas elaborado...
+import User from "../dao/mongo/models/user.model.js"
 
 import { createHash, isValidPassword } from "../util.js";  // IMPORTANTE: El profe en clase22 no usa util.js sino utils.js (plural)
 
@@ -48,7 +49,6 @@ const initializePassport = () => {
     });
 
     //Registrar ususario localmente
-
     passport.use(
         "register",
         new LocalStrategy(
@@ -69,10 +69,13 @@ const initializePassport = () => {
                         email,
                         age,
                         password: createHash(password), // Hashear la contraseña
+                        type: "LOCAL"
                     };
 
                     // Guardar el usuario
-                    const result = await User.create(newUser);
+                    const result = await User.create(newUser); // TODO: esto no debería consumir el modelo directo...
+
+
                     return done(null, result); // Pasar el usuario creado al éxito
                 } catch (error) {
                     return done(error); // Pasar el error si hay alguno
@@ -83,7 +86,6 @@ const initializePassport = () => {
 
 
     //estrategia local para iniciar sesión
-
     passport.use(
         "local",
         new LocalStrategy(
@@ -116,7 +118,7 @@ const initializePassport = () => {
             async (accessToken, refreshToken, profile, done) => {
                 // console.log("GitHubStrategy", { accessToken, refreshToken, profile }); 
                 try {
-                    // console.log("GitHubStrategy", { accessToken, refreshToken, profile }); //obtenemos el objeto del perfil
+                    console.log("GitHubStrategy", { accessToken, refreshToken, profile }); //obtenemos el objeto del perfil
                     //buscamos en la db el email
                     const user = await User.findOne({
                         email: profile._json.email,
@@ -130,9 +132,11 @@ const initializePassport = () => {
                             age: 20,
                             email: profile._json.email,
                             password: "",
+                            type: "GITHUB"
                         };
                         //guardamos el usuario en la database
-                        let createdUser = await User.create(newUser);
+                        let createdUser = await User.create(newUser);// TODO: esto no debería consumir el modelo directo...
+                        
                         done(null, createdUser);
                     } else {
                         done(null, user);
@@ -164,5 +168,7 @@ const initializePassport = () => {
         )
     );
 };
+
+
 
 export default initializePassport;

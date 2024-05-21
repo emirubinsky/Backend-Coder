@@ -1,5 +1,3 @@
-// TODO_ Pasarlo a clase esto
-import ProductManager from '../managers/product.manager.js'
 import CartManager from '../managers/cart.manager.js'
 
 const SUCCESS = 'success'
@@ -13,7 +11,7 @@ class CartController {
             const cart = await CartManager.getOne(id, true);
 
             if (cart) {
-                console.log({cart})
+                console.log({ cart })
                 res.status(200).json({ cart });
             } else {
                 res.status(404).json({ error: `Cart with ID: ${id} not found` });
@@ -26,32 +24,10 @@ class CartController {
 
     static async getAll(req, res) {
         try {
-            // Manipulacion de los parametros del <body> y del <queryString> => por seguridad.
-
-            const {
-                limit = 10,
-                page = 1,
-            } = req.query != null ? req.query : {};
-
-            // Obtención de parametros desde el queryString
-
-            // Formacion del objeto query para perfeccionar la query.
-            const query = {};
-
-            const options = {
-                limit,
-                page,
-                // TODO: Agregar algun sorting luego
-            };
+            console.log("Product Router > getAll", { dto: req.dto })
 
             // Llamada a la capa de negocio
-            const managerOutput = await CartManager.getAll({
-                host: req.get('host'),
-                protocol: req.protocol,
-                baseUrl: req.baseUrl,
-                query,
-                options
-            });
+            const managerOutput = await CartManager.getAll(req.dto);
 
             // Construir la respuesta JSON
             const response = {
@@ -71,19 +47,9 @@ class CartController {
 
     static async add(req, res) {
         try {
+            console.log("================= ADD ===============");
 
-            const parameterValidation = CartController.validateInsertion(req.body)
-
-            if (!parameterValidation) {
-                return res.status(400).json({
-                    error: "Parametros inválidos"
-                });
-            }
-
-            const newCart = await CartManager.add({
-                ...req.body,
-                user: req.session.userId
-            });
+            const newCart = await CartManager.add(req.dto);
 
             return res.json({
                 message: "Cart creado!!!",
@@ -99,23 +65,32 @@ class CartController {
         }
     }
 
+    static async initialize(req, res) {
+        try {
+            console.log("================= INITIALIZE ===============");
+
+            const newCart = await CartManager.initialize(req.dto);
+
+            return res.json({
+                message: "Cart inicializado!!!",
+                Cart: newCart,
+            });
+
+        } catch (err) {
+            console.error("Error al inicializar el Cart:", err);
+            return res.status(500).json({
+                error: "Error en la base de datos",
+                details: err.message
+            });
+        }
+    }
+
     static async update(req, res) {
 
         try {
-            const id = req.params.cid
+            console.log("================= UPDATE ===============");
 
-            const parameterValidation = CartController.validateUpdate(req.body)
-
-            if (!parameterValidation) {
-                return res.status(400).json({
-                    error: "Parametros inválidos"
-                });
-            }
-
-            const updatedCart = await CartManager.update({
-                ...req.body,
-                id
-            })
+            const updatedCart = await CartManager.update(req.dto)
 
             return res.json({
                 message: "Cart actualizado!!!",
@@ -139,7 +114,7 @@ class CartController {
             const deletionOutput = await CartManager.delete(cartId);
 
             return res.json({
-                message: "Operacion de carto procesada",
+                message: "Operacion de cart procesada",
                 output: deletionOutput, // INFO: Aca es 0 cuando borra algo, N cuando logra encontrar algo y borrarlo
                 id: cartId,
             });
@@ -154,41 +129,12 @@ class CartController {
 
     static async updateProductQuantity(req, res) {
 
-        const {
-            cid: cartId,
-            pid: productId
-        } = req.params;
-
-        const { quantity } = req.body
-
         try {
-            const parameterValidation = CartController.validateProductInsertion({ ...req.query, ...req.body })
+            console.log("================= UPDATE QUANTITY ===============");
 
-            if (!parameterValidation) {
-                return res.status(400).json({
-                    error: "Parametros inválidos"
-                });
-            }
+            const dto = req.dto
 
-            // TODO - Mover esta validacion al MANAGER.
-            const cart = await CartManager.getOne(cartId)
-
-            if (!cart) {
-                return res.status(404).json({ error: 'Cart not found - We can not continue' });
-            }
-
-            const product = await ProductManager.getOne(productId)
-
-            if (!product) {
-                return res.status(404).json({ error: 'Product not found - We can not continue' });
-            }
-
-            const updatedCart = CartManager.updateProductQuantity({
-                cartToUpdate: cart,
-                id: cartId,
-                product,
-                newQuantity: quantity
-            })
+            const updatedCart = await CartManager.updateProductQuantity(dto)
 
             return res.json({
                 message: "Cart actualizado!!!",
@@ -204,37 +150,21 @@ class CartController {
     }
 
     static async removeProduct(req, res) {
-        const {
-            cid: cartId,
-            pid: productId,
-        } = req.params;
-
         try {
 
-            const parameterValidation = CartController.validateProductInsertion(req.body)
+            console.log("================= REMOVE PRODUCT ===============");
 
-            if (!parameterValidation) {
-                return res.status(400).json({
-                    error: "Parametros inválidos"
-                });
-            }
+            const {
+                cid: cartId,
+                pid: productId,
+            } = req.params;
 
-            const cart = await CartManager.getOne(cartId)
+            // TODO - Aca obtener el userId logueado
 
-            if (!cart) {
-                return res.status(404).json({ error: 'Cart not found - We can not continue' });
-            }
-
-            const product = await ProductManager.getOne(productId)
-
-            if (!product) {
-                return res.status(404).json({ error: 'Product not found - We can not continue' });
-            }
-
-            const updatedCart = CartManager.removeProductFromCart({
-                cartToUpdate: cart,
-                id: cartId,
-                product
+            const updatedCart = await CartManager.removeProductFromCart({
+                cartId,
+                productId,
+                userId: "TODO: Mandarlo."
             })
 
             return res.json({
@@ -246,20 +176,6 @@ class CartController {
             res.status(500).json({ error: 'Internal server error' });
         }
     }
-
-    /* Otros métodos controladores */
-
-    /* Métodos internos - No expuestos en routes */
-    // TODO - Completar.
-    static validateInsertion = (body) => true
-
-    static validateUpdate = (body) => true
-
-    static validateProductInsertion = (body) => true
-
-    static validateProductUpdate = (body) => true
-
-    static validateProductDelete = (body) => true
 
 }
 

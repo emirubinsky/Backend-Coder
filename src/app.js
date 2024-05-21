@@ -1,11 +1,10 @@
 import express from "express";
-import mongoose from "mongoose";
 import http from "http";
 import HandleBarsRegister from "./appHelpers/handleBarsRegister.js";
 import handlebars from "express-handlebars";
-import { Server } from "socket.io";
+import initializeSocketServer from './appSocketServer.js';
 import bodyParser from "body-parser";
-import __dirname from "./util.js";
+import { __dirname } from "./util.js";
 import path from "path";
 import cookieParser from "cookie-parser";
 import session from "express-session";
@@ -14,6 +13,7 @@ import cors from "cors";
 
 
 import router from "./routes.js";
+import messenger from "./appHelpers/messenger.js";
 
 // Estas dos importaciones se usan en routes.js
 // import viewsRouter from "./routes/views.router.js";
@@ -70,25 +70,6 @@ app.use(
     })
 );
 
-// Rutas para productos y carritos
-//app.use("/api/products", productRouter);
-//app.use("/api/carts", cartRouter);
-
-mongoose.connect(MONGO_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-});
-
-const db = mongoose.connection;
-
-db.on("error", (err) => {
-    console.error("Error de conexión a MongoDB:", err);
-});
-
-db.once("open", () => {
-    console.log("Conexión a MongoDB exitosa");
-});
-
 // Middleware adicional para analizar el cuerpo de la solicitud JSON en cartRouter
 app.use(bodyParser.json());
 
@@ -136,34 +117,4 @@ httpServer.listen(PORT, () => {
 // Y con esta línea se podría haber definido la parte del puerto a escuchar.
 // app.set("PORT", process.env.PORT || PORT); // Usualmente 8000 o 4000
 
-// Servidor WebSocket
-const io = new Server(httpServer);
-
-io.on('connection', socket => {
-    console.log("Nuevo cliente conectado!!");
-
-    socket.on("deleteProduct", (deleteProductId) => {
-        console.log("Producto borrado:", deleteProductId);
-        io.emit("deleteProduct", deleteProductId);
-    });
-
-    socket.on("addProduct", (addProduct) => {
-        console.log("Producto agregado:", addProduct);
-        io.emit("addProduct", addProduct);
-    });
-
-    socket.on("addMessage", (addMessage) => {
-        console.log("Mensaje agregado", addMessage);
-        io.emit("addMessage", addMessage);
-    });
-
-    socket.on("deleteProductCart", (deleteProductCartId) => {
-        console.log("Producto eliminado del carrito", deleteProductCartId);
-        io.emit("deleteProductCart", deleteProductCartId);
-    });
-
-    socket.on("clearCart", (clearCart) => {
-        console.log("Carrito vaciado:", clearCart);
-        io.emit("clearCart", clearCart);
-    });
-});
+initializeSocketServer(httpServer)

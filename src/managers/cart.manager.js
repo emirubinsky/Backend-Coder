@@ -1,86 +1,57 @@
-import * as service from '../services/cart.service.js'
-import ProductManager from '../managers/product.manager.js'
+import { cartService } from "../repositories/index.js";
+import ProductManager from './product.manager.js'
 
 class CartManager {
-
     static async getOne(id, populate = false) {
         // Perform business logic operations
         // Nothing...
 
-        // Call service layer for database interactions
-        const result = await service.getOne(id, populate)
+        // Call cartService layer for database interactions
+        const result = await cartService.getOne(id, populate)
 
         return result;
 
     }
 
-    static async getAll({ host, protocol, baseUrl, query, options }) {
+    static async getAll(cartQueryDTO) {
 
-        const serviceOutput = await service.getAll({ query, options });
+        const serviceOutput = await cartService.getAll(cartQueryDTO);
 
-        //
-        //console.log('Paginated Carts:', serviceOutput);
-        // Access paginated carts with populated 'items'
-        // Access paginated carts with populated 'products'
-        serviceOutput.docs.forEach((cart) => {
-            console.log('Cart ID:', cart._id);
-            console.log('User ID:', cart.user);
-            console.log('Products:');
-            cart.products.forEach((cartProduct) => {
-                console.log('Product ID:', cartProduct.product._id);
-                console.log('Product Name:', cartProduct.product.name);
-                console.log('Product Title:', cartProduct.product.title);
-                console.log('Quantity:', cartProduct.quantity);
-            });
-        });
-        //
-
-        const carts = serviceOutput.docs.map(cart => cart.toObject());
-
-        let prevLink = null;
-        if (serviceOutput.hasPrevPage) {
-            prevLink = `${protocol}://${host}${baseUrl}?page=${serviceOutput.prevPage}`;
-        }
-
-        // Determinar el link para la página siguiente
-        let nextLink = null;
-        if (serviceOutput.hasNextPage) {
-            nextLink = `${protocol}://${host}${baseUrl}?page=${serviceOutput.nextPage}`;
-        }
-
-        return {
-            carts,
-            pagination: {
-                totalDocs: serviceOutput.totalDocs,
-                limit: serviceOutput.limit,
-                totalPages: serviceOutput.totalPages,
-                page: serviceOutput.page,
-                pagingCounter: serviceOutput.pagingCounter,
-                hasPrevPage: serviceOutput.hasPrevPage,
-                hasNextPage: serviceOutput.hasNextPage,
-                prevPage: serviceOutput.prevPage,
-                nextPage: serviceOutput.nextPage,
-                prevLink,
-                nextLink
-            }
-        }
+        return serviceOutput
 
     }
 
-    static async add(newCartDetail) {
-
+    static async add(cartDTO) {
         try {
-            console.log({ newCartDetail })
+            console.log("-----------------", { cartToAdd: cartDTO })
 
-            const validation = await this.validateCart(newCartDetail)
+            const validation = await this.validateCart(cartDTO)
 
-            const serviceOutput = await service.insert(newCartDetail);
+            const serviceOutput = await cartService.insert(cartDTO);
 
             return serviceOutput
         } catch (error) {
-            return error
+            console.error("CART MANAGER > ERROR > add", {
+                errorMessage: error.message
+            })
+            throw error
         }
+    }
 
+    static async initialize(cartDTO) {
+        try {
+            console.log("-----------------", { cartToAdd: cartDTO })
+
+            // const validation = await this.validateCart(cartDTO)
+            const serviceOutput = await cartService.insert(cartDTO);
+
+            return serviceOutput
+        } catch (error) {
+            console.error("CART MANAGER > ERROR > add", {
+                errorMessage: error.message
+            })
+            throw error
+        }
     }
 
     /**
@@ -88,65 +59,126 @@ class CartManager {
      * - OBLIGATORIAMENTE el ID.
      * - Y un puñado de props para actualizar (opcional)
      */
-    static async update(cartToUpdate) {
+    static async update(cartDTO) {
         try {
-            console.log({ cartToUpdate })
+            console.log("-----------------", { cartToUpdate: cartDTO })
 
-            const validation = await this.validateCart(cartToUpdate)
+            const validation = await this.validateCart(cartDTO)
 
-            const serviceOutput = await service.update(cartToUpdate);
+            const serviceOutput = await cartService.update(cartDTO);
 
             return serviceOutput
         } catch (error) {
-            return error
+            console.error("CART MANAGER > ERROR > update", {
+                errorMessage: error.message
+            })
+            throw error
         }
     }
 
     static async delete(id) {
-        return await service.deleteOne(id);
+        try {
+            const serviceOutput = await cartService.deleteOne(id);
+
+            return serviceOutput
+        } catch (error) {
+            console.error("CART MANAGER > ERROR > delete", {
+                errorMessage: error.message
+            })
+            throw error
+        }
     }
 
-    static async updateProductQuantity({ cartToUpdate, product, newQuantity }) {
+    static async updateProductQuantity(updateQuantityCartDTO) {
 
         try {
+            const cartId = updateQuantityCartDTO.id
+            const productId = updateQuantityCartDTO.products[0].product
+            const newQuantity = updateQuantityCartDTO.products[0].quantity
+            const replaceQuantity = updateQuantityCartDTO.products[0].replace
+
+            const cart = await this.getOne(cartId)
+
+            if (!cart) {
+                return new Error('Cart not found - We can not continue');
+            }
+            cart.id = cart._id
+
+            // TODO - Poner aquí validación de Cart x User
+
+            const product = await ProductManager.getOne(productId)
+
+            if (!product) {
+                return new Error('Product not found - We can not continue');
+            }
+
             const validation = await this.validateCartProduct(product, newQuantity)
 
             // Check if product already exists in the cart
-            console.log("productos antes de", cartToUpdate.products)
-            const existingProduct = cartToUpdate.products.find(item => item.product.equals(product._id));
+            
+            console.log("productos antes de", cart.products)
+
+            const existingProduct = cart.products.find(item => item.product._id.toString() === product._id.toString());
 
             if (existingProduct) {
-                existingProduct.quantity = newQuantity;
+                if(replaceQuantity){
+                    existingProduct.quantity = newQuantity;
+                }else{
+                    existingProduct.quantity += newQuantity;
+                }
+                
             } else {
-                cartToUpdate.products.push({
+                cart.products.push({
                     product: product._id,
                     quantity: newQuantity
                 });
             }
-
-            // TODO - unificar bien el tema _id
-            cartToUpdate.id = cartToUpdate._id
-
-            console.log("productos despues de", cartToUpdate.products)
-
-            return await CartManager.update(cartToUpdate)
+            
+            console.log("productos despues de", cart.products)
+            
+            const serviceOutput = await CartManager.update(cart)
+            return serviceOutput
         } catch (error) {
-            return error
+            console.error("CART MANAGER > ERROR > updateProductQuantity", {
+                reason: error.message
+            })
+            throw error
         }
     }
 
-    static async removeProductFromCart({ cartToUpdate, product }) {
+    static async removeProductFromCart({ cartId, productId, userId }) {
 
-        cartToUpdate.products = cartToUpdate.products.filter(item => !item.product.equals(product._id));
+        try {
 
-        // TODO - unificar bien el tema _id
-        cartToUpdate.id = cartToUpdate._id
+            const cart = await this.getOne(cartId)
 
-        return await CartManager.update(cartToUpdate)
+            if (!cart) {
+                return new Error('Cart not found - We can not continue');
+            }
+
+            // TODO - Poner aquí validación de Cart x User
+
+            const product = await ProductManager.getOne(productId)
+
+            if (!product) {
+                return new Error('Product not found - We can not continue');
+            }
+
+            cart.products = cart.products.filter(item => !item.product.equals(product._id));
+
+            // TODO - unificar bien el tema _id
+            cart.id = cart._id
+
+            return await CartManager.update(cart)
+        } catch (error) {
+            console.log("removeProductFromCart > ERROR", {
+                reason: error.message
+            })
+            throw error
+        }
     }
 
-
-    static async validateCart(cardDetail) {
+    static async validateCart(cartDTO) {
 
         try {
             // Validamos usuario
@@ -156,7 +188,7 @@ class CartManager {
             // Validamos cada producto
             // Existencia y luego stock
 
-            for (const cartProduct of cardDetail.products) {
+            for (const cartProduct of cartDTO.products) {
                 const result = await this.validateCartProduct(
                     cartProduct.product,
                     cartProduct.quantity

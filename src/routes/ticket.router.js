@@ -1,6 +1,18 @@
 import express from "express";
-import passport from "passport";
 import TicketController from "../controllers/ticket.controller.js";
+
+import {
+    createTicketDTO,
+    createTicketQueryDTO
+} from "../middlewares/ticket.dto.middleware.js"
+
+import {
+    validateTicket,
+    validateTicketId,
+    validateTicketQuery
+} from "../middlewares/ticket.validation.middleware.js"
+
+import { authToken, isUser } from "../middlewares/auth.js";
 
 const ticketRouter = express.Router();
 // Para rutas protegidas const protectWithJWT = passport.authenticate("jwt", { session: false });
@@ -9,15 +21,35 @@ const ticketRouter = express.Router();
 ticketRouter.get("/:cid", TicketController.getOne);
 
 // Maneja la solicitud de renderizar el carrito
-ticketRouter.get("/", TicketController.getAll);
+ticketRouter.get("/",
+    //authToken,
+    //isUser,
+    validateTicketQuery,
+    createTicketQueryDTO,
+    TicketController.getAll);
 
 // Maneja la solicitud de agregar el producto al carrito
-ticketRouter.post("/", TicketController.add);
+ticketRouter.post("/",
+    authToken,
+    isUser,
+    validateTicket,
+    createTicketDTO,
+    TicketController.add);
 
 // Maneja la solicitud para actualizar el carrito con nuevos productos
-ticketRouter.put("/:cid", TicketController.update);
+ticketRouter.put("/:cid",
+    authToken,
+    isUser,
+    validateTicketId,
+    validateTicket,
+    createTicketDTO,
+    TicketController.update);
 
 // Maneja la solicitud para limpiar el carrito
-ticketRouter.delete("/:cid", TicketController.delete);
+ticketRouter.delete("/:cid",
+    authToken,
+    isUser,
+    validateTicketId,
+    TicketController.delete);
 
 export default ticketRouter;

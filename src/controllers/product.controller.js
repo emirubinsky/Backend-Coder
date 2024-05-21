@@ -4,10 +4,10 @@ const SUCCESS = 'success'
 
 class ProductController {
 
-    static async getOne (req, res) {
+    static async getOne(req, res) {
         try {
             const id = req.params.id
-            
+
             const product = await ProductManager.getOne(id);
 
             if (product) {
@@ -21,57 +21,19 @@ class ProductController {
         }
     }
 
-    static async getAll (req, res) {
+    static async getAll(req, res) {
         try {
-            // Manipulacion de los parametros del <body> y del <queryString> => por seguridad.
+            console.log("Product Router > getAll", { dto: req.dto })
             
-            // Obtención de parametros desde el body.
-            const { category, brand, sort } = req.query;
-
-            const {
-                limit = 5,
-                page = 1,
-            } = req.query != null ? req.query : {};
-
-            // Obtención de parametros desde el queryString
-
-            // Formacion del objeto query para perfeccionar la query.
-            const query = {};
-
-            if (category) {
-                query.category = category;
-            }
-
-            if (brand) {
-                query.brand = brand;
-            }
-
-            const options = {
-                limit,
-                page,
-                sort: { price: sort === 'asc' ? 1 : -1 }
-            };
-            console.log({
-                host: req.get('host'),
-                protocol: req.protocol,
-                baseUrl: req.baseUrl,
-                options
-              })
             // Llamada a la capa de negocio
-            const managerOutput = await ProductManager.getAll({
-                host: req.get('host'),
-                protocol: req.protocol,
-                baseUrl: req.baseUrl,
-                query,
-                options
-            });
+            const managerOutput = await ProductManager.getAll(req.dto);
 
             // Construir la respuesta JSON
+            // TODO: Debería ser un DTO de salida
             const response = {
                 status: SUCCESS,
                 Products: managerOutput.products,
                 Query: managerOutput.pagination,
-
             };
 
             // Envío respuesta
@@ -83,29 +45,11 @@ class ProductController {
         }
     }
 
-    static async add (req, res) {
+    static async add(req, res) {
         try {
+            console.log("================= ADD ===============");
 
-            const parameterValidation = ProductController.validateInsertion(req.body)
-
-            if (!parameterValidation) {
-                return res.status(400).json({
-                    error: "Parametros inválidos"
-                });
-            }
-
-            const imageName = req.file ? req.file.filename : null;
-
-            if (!imageName) {
-                return res.status(400).json({
-                    error: 'No se proporcionó una imagen PRINCIPAL válida'
-                });
-            }
-
-            const newProduct = await ProductManager.add({
-                ...req.body,
-                image: imageName,
-            });
+            const newProduct = await ProductManager.add(req.dto);
 
             return res.json({
                 message: "Producto creado!!!",
@@ -121,26 +65,12 @@ class ProductController {
         }
     }
 
-    static async update (req, res) {
+    static async update(req, res) {
 
         try {
-            const id = req.params.id
+            console.log("================= UPDATE ===============");
 
-            const parameterValidation = ProductController.validateUpdate(req.body)
-
-            if (!parameterValidation) {
-                return res.status(400).json({
-                    error: "Parametros inválidos"
-                });
-            }
-
-            const imageName = req.file ? req.file.filename : null;
-
-            const updatedProduct = await ProductManager.update({
-                ...req.body,
-                id,
-                image: imageName,
-            })
+            const updatedProduct = await ProductManager.update(req.dto)
 
             return res.json({
                 message: "Producto actualizado!!!",
@@ -157,7 +87,7 @@ class ProductController {
 
     }
 
-    static async delete (req, res) {
+    static async delete(req, res) {
         try {
             const productId = req.params.id;
 
@@ -177,14 +107,6 @@ class ProductController {
         }
 
     }
-
-    /* Otros métodos controladores */
-
-    /* Métodos internos - No expuestos en routes */
-    // TODO - Completar.
-    static validateInsertion = (body) => true
-
-    static validateUpdate = (body) => true
 
 }
 

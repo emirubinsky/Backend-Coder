@@ -1,5 +1,4 @@
-import * as service from '../services/product.service.js'
-import Product from "../models/product.model.js";
+import { productService } from "../repositories/index.js";
 
 class ProductManager {
   static async getOne(id) {
@@ -7,74 +6,51 @@ class ProductManager {
     // Nothing...
 
     // Call service layer for database interactions
-    const result = await service.getOne(id);
+    const result = await productService.getOne(id);
 
     return result;
 
   }
 
-  static async getAll({ host, protocol, baseUrl, query, options }) {
+  static async getAll(productQueryDTO) {
 
-    const serviceOutput = await service.getAll({ query, options });
+    const serviceOutput = await productService.getAll(productQueryDTO);
 
-    const products = serviceOutput.docs.map(product => product.toObject());
-
-    let prevLink = null;
-    if (serviceOutput.hasPrevPage) {
-      prevLink = `${protocol}://${host}${baseUrl}?page=${serviceOutput.prevPage}`;
-    }
-
-    // Determinar el link para la página siguiente
-    let nextLink = null;
-    if (serviceOutput.hasNextPage) {
-      nextLink = `${protocol}://${host}${baseUrl}?page=${serviceOutput.nextPage}`;
-    }
-
-    return {
-      products,
-      pagination: {
-        totalDocs: serviceOutput.totalDocs,
-        limit: serviceOutput.limit,
-        totalPages: serviceOutput.totalPages,
-        page: serviceOutput.page,
-        pagingCounter: serviceOutput.pagingCounter,
-        hasPrevPage: serviceOutput.hasPrevPage,
-        hasNextPage: serviceOutput.hasNextPage,
-        prevPage: serviceOutput.prevPage,
-        nextPage: serviceOutput.nextPage,
-        prevLink,
-        nextLink
-      }
-    }
+    return serviceOutput
 
   }
 
-  static async add(newProductDetail) {
+  static async add(productDTO) {
+    console.log("-----------------",
+      { productToAdd: productDTO })
 
-    const serviceOutput = await service.insert(newProductDetail);
+    const serviceOutput = await productService.insert(productDTO);
 
     return serviceOutput
   }
 
   /**
-   * El productToUpdate va a tener
+   * El productToUpdate va a tenerjajaj
    * - OBLIGATORIAMENTE el ID.
    * - Y un puñado de props para actualizar (opcional)
    */
-  static async update(productToUpdate) {
+  static async update(productDTO) {
 
-    if (productToUpdate.image === null) {
-      delete productToUpdate.image
+    if (productDTO.image === null) {
+      delete productDTO.image
     }
-    console.log({ productToUpdate })
-    const serviceOutput = await service.update(productToUpdate);
+
+    console.log("-----------------",
+      { productToUpdate: productDTO })
+
+    const serviceOutput = await productService.update(productDTO);
 
     return serviceOutput
 
   }
 
   static async delete(id) {
-    return await service.deleteOne(id);
+    return await productService.deleteOne(id);
   }
 }
 

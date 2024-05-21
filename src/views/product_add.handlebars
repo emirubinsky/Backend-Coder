@@ -19,7 +19,13 @@
                 </div>
                 <div class="mb-3">
                     <label for="category" class="form-label">Category</label>
-                    <input type="text" class="form-control" id="category" name="category" required>
+                    <select class="form-select" id="category" name="category" required>
+                        <option value="">Select Category</option>
+                        <option value="electronics">Electronica</option>
+                        <option value="clothing">Ropa</option>
+                        <option value="books">Libros</option>
+                        <!-- Add more category options as needed -->
+                    </select>
                 </div>
                 <div class="mb-3">
                     <label for="brand" class="form-label">Brand</label>
@@ -38,14 +44,39 @@
                     <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
                 </div>
                 <div class="mb-3">
-                    <label for="thumbnails" class="form-label">Thumbnails (comma-separated URLs)</label>
-                    <input type="text" class="form-control" id="thumbnails" name="thumbnails">
+                    <label for="fileInput" class="form-label">Add Thumbnail Images</label>
+                    <input type="file" class="form-control" id="fileInput" accept="image/*" multiple>
                 </div>
+
+
+                <!-- Table to display uploaded thumbnail images -->
+                <div class="mb-3">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Thumbnail Image</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="thumbnailList">
+                            <!-- This section will be dynamically populated with uploaded thumbnails -->
+                        </tbody>
+                    </table>
+                </div>
+
+
+                <!--
                 <div class="mb-3 form-check">
                     <input type="checkbox" class="form-check-input" id="status" name="status" checked>
                     <label class="form-check-label" for="status">Active</label>
                 </div>
-                <button type="submit" class="btn btn-primary">Add Product</button>
+                -->
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="status" name="status" checked>
+                    <label class="form-check-label" for="status">Active</label>
+                    <input type="hidden" name="active" value="true"> <!-- Hidden field to store true/false value -->
+                </div>
+                <button type="submit" class="btn btn-primary" id="addProductBtn">Add Product</button>
             </form>
         </div>
     </div>

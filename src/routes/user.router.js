@@ -7,7 +7,7 @@ const userRouter = express.Router();
 userRouter.get("/logout", userController.logOut);
 
 // Maneja el renderizado del login
-userRouter.get("/login", userController.getLogin);
+// userRouter.get("/login", userController.getLogin);
 
 // Maneja el renderizado del register
 userRouter.get("/register", userController.getRegister);

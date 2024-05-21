@@ -1,4 +1,9 @@
-import User from "../models/user.model.js";
+
+//import User from "../models/user.model.js";
+// TODO hacer todo el camino de mas elaborado...
+import User from "../dao/mongo/models/user.model.js"
+
+
 import bcrypt from "bcrypt";
 import passport from "passport";
 import jwt from 'jsonwebtoken'
@@ -49,9 +54,16 @@ const userController = {
                 // Generar token JWT
                 const access_token = generateAuthToken(user);
 
+                req.session.email = email;
                 req.session.userId = user._id;
                 req.session.user = user;
                 req.session.isAuthenticated = true;
+
+                
+                res.cookie("jwt", access_token, {
+                    httpOnly: true,
+                })
+                
 
                 console.log("Datos del login:", user, "token:", access_token);
 
@@ -118,29 +130,38 @@ const userController = {
     // Redirige al usuario a la página de inicio después de iniciar sesión con GitHub
     handleGitHubCallback: async (req, res) => {
         try {
-            // console.log("handleGitHubCallback", { req, res })
+            // console.log("handleGitHubCallback > inicio", { req, res })
 
             // Genera el token de acceso
             const access_token = generateAuthToken(req.user);
 
+            console.log("handleGitHubCallback > access_token listo")
+
             // Establece la sesión del usuario
+            req.session.email = req.user.email;
             req.session.token = access_token;
             req.session.userId = req.user._id;
             req.session.user = req.user;
             req.session.isAuthenticated = true;
 
             console.log("Token login github:", access_token);
+            
             //res.cookie('jwt', access_token); // Set JWT token in cookie
 
             // TODO: luego
             res.cookie("jwt", access_token, {
                 httpOnly: true,
-            }).send({
+            })
+            
+            // INFO: Prohibido esto, sino mandamos como una doble respuesta y da problemas
+            /*
+            .send({
                 status: "Success",
                 message: req.user,
                 access_token,
                 userId: req.user._id
             });
+            */
 
             // Envia la respuesta con el token de acceso al frontend
             res.redirect("/home");
@@ -156,6 +177,9 @@ const userController = {
             req.session.userId = null;
             req.session.user = null;
             req.session.isAuthenticated = false;
+
+            res.clearCookie('jwt');
+
             return res.render("users_login")
             
             //res.json({ message: "Logout funciona" });

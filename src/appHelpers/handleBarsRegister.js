@@ -49,7 +49,7 @@ class HandleBarsRegister {
       console.log("calculateGrandTotal", tickets)
       let grandTotal = 0;
       tickets.forEach(ticket => {
-        ticket.cart.products.forEach(product => {
+        ticket.products.forEach(product => {
           grandTotal += (product.price * product.quantity);
         });
       });

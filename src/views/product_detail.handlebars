@@ -1,24 +1,57 @@
 {{#with response}}
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <h2 class="text-center mb-5">Detalles del Producto</h2>
-                <div id="productList">
-                    <div class="card">
-                        <img src="/img/{{Product.image}}" class="card-img-top img-fluid" alt="{{Product.title}}"
-                            style="max-height: 400px; aspect-ratio: 3/2; object-fit: contain;">
-                        <div class="card-body">
-                            <h5 class="card-title">{{Product.title}}</h5>
-                            <p class="card-text">{{Product.brand}}</p>
-                            <p class="card-text">{{Product.description}}</p>
-                            <p class="card-text">Precio: ${{Product.price}}</p>
-                            <p class="card-text">Stock: {{Product.stock}}</p>
-                            <p class="card-text">Categoría: {{Product.category}}</p>
-                        </div>
-                    </div>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h2 class="mb-4 text-center">{{Product.title}}</h2>
+
+            <!-- Display main Product image at the top centered -->
+            <div class="text-center mb-4">
+                <img src="/img/products/{{Product.image}}" class="img-fluid product-image" alt="Main Product Image"
+                style="max-height: 400px; aspect-ratio: 3/2; object-fit: contain;">
+            </div>
+
+            <!-- Display thumbnail images in a horizontal row -->
+            <div class="text-center mb-4">
+                <div class="d-flex justify-content-center">
+                    {{#each Product.thumbnails}}
+                    <img src="/img/products/{{this}}" class="img-thumbnail thumbnail-image mx-2" alt="Thumbnail" width="50" height="50">
+                    {{/each}}
                 </div>
+            </div>
+            <!-- Display thumbnails carousel if there are any thumbnails -->
+            <!--
+            {{#if Product.thumbnails.length}}
+            <div id="thumbnailsCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    {{#each Product.thumbnails}}
+                    <div class="carousel-item {{#if @first}}active{{/if}}">
+                        <img src="/img/products/{{this}}" class="d-block w-100 thumbnail-image" alt="Thumbnail">
+                    </div>
+                    {{/each}}
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#thumbnailsCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#thumbnailsCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+            {{/if}}
+            -->
+
+            <div class="mb-3">
+                <p><strong>Description:</strong> {{Product.description}}</p>
+                <p><strong>Code:</strong> {{Product.code}}</p>
+                <p><strong>Category:</strong> {{Product.category}}</p>
+                <p><strong>Brand:</strong> {{Product.brand}}</p>
+                <p><strong>Price:</strong> ${{Product.price}}</p>
+                <p><strong>Stock:</strong> {{Product.stock}}</p>
+                <p><strong>Status:</strong> {{#if Product.status}}Active{{else}}Inactive{{/if}}</p>
             </div>
         </div>
     </div>
+</div>
 {{/with}}
 <!-- <script src="/socket.io/socket.io.js"></script> -->

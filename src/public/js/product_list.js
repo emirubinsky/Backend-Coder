@@ -18,6 +18,12 @@ for (var i = 0; i < everyDeleteProductBtn.length; i++) {
     everyDeleteProductBtn[i].addEventListener('click', handleDeleteProduct, false);
 }
 
+var everyUpdateProductBtn = document.getElementsByClassName("btn-update-product")
+
+for (var i = 0; i < everyUpdateProductBtn.length; i++) {
+    everyUpdateProductBtn[i].addEventListener('click', handleUpdateProduct, false);
+}
+
 function handleDeleteProduct(event) {
 
     const token = localStorage.getItem('token');
@@ -56,7 +62,23 @@ function handleDeleteProduct(event) {
         });
 }
 
+function handleUpdateProduct(event) {
 
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+        console.log("Usuario no logueado o registrado");
+        window.location.href = "http://localhost:8080/"
+    }
+
+    const userId = localStorage.getItem('userId');
+    const cartId = localStorage.getItem('cartId');
+
+    const productId = event.target.getAttribute('data-product-id');
+
+    window.location.href = `http://localhost:8080/products/update/${productId}` 
+
+}
 
 
 

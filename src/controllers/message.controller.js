@@ -1,4 +1,6 @@
-import Message from "../models/message.model.js"
+// TODO: Hacer el camino elaborado
+// import Message from "../models/message.model.js"
+import Message from "../dao/mongo/models/message.model.js"
 
 const messageController = {
     getMessages: async (req, res) => {

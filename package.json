@@ -5,21 +5,31 @@
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon ./src/app.js"
+    "old_start": "nodemon ./src/app.js",
+    "start": "nodemon -r dotenv/config server.js",
+    "start:dev": "nodemon ./src/app.js --mode development",
+    "start:stage": "nodemon ./src/app.js --mode staging",
+    "start:prod": "nodemon ./src/app.js --mode production",
+    "wip_start:dev": "cross-env NODE_ENV=development nodemon -r dotenv/config ./src/app.js",
+    "wip_start:prod": "cross-env NODE_ENV=production node -r dotenv/config ./src/app.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.7.1",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
+    "commander": "^12.1.0",
     "connect-mongo": "^5.1.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.4.5",
     "express": "^4.18.1",
     "express-handlebars": "^6.0.6",
     "express-session": "^1.17.3",
+    "express-validator": "^7.0.1",
     "handlebars": "^4.7.8",
     "jsonwebtoken": "^9.0.2",
     "moment": "^2.30.1",
@@ -28,6 +38,7 @@
     "mongoose-deep-populate": "^3.2.0",
     "mongoose-paginate-v2": "^1.8.0",
     "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.13",
     "nodemon": "^3.1.0",
     "passport": "^0.6.0",
     "passport-github2": "^0.1.12",
@@ -35,6 +46,7 @@
     "passport-local": "^1.0.0",
     "session-file-store": "^1.2.0",
     "socket.io": "^4.7.5",
-    "socket.io-client": "^4.7.5"
+    "socket.io-client": "^4.7.5",
+    "twilio": "^5.0.4"
   }
 }

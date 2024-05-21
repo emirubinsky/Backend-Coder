@@ -38,10 +38,28 @@ const ticketSchema = new mongoose.Schema({
         type: String,
         require: true
     }, // Correo del usuario asociado al carrito
+    /*
     cart: {
         type: mongoose.Schema.Types.ObjectId,
         ref: MONGO_COLLECTIONS_NAME_CART
     },
+    */
+    products: [{
+        product: {
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: MONGO_COLLECTIONS_NAME_PRODUCT
+        },
+        quantity: {
+            type: Number,
+            require: true
+        },
+        // Props no especificadas en la clase.
+        // Pero puede tener sentido para reflejar el precio total del momento
+        price: {
+            type: Number,
+            require: false
+        }
+    }],
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'

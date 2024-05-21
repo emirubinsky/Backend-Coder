@@ -1,3 +1,4 @@
+{{#with response}}
 <div class="mt-5">
     <h1 class="text-center">Carrito de Compras</h1>
     <div class="row mt-5">
@@ -14,17 +15,17 @@
                     </tr>
                 </thead>
                 <tbody id="cartList">
-                    {{#each cart.products}}
+                    {{#each Cart.products}}
                     <tr>
-                        <td>{{this.product._id}}</td>
+                        <td>{{product._id}}</td>
                         <td>{{this.product.title}}</td>
                         <td>${{this.product.price}}</td>
                         <td>{{this.quantity}}</td>
                         <td>${{multiply this.quantity this.product.price}}</td>
                         <td>
                             <button class="btn btn-danger delete-btn" data-product-id="{{this.product._id}}"
-                                data-delete-url="http://localhost:8080/api/carts/{{../cart._id}}/products/{{this.product._id}}"
-                                onclick="deleteProductFromCart('{{../cart._id}}', '{{this.product._id}}')">Eliminar
+                                data-delete-url="http://localhost:8080/api/carts/{{../Cart._id}}/products/{{this.product._id}}"
+                                onclick="deleteProductFromCart('{{../Cart._id}}', '{{this.product._id}}')">Eliminar
                                 producto</button>
                         </td>
                     </tr>
@@ -39,8 +40,8 @@
             <div class="text-center card">
                 <div class="card-body">
                     <h5 class="card-title">Resumen del Pedido</h5>
-                    <p class="card-text">Total de Productos: {{cart.products.length}}</p>
-                    <p class="card-text">Total a Pagar: ${{cart.total}}</p>
+                    <p class="card-text">Total de Productos: {{Cart.products.length}}</p>
+                    <p class="card-text">Total a Pagar: ${{Cart.total}}</p>
                 </div>
             </div>
         </div>
@@ -49,7 +50,7 @@
     <div class="row mt-2">
         <div class="col-md-6 offset-md-3">
             <div class="text-center">
-                <button id="returnToShopping" data-cart-id="{{user.cart.id}}"
+                <button id="returnToShopping" data-cart-id="{{user.Cart.id}}"
                     class="btn btn-lg btn-outline-dark btn-block mb-3">
                     Seguir Comprando
                 </button>
@@ -57,16 +58,16 @@
         </div>
         <div class="col-md-6 offset-md-3">
             <div class="text-center">
-                <p>{{cart._id}}</p>
-                <button id="continueToTicket" data-cart-id="{{cart._id}}"
-                    class="btn btn-lg btn-outline-dark btn-block mb-3"
-                    onclick="confirmCartToTicket('{{cart._id}}')">
+                <p>{{Cart._id}}</p>
+                <button id="continueToTicket" data-cart-id="{{Cart._id}}"
+                    class="btn btn-lg btn-outline-dark btn-block mb-3" onclick="confirmCartToTicket('{{Cart._id}}')">
                     Confirmar Compra
                 </button>
             </div>
         </div>
     </div>
 </div>
+{{/with}}
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/cart.js"></script>

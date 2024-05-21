@@ -10,9 +10,11 @@ function onLoad(){
 
     const userId = localStorage.getItem("userId")
 
-    fetch('http://localhost:8080/api/carts/', {
+    fetch('http://localhost:8080/api/carts/user', {
         method: 'POST',
-        body: JSON.stringify({ userId }),
+        body: JSON.stringify({ 
+            user: userId 
+        }),
         headers: {
             'Content-Type': 'application/json',
             "Access-Control-Allow-Origin": "*"
@@ -25,7 +27,7 @@ function onLoad(){
         } else {
             console.log("hubo un error")
             // Si la respuesta no es exitosa, mostrar un mensaje de error
-            throw new Error('Credenciales incorrectas');
+            throw new Error('Problemas al inicializar carrito');
         }
     })
         .then(response => {
@@ -38,7 +40,7 @@ function onLoad(){
             const cartId = response.Cart._id;
             localStorage.setItem('cartId', cartId)
             console.log("cartId:", cartId);
-            console.log("Carrito creado!!!");
+            console.log("Carrito inicializado/obtenido !!!");
 
             
         })

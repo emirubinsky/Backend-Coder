@@ -36,12 +36,19 @@
         {{#each response.Products}}
         <div class="col-lg-4 col-md-6 mb-4">
             <div class="card h-100">
-                <img src="/img/{{this.image}}" class="card-img-top" alt="{{this.title}}">
+                <img src="/img/products/{{this.image}}" class="card-img-top" alt="{{this.title}}">
                 <div class="card-body text-center">
                     <h5 class="card-title">{{this.title}}</h5>
                     <p class="card-text">Precio: ${{this.price}}</p>
+                    <p class="card-text">Stock:  {{this.stock}}</p>
                     <div class="btn-group" role="group">
-                        <a href="/products/{{this._id}}" class="btn btn-primary"><i class="fas fa-eye"></i> Detalles</a>
+                        <a href="/products/{{this._id}}" 
+                            class="btn btn-primary">
+                            <i class="fas fa-eye"></i> Detalles
+                        </a>
+                        <button class="btn btn-warning btn-update-product " 
+                            data-product-id="{{this._id}}">
+                            <i class="fas fa-shopping-cart"></i> Editar Producto </button>
                         <button class="btn btn-danger btn-delete-product " 
                             data-product-id="{{this._id}}">
                             <i class="fas fa-shopping-cart"></i> Eliminar Producto </button>

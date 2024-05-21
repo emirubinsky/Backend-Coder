@@ -1,5 +1,3 @@
-// TODO_ Pasarlo a clase esto
-import ProductManager from '../managers/product.manager.js'
 import TicketManager from '../managers/ticket.manager.js'
 
 const SUCCESS = 'success'
@@ -26,32 +24,10 @@ class TicketController {
 
     static async getAll(req, res) {
         try {
-            // Manipulacion de los parametros del <body> y del <queryString> => por seguridad.
-
-            const {
-                limit = 10,
-                page = 1,
-            } = req.query != null ? req.query : {};
-
-            // Obtención de parametros desde el queryString
-
-            // Formacion del objeto query para perfeccionar la query.
-            const query = {};
-
-            const options = {
-                limit,
-                page,
-                // TODO: Agregar algun sorting luego
-            };
+            console.log("Ticket Router > getAll", { dto: req.dto })
 
             // Llamada a la capa de negocio
-            const managerOutput = await TicketManager.getAll({
-                host: req.get('host'),
-                protocol: req.protocol,
-                baseUrl: req.baseUrl,
-                query,
-                options
-            });
+            const managerOutput = await TicketManager.getAll(req.dto);
 
             // Construir la respuesta JSON
             const response = {
@@ -61,7 +37,7 @@ class TicketController {
             };
 
             // Envío respuesta
-            res.json({ message: "Lista de Carros:", response })
+            res.json({ message: "Lista de Tickets:", response })
 
         } catch (error) {
             console.error(`Error loading tickets: ${error}`, error);
@@ -71,24 +47,9 @@ class TicketController {
 
     static async add(req, res) {
         try {
+            console.log("================= ADD ===============");
 
-            //const cartId = req.params.cid
-            const userId = req.session.userId
-
-            const parameterValidation = TicketController.validateInsertion(req.body)
-
-            if (!parameterValidation) {
-                return res.status(400).json({
-                    error: "Parametros inválidos"
-                });
-            }
-
-            // TODO - maniobrar los parametros aca
-            const newTicket = await TicketManager.add({
-                ...req.body,
-                //cartId,
-                userId
-            });
+            const newTicket = await TicketManager.add(req.dto);
 
             return res.json({
                 message: "Ticket creado!!!",
@@ -105,22 +66,10 @@ class TicketController {
     }
 
     static async update(req, res) {
-
         try {
-            const id = req.params.cid
+            console.log("================= UPDATE ===============");
 
-            const parameterValidation = TicketController.validateUpdate(req.body)
-
-            if (!parameterValidation) {
-                return res.status(400).json({
-                    error: "Parametros inválidos"
-                });
-            }
-
-            const updatedTicket = await TicketManager.update({
-                ...req.body,
-                id
-            })
+            const updatedTicket = await TicketManager.update(req.dto)
 
             return res.json({
                 message: "Ticket actualizado!!!",
@@ -156,21 +105,6 @@ class TicketController {
             });
         }
     }
-
-
-    /* Otros métodos controladores */
-
-    /* Métodos internos - No expuestos en routes */
-    // TODO - Completar.
-    static validateInsertion = (body) => true
-
-    static validateUpdate = (body) => true
-
-    static validateProductInsertion = (body) => true
-
-    static validateProductUpdate = (body) => true
-
-    static validateProductDelete = (body) => true
 
 }
 
