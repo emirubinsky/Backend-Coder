@@ -1,5 +1,6 @@
 import { cartService } from "../repositories/index.js";
 import ProductManager from './product.manager.js'
+import { customLogger } from '../appHelpers/logger.helper.js';
 
 class CartManager {
     static async getOne(id, populate = false) {
@@ -23,7 +24,7 @@ class CartManager {
 
     static async add(cartDTO) {
         try {
-            console.log("-----------------", { cartToAdd: cartDTO })
+            customLogger.info("-----------------", { cartToAdd: cartDTO })
 
             const validation = await this.validateCart(cartDTO)
 
@@ -31,8 +32,9 @@ class CartManager {
 
             return serviceOutput
         } catch (error) {
-            console.error("CART MANAGER > ERROR > add", {
-                errorMessage: error.message
+            customLogger.error("CART MANAGER > ERROR > add", {
+                errorMessage: error.message,
+                ...error
             })
             throw error
         }
@@ -40,15 +42,16 @@ class CartManager {
 
     static async initialize(cartDTO) {
         try {
-            console.log("-----------------", { cartToAdd: cartDTO })
+            customLogger.info("-----------------", { cartToAdd: cartDTO })
 
             // const validation = await this.validateCart(cartDTO)
             const serviceOutput = await cartService.insert(cartDTO);
 
             return serviceOutput
         } catch (error) {
-            console.error("CART MANAGER > ERROR > add", {
-                errorMessage: error.message
+            customLogger.error("CART MANAGER > ERROR > add", {
+                errorMessage: error.message,
+                ...error
             })
             throw error
         }
@@ -61,7 +64,7 @@ class CartManager {
      */
     static async update(cartDTO) {
         try {
-            console.log("-----------------", { cartToUpdate: cartDTO })
+            customLogger.info("-----------------", { cartToUpdate: cartDTO })
 
             const validation = await this.validateCart(cartDTO)
 
@@ -69,8 +72,9 @@ class CartManager {
 
             return serviceOutput
         } catch (error) {
-            console.error("CART MANAGER > ERROR > update", {
-                errorMessage: error.message
+            customLogger.error("CART MANAGER > ERROR > update", {
+                errorMessage: error.message,
+                ...error
             })
             throw error
         }
@@ -82,8 +86,9 @@ class CartManager {
 
             return serviceOutput
         } catch (error) {
-            console.error("CART MANAGER > ERROR > delete", {
-                errorMessage: error.message
+            customLogger.error("CART MANAGER > ERROR > delete", {
+                errorMessage: error.message,
+                ...error
             })
             throw error
         }
@@ -116,7 +121,7 @@ class CartManager {
 
             // Check if product already exists in the cart
             
-            console.log("productos antes de", cart.products)
+            customLogger.info("productos antes de", cart.products)
 
             const existingProduct = cart.products.find(item => item.product._id.toString() === product._id.toString());
 
@@ -134,13 +139,14 @@ class CartManager {
                 });
             }
             
-            console.log("productos despues de", cart.products)
+            customLogger.info("productos despues de", cart.products)
             
             const serviceOutput = await CartManager.update(cart)
             return serviceOutput
         } catch (error) {
-            console.error("CART MANAGER > ERROR > updateProductQuantity", {
-                reason: error.message
+            customLogger.error("CART MANAGER > ERROR > updateProductQuantity", {
+                reason: error.message,
+                ...error
             })
             throw error
         }
@@ -171,7 +177,7 @@ class CartManager {
 
             return await CartManager.update(cart)
         } catch (error) {
-            console.log("removeProductFromCart > ERROR", {
+            customLogger.info("removeProductFromCart > ERROR", {
                 reason: error.message
             })
             throw error

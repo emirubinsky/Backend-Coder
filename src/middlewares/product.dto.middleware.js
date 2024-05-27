@@ -2,11 +2,13 @@
 import ProductDTO from '../dao/dto/product.dto.js';
 import ProductQueryDTO from '../dao/dto/product.query.dto.js';
 
+import { customLogger } from '../appHelpers/logger.helper.js';
+
 export const createProductDTO = (req, res, next) => {
     try {
 
-        console.log(req.body); // Log request body (form data)
-        console.log(req.files); // Log uploaded files (images)
+        customLogger.info("createProductDTO > body", req.body); // Log request body (form data)
+        customLogger.info("createProductDTO > files", req.files); // Log uploaded files (images)
 
         //const image = req.files['image'][0].filename; // Get main image filename
         //const thumbnails = req.files['thumbnails'].map(file => file.filename); // Get thumbnail image filenames
@@ -40,7 +42,7 @@ export const createProductDTO = (req, res, next) => {
 
         });
 
-        console.log("createProductDTO", {
+        customLogger.info("createProductDTO", {
             dto
         })
 
@@ -48,9 +50,11 @@ export const createProductDTO = (req, res, next) => {
 
         next();
     } catch (error) {
+        customLogger.error(error.message, { stack: error.stack })
         res.status(400).json({
             reason: 'MIDDLEWARE > PRODUCT DTO > Invalid product data',
-            errorMessage: error.message
+            errorMessage: error.message,
+            stack: error.stack
         });
     }
 };
@@ -92,7 +96,7 @@ export const createProductQueryDTO = (req, res, next) => {
             baseUrlHandled = baseUrlHandled.replace("/products", "/products/list")
         }
 
-        console.log("createProductQueryDTO", { view, baseUrl: req.baseUrl })
+        customLogger.info("createProductQueryDTO", { view, baseUrl: req.baseUrl })
 
         const dto = new ProductQueryDTO({
             host: req.get('host'),
@@ -104,7 +108,7 @@ export const createProductQueryDTO = (req, res, next) => {
             sort: { price: sort === 'asc' ? 1 : -1 }
         });
 
-        console.log("createProductQueryDTO", {
+        customLogger.info("createProductQueryDTO", {
             dto
         })
 
@@ -112,9 +116,11 @@ export const createProductQueryDTO = (req, res, next) => {
 
         next();
     } catch (error) {
+        customLogger.error(error.message, { stack: error.stack })
         res.status(400).json({
             reason: 'MIDDLEWARE > PRODUCT QUERY DTO > Invalid product-query data',
-            errorMessage: error.message
+            errorMessage: error.message,
+            stack: error.stack
         });
     }
 };

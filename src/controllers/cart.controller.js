@@ -1,5 +1,7 @@
 import CartManager from '../managers/cart.manager.js'
 
+import { customLogger } from '../appHelpers/logger.helper.js';
+
 const SUCCESS = 'success'
 
 class CartController {
@@ -11,20 +13,20 @@ class CartController {
             const cart = await CartManager.getOne(id, true);
 
             if (cart) {
-                console.log({ cart })
+                consoleLogger.info({ cart })
                 res.status(200).json({ cart });
             } else {
                 res.status(404).json({ error: `Cart with ID: ${id} not found` });
             }
         } catch (error) {
-            console.error(`Error loading cart: ${error}`, error);
+            customLogger.error(`Error loading cart: ${error}`, { ...error });
             res.status(500).json({ error: 'Error retrieving cart' });
         }
     }
 
     static async getAll(req, res) {
         try {
-            console.log("Product Router > getAll", { dto: req.dto })
+            customLogger.info("Product Router > getAll", { dto: req.dto })
 
             // Llamada a la capa de negocio
             const managerOutput = await CartManager.getAll(req.dto);
@@ -40,14 +42,14 @@ class CartController {
             res.json({ message: "Lista de Carros:", response })
 
         } catch (error) {
-            console.error(`Error loading carts: ${error}`, error);
+            customLogger.error(`Error loading carts: ${error}`, { ...error });
             res.status(500).json({ error: 'Error retrieving carts' });
         }
     }
 
     static async add(req, res) {
         try {
-            console.log("================= ADD ===============");
+            customLogger.info("================= ADD ===============");
 
             const newCart = await CartManager.add(req.dto);
 
@@ -57,7 +59,7 @@ class CartController {
             });
 
         } catch (err) {
-            console.error("Error al guardar el Cart:", err);
+            customLogger.error("Error al guardar el Cart:", { stack: err.stack });
             return res.status(500).json({
                 error: "Error en la base de datos",
                 details: err.message
@@ -67,7 +69,7 @@ class CartController {
 
     static async initialize(req, res) {
         try {
-            console.log("================= INITIALIZE ===============");
+            customLogger.info("================= INITIALIZE ===============");
 
             const newCart = await CartManager.initialize(req.dto);
 
@@ -77,7 +79,7 @@ class CartController {
             });
 
         } catch (err) {
-            console.error("Error al inicializar el Cart:", err);
+            customLogger.error("Error al inicializar el Cart:", { ...err });
             return res.status(500).json({
                 error: "Error en la base de datos",
                 details: err.message
@@ -88,7 +90,7 @@ class CartController {
     static async update(req, res) {
 
         try {
-            console.log("================= UPDATE ===============");
+            customLogger.info("================= UPDATE ===============");
 
             const updatedCart = await CartManager.update(req.dto)
 
@@ -98,7 +100,7 @@ class CartController {
             });
 
         } catch (err) {
-            console.error("Error al actualizar el Cart:", err);
+            customLogger.error("Error al actualizar el Cart:", { ...err });
             return res.status(500).json({
                 error: "Error en la base de datos",
                 details: err.message
@@ -130,7 +132,7 @@ class CartController {
     static async updateProductQuantity(req, res) {
 
         try {
-            console.log("================= UPDATE QUANTITY ===============");
+            customLogger.info("================= UPDATE QUANTITY ===============");
 
             const dto = req.dto
 
@@ -142,6 +144,7 @@ class CartController {
             });
 
         } catch (error) {
+            customLogger.error("Error al actualizar el cart:", { ...error });
             return res.status(500).json({
                 error: "Error en la base de datos",
                 details: error.message
@@ -152,7 +155,7 @@ class CartController {
     static async removeProduct(req, res) {
         try {
 
-            console.log("================= REMOVE PRODUCT ===============");
+            customLogger.info("================= REMOVE PRODUCT ===============");
 
             const {
                 cid: cartId,
@@ -173,6 +176,7 @@ class CartController {
             });
 
         } catch (error) {
+            customLogger.error("Error al remover el product:", { ...error });
             res.status(500).json({ error: 'Internal server error' });
         }
     }

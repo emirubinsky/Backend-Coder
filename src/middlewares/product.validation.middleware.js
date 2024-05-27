@@ -1,5 +1,8 @@
 // middleware/validationMiddleware.js
 import { body, query, param, validationResult } from 'express-validator';
+import { customLogger } from '../appHelpers/logger.helper.js';
+import ValidationError from '../appHelpers/errors/validation.error.js'
+import { ENUM_ERROR_TYPES } from '../appHelpers/enums/enum.collection.js';
 
 // Custom validator to check if file is an image
 const isImage = value => {
@@ -18,12 +21,21 @@ export const validateProduct = [
     body('description').optional().isString().withMessage('Description must be a string'),
 
     (req, res, next) => {
-        console.log('Body:', req.body); // Debugging statement
-        console.log('Files:', req.files); // Debugging statement
+        customLogger.info('Body:', req.body); // Debugging statement
+        customLogger.info('Files:', req.files); // Debugging statement
 
         // Validate the main image file
         if (!req.files || !req.files.image || !req.files.image[0] || !isImage(req.files.image[0])) {
-            return res.status(400).json({ errors: [{ msg: 'Image must be a valid image file' }] });
+
+            const message = 'Image must be a valid image file'
+            const customError = ValidationError.createError({
+                cause: "Product > Validation > File",
+                message,
+                code: ENUM_ERROR_TYPES.VALIDATION_FILE_ERROR,
+                items: [{ msg: message }]
+            })
+            customLogger.error(message, { ...customError })
+            return next(customError) //res.status(400).json(customError);
         }
 
         // Validate thumbnails if they are present
@@ -31,7 +43,15 @@ export const validateProduct = [
             const thumbnails = req.files.thumbnails;
             for (const file of thumbnails) {
                 if (!isImage(file)) {
-                    return res.status(400).json({ errors: [{ msg: 'Each thumbnail must be a valid image file' }] });
+                    const message = 'Each thumbnail must be a valid image file'
+                    const customError = ValidationError.createError({
+                        cause: "Product > Validation > File",
+                        message,
+                        code: ENUM_ERROR_TYPES.VALIDATION_FILE_ERROR,
+                        items: [{ msg: message }]
+                    })
+                    customLogger.error(message, { ...customError })
+                    return next(customError) //res.status(400).json(customError);
                 }
             }
         }
@@ -40,14 +60,18 @@ export const validateProduct = [
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
+            const message = 'Product VALIDATION MDW > validateProduct > error'
+            const customError = ValidationError.createError({
+                cause: "Product > Validation > validateProduct",
+                message,
+                code: ENUM_ERROR_TYPES.VALIDATION_ERROR,
+                items: errors.array()
+            })
+            customLogger.error(message, { ...customError })
+            return next(customError) //res.status(400).json(customError);
         }
         next();
     }
-];
-
-const validateId = [
-    
 ];
 
 export const validateProductId = [
@@ -55,7 +79,15 @@ export const validateProductId = [
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
+            const message = 'Product VALIDATION MDW > validateProductId > error'
+            const customError = ValidationError.createError({
+                cause: "Product > Validation > validateProductId",
+                message,
+                code: ENUM_ERROR_TYPES.VALIDATION_ERROR,
+                items: errors.array()
+            })
+            customLogger.error(message, { ...customError })
+            return next(customError) //res.status(400).json(customError);
         }
         next();
     }
@@ -69,10 +101,18 @@ export const validateProductQuery = [
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            console.log("PRODUCT VALIDATION MDW > validateProductQuery > error" )
-            return res.status(400).json({ errors: errors.array() });
+
+            const message = "PRODUCT VALIDATION MDW > validateProductQuery > error"
+            const customError = ValidationError.createError({
+                cause: "Product > Validation > validateProductQuery",
+                message,
+                code: ENUM_ERROR_TYPES.VALIDATION_ERROR,
+                items: errors.array()
+            })
+            customLogger.error(message, { ...customError })
+            return next(customError) //res.status(400).json(customError);
         }
-        console.log("PRODUCT VALIDATION MDW > validateProductQuery > OK" )
+        customLogger.info("PRODUCT VALIDATION MDW > validateProductQuery > OK")
         next();
     }
 ];

@@ -1,5 +1,7 @@
 import ProductManager from '../managers/product.manager.js'
 
+import { customLogger } from '../appHelpers/logger.helper.js';
+
 const SUCCESS = 'success'
 
 class ProductController {
@@ -16,15 +18,15 @@ class ProductController {
                 res.status(404).json({ error: `Product with ID: ${id} not found` });
             }
         } catch (error) {
-            console.error(`Error loading product: ${error}`, error);
+            customLogger.error(`Error loading product: ${error}`, { ...error });
             res.status(500).json({ error: 'Error retrieving product' });
         }
     }
 
     static async getAll(req, res) {
         try {
-            console.log("Product Router > getAll", { dto: req.dto })
-            
+            customLogger.info("Product Router > getAll", { dto: req.dto })
+
             // Llamada a la capa de negocio
             const managerOutput = await ProductManager.getAll(req.dto);
 
@@ -40,14 +42,14 @@ class ProductController {
             res.json({ message: "Lista de productos:", response })
 
         } catch (error) {
-            console.error(`Error loading products: ${error}`, error);
+            customLogger.error(`Error loading products: ${error}`, { ...error });
             res.status(500).json({ error: 'Error retrieving products' });
         }
     }
 
     static async add(req, res) {
         try {
-            console.log("================= ADD ===============");
+            customLogger.info("================= ADD ===============");
 
             const newProduct = await ProductManager.add(req.dto);
 
@@ -57,7 +59,7 @@ class ProductController {
             });
 
         } catch (err) {
-            console.error("Error al guardar el Producto:", err);
+            customLogger.error("Error al guardar el Producto:", { ...err });
             return res.status(500).json({
                 error: "Error en la base de datos",
                 details: err.message
@@ -68,7 +70,7 @@ class ProductController {
     static async update(req, res) {
 
         try {
-            console.log("================= UPDATE ===============");
+            customLogger.info("================= UPDATE ===============");
 
             const updatedProduct = await ProductManager.update(req.dto)
 
@@ -78,7 +80,7 @@ class ProductController {
             });
 
         } catch (err) {
-            console.error("Error al actualizar el Producto:", err);
+            customLogger.error("Error al actualizar el Producto:", { ...err });
             return res.status(500).json({
                 error: "Error en la base de datos",
                 details: err.message
@@ -100,6 +102,7 @@ class ProductController {
             });
 
         } catch (error) {
+            customLogger.error("Error al actualizar el Producto:", { ...err });
             return res.status(500).json({
                 error: "Error en la base de datos",
                 details: err.message

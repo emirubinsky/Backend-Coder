@@ -1,11 +1,13 @@
 // middleware/validationMiddleware.js
 import { body, query, param, validationResult } from 'express-validator';
+import { customLogger } from '../appHelpers/logger.helper.js';
+import ValidationError from '../appHelpers/errors/validation.error.js'
+import { ENUM_ERROR_TYPES } from '../appHelpers/enums/enum.collection.js';
 
 const REQ_PARAM_CART_ID = 'cid'
 const REQ_PARAM_PRODUCT_ID = 'pid'
 
 // Validation rules for creating a product
-
 export const validateCart = [
     body('products').isArray().withMessage('Products must be an array'),
     body('products.*.product').isMongoId().withMessage('Each product must be a valid product ID'),
@@ -15,10 +17,15 @@ export const validateCart = [
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            console.log("CART VALIDATION MDW > validateCart > error")
-            return res.status(400).json({
-                errors: errors.array()
-            });
+            const message = "CART VALIDATION MDW > validateCart > error"
+            const customError = ValidationError.createError({
+                cause: "Cart > Validation",
+                message,
+                code: ENUM_ERROR_TYPES.VALIDATION_ERROR,
+                items: errors.array()
+            })
+            customLogger.error(message, { ...customError })
+            return next(customError) //res.status(400).json(customError);
         }
         next();
     }
@@ -29,10 +36,15 @@ export const validateUpdateProductCartQuantity = [
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            console.log("CART VALIDATION MDW > validateUpdateProductCartQuantity > error")
-            return res.status(400).json({
-                errors: errors.array()
-            });
+            const message = "CART VALIDATION MDW > validateUpdateProductCartQuantity > error"
+            const customError = ValidationError.createError({
+                cause: "Cart > Validation",
+                message,
+                code: ENUM_ERROR_TYPES.VALIDATION_ERROR,
+                items: errors.array()
+            })
+            customLogger.error(message, { ...customError })
+            return next(customError) //res.status(400).json(customError);
         }
         next();
     }
@@ -43,7 +55,15 @@ export const validateCartId = [
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
+            const message = "CART VALIDATION MDW > validateCartId > error"
+            const customError = ValidationError.createError({
+                cause: "Cart > Validation",
+                message,
+                code: ENUM_ERROR_TYPES.VALIDATION_ERROR,
+                items: errors.array()
+            })
+            customLogger.error(message, { ...customError })
+            return next(customError) //res.status(400).json(customError);
         }
         next();
     }
@@ -54,7 +74,15 @@ export const validateProductId = [
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
+            const message = "CART VALIDATION MDW > validateProductId > error"
+            const customError = ValidationError.createError({
+                cause: "Cart > Validation",
+                message,
+                code: ENUM_ERROR_TYPES.VALIDATION_ERROR,
+                items: errors.array()
+            })
+            customLogger.error(message, { ...customError })
+            return next(customError) //res.status(400).json(customError);
         }
         next();
     }
@@ -68,12 +96,17 @@ export const validateCartQuery = [
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            console.log("CART VALIDATION MDW > validateCartQuery > error")
-            return res.status(400).json({
-                errors: errors.array()
-            });
+            const message = "CART VALIDATION MDW > validateCartQuery > error"
+            const customError = ValidationError.createError({
+                cause: "Cart > Validation",
+                message,
+                code: ENUM_ERROR_TYPES.VALIDATION_ERROR,
+                items: errors.array()
+            })
+            customLogger.error(message, { ...customError })
+            return next(customError) //res.status(400).json(customError);
         }
-        console.log("CART VALIDATION MDW > validateCartQuery > OK")
+        customLogger.info("CART VALIDATION MDW > validateCartQuery > OK")
         next();
     }
 ];

@@ -2,11 +2,13 @@
 import CartDTO from '../dao/dto/cart.dto.js';
 import CartQueryDTO from '../dao/dto/cart.query.dto.js';
 
+import { customLogger } from '../appHelpers/logger.helper.js';
+
 export const createCartDTO = (req, res, next) => {
     try {
 
-        console.log(req.body);
-        console.log(req.session); 
+        customLogger.info(req.body);
+        customLogger.info(req.session); 
 
         const id = req.params.cid ? req.params.cid : -1
 
@@ -16,7 +18,7 @@ export const createCartDTO = (req, res, next) => {
             id
         });
 
-        console.log("createCartDTO", {
+        customLogger.info("createCartDTO", {
             dto
         })
 
@@ -34,8 +36,8 @@ export const createCartDTO = (req, res, next) => {
 export const initializeCartDTO = (req, res, next) => {
     try {
 
-        console.log(req.body);
-        console.log(req.session); 
+        customLogger.info(req.body);
+        customLogger.info(req.session); 
 
         const id = req.params.cid ? req.params.cid : -1
 
@@ -45,7 +47,7 @@ export const initializeCartDTO = (req, res, next) => {
             id
         });
 
-        console.log("initializeCartDTO", {
+        customLogger.info("initializeCartDTO", {
             dto
         })
 
@@ -70,8 +72,8 @@ export const updateQuantityCartDTO = (req, res, next) => {
 
         const { quantity, replace = false } = req.body
 
-        console.log(req.body);
-        console.log(req.session); 
+        customLogger.info(req.body);
+        customLogger.info(req.session); 
 
         /*
                 {
@@ -92,7 +94,7 @@ export const updateQuantityCartDTO = (req, res, next) => {
             id: cartId
         });
 
-        console.log("createCartDTO", {
+        customLogger.info("createCartDTO", {
             dto
         })
 
@@ -129,7 +131,7 @@ export const createCartQueryDTO = (req, res, next) => {
             page,
         });
 
-        console.log("createCartQueryDTO", {
+        customLogger.info("createCartQueryDTO", {
             dto
         })
 

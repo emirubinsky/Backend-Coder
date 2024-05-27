@@ -1,6 +1,8 @@
 import __dirname from './dirname.config'
 import dotenv from "dotenv";
 
+import { customLogger } from '../appHelpers/logger.helper.js';
+
 dotenv.config({ path: path.resolve(__dirname, './.env') });
 
 export const PORT = process.env.PORT;

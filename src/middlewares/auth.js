@@ -1,22 +1,37 @@
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../util.js"
 
+import { customLogger } from '../appHelpers/logger.helper.js';
+
 // Esta función middleware es más robusta
 // TODO: Hacerla funcionar
 export const authToken = (req, res, next) => {
-    console.log("-------------------------------------------------")
-    console.log("MIDDLEWARE authToken", req.session)
+    customLogger.info("-------------------------------------------------")
+    customLogger.info("MIDDLEWARE authToken", req.session)
     if (!req.session || !req.session.user) {
-        console.log("MIDDLEWARE auth > authToken a login", req.session)
-        return res.redirect("/login");
+        customLogger.info("MIDDLEWARE auth > authToken a login", req.session)
+
+        const acceptHeader = req.get('Accept');
+
+        if (acceptHeader && !acceptHeader.includes('text/html')) {
+            // If the request expects a JSON response
+            customLogger.info("MIDDLEWARE auth > response with json")
+            return res.status(401).send({ status: "error", message: "No autenticado" });
+        } else {
+            customLogger.info("MIDDLEWARE auth > redirect a login")
+            // If the request is from a browser or expects HTML
+            return res.redirect("/login");
+        }
+
+        
     }
-    console.log("-------------------------------------------------")
+    customLogger.info("-------------------------------------------------")
     next();
     /*
     const authHeader = req.headers.authorization;
     const cookieToken = req.cookies.jwt//jwtToken;
 
-    console.log("authToken", { authHeader, cookieToken })
+    customLogger.info("authToken", { authHeader, cookieToken })
 
     // Verificar si el token está presente en el encabezado de autorización o en la cookie jwtToken
     const token = authHeader ? authHeader.split(" ")[1] : cookieToken;
@@ -27,7 +42,7 @@ export const authToken = (req, res, next) => {
 
     jwt.verify(token, config.jwtSecret, (error, user) => {
         if (error) {
-            console.error('JWT Verification Error:', error);
+            customLogger.error('JWT Verification Error:', error);
             return res.status(401).send({ status: "error", message: "Unauthorized" });
         }
 
@@ -39,13 +54,23 @@ export const authToken = (req, res, next) => {
 
 // Esta funcion es la que usó el profe en clase22
 export function auth(req, res, next) {
-    console.log("-------------------------------------------------")
-    console.log("MIDDLEWARE auth", req.session)
+    customLogger.info("-------------------------------------------------")
+    customLogger.info("MIDDLEWARE auth", req.session)
     if (!req.session || !req.session.user) {
-        console.log("MIDDLEWARE auth > redirect a login", req.session)
-        return res.redirect("/login");
+
+        const acceptHeader = req.get('Accept');
+
+        if (acceptHeader && !acceptHeader.includes('text/html')) {
+            // If the request expects a JSON response
+            customLogger.info("MIDDLEWARE auth > response with json")
+            return res.status(401).send({ status: "error", message: "No autenticado" });
+        } else {
+            customLogger.info("MIDDLEWARE auth > redirect a login")
+            // If the request is from a browser or expects HTML
+            return res.redirect("/login");
+        }
     }
-    console.log("-------------------------------------------------")
+    customLogger.info("-------------------------------------------------")
     next();
 }
 

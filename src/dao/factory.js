@@ -3,6 +3,9 @@
 import mongoose from "mongoose";
 import { MONGO_URL } from "../util.js";
 
+import { customLogger } from '../appHelpers/logger.helper.js';
+customLogger.info("DAO Factory > LISTO");
+
 export let Users;
 export let Products;
 export let Carts;
@@ -14,20 +17,18 @@ const entorno = {
 
 switch (entorno.persistence) {
   case "MONGO":
-    console.log("FACTORY DAO > MONGO")
     mongoose.connect(MONGO_URL, {
       useNewUrlParser: true,
       useUnifiedTopology: true
     });
-
     const db = mongoose.connection;
 
     db.on("error", (err) => {
-      console.error("Error de conexión a MongoDB:", err);
+      customLogger.info("DAO Factory > Error de conexión a MongoDB:", err);
     });
 
     db.once("open", () => {
-      console.log("Conexión a MongoDB exitosa");
+      customLogger.info("DAO Factory > Conexión a MongoDB exitosa");
     });
 
     //const { default: UsersMongo } = await import("./mongo/services/user.service.js");
@@ -40,6 +41,7 @@ switch (entorno.persistence) {
     Carts = CartsMongo
     Tickets = TicketsMongo
 
+    customLogger.info("DAO Factory > FINALIZACION");
     break;
   case "MEMORY":
     const { default: UsersMemory } = await import("./memory/services/user.service.js.js");
@@ -57,6 +59,6 @@ switch (entorno.persistence) {
   case "FS":
     break;
   default:
-    console.log("FACTORY DAO > DEFAULT")
+    customLogger.info("FACTORY DAO > DEFAULT")
     break;
 }

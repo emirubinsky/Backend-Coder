@@ -6,6 +6,7 @@ import ProductDTO from '../dao/dto/product.dto.js'
 import CartDTO from "../dao/dto/cart.dto.js";
 
 import messenger from "../appHelpers/messenger.js";
+import { customLogger } from '../appHelpers/logger.helper.js';
 
 class TicketManager {
 
@@ -15,8 +16,9 @@ class TicketManager {
 
             return serviceOutput
         } catch (error) {
-            console.error("TICKET MANAGER > ERROR > getOne", {
-                errorMessage: error.message
+            customLogger.error("TICKET MANAGER > ERROR > getOne", {
+                errorMessage: error.message,
+                ...error
             })
             throw error
         }
@@ -28,8 +30,9 @@ class TicketManager {
 
             return serviceOutput
         } catch (error) {
-            console.error("TICKET MANAGER > ERROR > getAll", {
-                errorMessage: error.message
+            customLogger.error("TICKET MANAGER > ERROR > getAll", {
+                errorMessage: error.message,
+                ...error
             })
             throw error
         }
@@ -37,7 +40,7 @@ class TicketManager {
 
     static async add(ticketDTO) {
         try {
-            console.log("-----------------", { ticketToAddDraft: ticketDTO })
+            customLogger.info("-----------------", { ticketToAddDraft: ticketDTO })
             /**
              * Desde el controller yo recibiría
              * - el userId => y de ahi saco el email
@@ -51,7 +54,7 @@ class TicketManager {
             } = ticketDTO
 
             const cart = await CartManager.getOne(cartId, true)
-            console.log("ticketDTO > add", {cart})
+            customLogger.info("ticketDTO > add", {cart})
             const productsToPurchase = [];
             const productsToKeepInCart = [];
 
@@ -125,7 +128,7 @@ class TicketManager {
                 user: userId
             }
 
-            console.log("-----------------", { ticketToAddFinal: insertBody })
+            customLogger.info("-----------------", { ticketToAddFinal: insertBody })
 
             // Insertamos el ticket de la compra realizada con los productos
             const ticketInsertResult = await ticketService.insert(insertBody);
@@ -144,7 +147,7 @@ class TicketManager {
                 subject: "Ticket Generado", 
                 message: "Muchas gracias, su compra ha sido regitrado con el ID: " + ticketInsertResult._id 
             }
-            console.log("TICKET MANAGER > EMAIL > ", { datosEmail })
+            customLogger.info("TICKET MANAGER > EMAIL > ", { datosEmail })
             messenger.mandarEmail({
                 datos: datosEmail
             })
@@ -155,8 +158,9 @@ class TicketManager {
                 cartUpdateResult
             }
         } catch (error) {
-            console.error("TICKET MANAGER > ERROR > add", {
-                errorMessage: error.message
+            customLogger.error("TICKET MANAGER > ERROR > add", {
+                errorMessage: error.message,
+                ...error
             })
             throw error
         }
@@ -169,14 +173,15 @@ class TicketManager {
      */
     static async update(ticketDTO) {
         try {
-            console.log("-----------------", { ticketToUpdate: ticketDTO })
+            customLogger.info("-----------------", { ticketToUpdate: ticketDTO })
 
             const serviceOutput = await ticketService.update(ticketDTO);
 
             return serviceOutput
         } catch (error) {
-            console.error("TICKET MANAGER > ERROR > update", {
-                errorMessage: error.message
+            customLogger.error("TICKET MANAGER > ERROR > update", {
+                errorMessage: error.message,
+                ...error
             })
             throw error
         }
@@ -188,8 +193,9 @@ class TicketManager {
 
             return serviceOutput
         } catch (error) {
-            console.error("TICKET MANAGER > ERROR > update", {
-                errorMessage: error.message
+            customLogger.error("TICKET MANAGER > ERROR > update", {
+                errorMessage: error.message,
+                ...error
             })
             throw error
         }

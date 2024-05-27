@@ -21,9 +21,6 @@ class ProductManager {
   }
 
   static async add(productDTO) {
-    console.log("-----------------",
-      { productToAdd: productDTO })
-
     const serviceOutput = await productService.insert(productDTO);
 
     return serviceOutput
@@ -39,9 +36,6 @@ class ProductManager {
     if (productDTO.image === null) {
       delete productDTO.image
     }
-
-    console.log("-----------------",
-      { productToUpdate: productDTO })
 
     const serviceOutput = await productService.update(productDTO);
 

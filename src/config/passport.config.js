@@ -10,16 +10,18 @@ import User from "../dao/mongo/models/user.model.js"
 
 import { createHash, isValidPassword } from "../util.js";  // IMPORTANTE: El profe en clase22 no usa util.js sino utils.js (plural)
 
+import { customLogger } from '../appHelpers/logger.helper.js';
+
 const LocalStrategy = local.Strategy; //estrategia local
 const JWTStrategy = jwt.Strategy; //estrategia jwt
 const ExtracJWT = jwt.ExtractJwt; //Extractor de jwt de los headers, de las cookies
 
-console.log("_GitHubStrategy", Object.keys(_GitHubStrategy))
+customLogger.info("PASSPORT > GitHubStrategy details", Object.keys(_GitHubStrategy))
 const GitHubStrategy = _GitHubStrategy.Strategy
 
 import { CLIENT_ID, CLIENT_SECRET, CALLBACK_URL, JWT_SECRET } from "../util.js";
 
-console.log("passport.config.js", {
+customLogger.info("PASSPORT > Constant loaded", {
     CLIENT_ID, CLIENT_SECRET, CALLBACK_URL, JWT_SECRET
 })
 
@@ -32,8 +34,8 @@ const cookieExtractor = (req) => {
     return token;
 };
 
-const initializePassport = () => {
 
+const initializePassport = () => {
     //Serializar y deserializar usuario
     passport.serializeUser((user, done) => {
         done(null, user._id);
@@ -59,7 +61,7 @@ const initializePassport = () => {
                 try {
                     const user = await User.findOne({ email: username });
                     if (user) {
-                        console.log("el usuario ya existe");
+                        customLogger.info("el usuario ya existe");
                         return done(null, false); // Indica que el usuario existe (sin error)
                     }
 
@@ -116,9 +118,9 @@ const initializePassport = () => {
                 callbackURL: CALLBACK_URL,                 //callbackURL: "http://localhost:8080/users/githubcallback",//url callback de github
             },
             async (accessToken, refreshToken, profile, done) => {
-                // console.log("GitHubStrategy", { accessToken, refreshToken, profile }); 
+                // customLogger.info("GitHubStrategy", { accessToken, refreshToken, profile }); 
                 try {
-                    console.log("GitHubStrategy", { accessToken, refreshToken, profile }); //obtenemos el objeto del perfil
+                    customLogger.info("GitHubStrategy", { accessToken, refreshToken, profile }); //obtenemos el objeto del perfil
                     //buscamos en la db el email
                     const user = await User.findOne({
                         email: profile._json.email,
@@ -142,7 +144,7 @@ const initializePassport = () => {
                         done(null, user);
                     }
                 } catch (error) {
-                    console.log(error)
+                    customLogger.fatal("PASSPORT > GITHUB ERROR > ", error)
                     return done(error);
                 }
             }
@@ -161,7 +163,7 @@ const initializePassport = () => {
                 try {
                     return done(null, jwt_payload);
                 } catch (error) {
-                    console.log(error)
+                    customLogger.fatal("PASSPORT > JWT ERROR > ", error)
                     return done(error);
                 }
             }

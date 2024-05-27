@@ -10,7 +10,6 @@ export default class TicketRepository {
          * - e invocaría a métodos "homologados" (o interfaz) que 
          * -- en definitva haria uso de las capacidades de mongo.
          */
-        console.log("Repository > Ticket", { dao })
         this.dao = dao;
     }
 

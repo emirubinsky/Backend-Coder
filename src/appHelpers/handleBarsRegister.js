@@ -2,6 +2,9 @@
 import Handlebars from "handlebars";
 import moment from 'moment'
 
+import { customLogger } from '../appHelpers/logger.helper.js';
+customLogger.info("HandleBarsRegister > LISTO")
+
 class HandleBarsRegister {
 
   static registerHelpers() {
@@ -23,19 +26,19 @@ class HandleBarsRegister {
     // Helpers for /tickets
 
     Handlebars.registerHelper('formatDate', function (dateToTransform) {
-      console.log("formatDate", dateToTransform)
+      customLogger.info("formatDate", dateToTransform)
       return moment(dateToTransform).format();
     });
 
     Handlebars.registerHelper('pricePerItem', function (price, quantity) {
-      console.log("pricePerItem", price, quantity)
+      customLogger.info("pricePerItem", price, quantity)
       return (price * quantity).toFixed(2);
     });
 
     // Helper function to calculate total amount for a ticket's cart items
     Handlebars.registerHelper('calculateTotal', function (products) {
 
-      console.log("calculateTotal", products)
+      customLogger.info("calculateTotal", products)
 
       let total = 0;
       products.forEach(product => {
@@ -46,7 +49,7 @@ class HandleBarsRegister {
 
     // Helper function to calculate grand total amount for all tickets
     Handlebars.registerHelper('calculateGrandTotal', function (tickets) {
-      console.log("calculateGrandTotal", tickets)
+      customLogger.info("calculateGrandTotal", tickets)
       let grandTotal = 0;
       tickets.forEach(ticket => {
         ticket.products.forEach(product => {

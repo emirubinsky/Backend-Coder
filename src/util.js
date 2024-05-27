@@ -1,8 +1,11 @@
+console.log("Loading UTILS ... <<<<<<<<<<--------------");
 import { fileURLToPath } from "url";
 import path, { dirname } from "path";
 import dotenv from "dotenv";
 import multer from "multer";
 import bcrypt from 'bcrypt'
+
+// import { customLogger } from './appHelpers/logger.helper.js';
 
 console.log("UTIL starting")
 

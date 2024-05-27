@@ -1,4 +1,5 @@
 import Cart from "../models/cart.model.js";
+import { customLogger } from '../../../appHelpers/logger.helper.js';
 
 const model = Cart
 
@@ -52,17 +53,17 @@ export default class CartMongoService {
         // Access paginated carts with populated 'items'
         // Access paginated carts with populated 'products'
         cartPaginationOutput.docs.forEach((cart) => {
-            console.log('-------');
-            console.log('Cart ID:', cart._id);
-            console.log('User ID:', cart.user);
-            console.log('Products:', cart.products);
+            customLogger.info('-------');
+            customLogger.info('Cart ID:', cart._id);
+            customLogger.info('User ID:', cart.user);
+            customLogger.info('Products:', cart.products);
             cart.products
                 .filter(cartProduct => cartProduct.product !== null)
                 .forEach((cartProduct) => {
-                    console.log('Product ID:', cartProduct.product._id);
-                    //console.log('Product Name:', cartProduct.product.name);
-                    console.log('Product Title:', cartProduct.product.title);
-                    console.log('Quantity:', cartProduct.quantity);
+                    customLogger.info('Product ID:', cartProduct.product._id);
+                    //customLogger.info('Product Name:', cartProduct.product.name);
+                    customLogger.info('Product Title:', cartProduct.product.title);
+                    customLogger.info('Quantity:', cartProduct.quantity);
                 });
         });
         //
@@ -106,7 +107,7 @@ export default class CartMongoService {
         });
 
         const existentCart = await model.findOne({ user });
-        console.log("MONGO SERVICE > CART | CHECKING EXISTENCE", { existentCart })
+        customLogger.info("MONGO SERVICE > CART | CHECKING EXISTENCE", { existentCart })
         if (existentCart) {
             return existentCart
         }
@@ -128,7 +129,7 @@ export default class CartMongoService {
             products
         }
 
-        console.log("MONGO > cart.service > update", { filter, entityToUpdate })
+        customLogger.info("MONGO > cart.service > update", { filter, entityToUpdate })
 
         const updatedDoc = await model.findOneAndUpdate(filter, entityToUpdate, {
             returnOriginal: false

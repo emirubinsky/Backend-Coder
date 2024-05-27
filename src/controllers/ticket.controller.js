@@ -1,5 +1,7 @@
 import TicketManager from '../managers/ticket.manager.js'
 
+import { customLogger } from '../appHelpers/logger.helper.js';
+
 const SUCCESS = 'success'
 
 class TicketController {
@@ -11,20 +13,20 @@ class TicketController {
             const ticket = await TicketManager.getOne(id, true);
 
             if (ticket) {
-                console.log({ticket})
+                customLogger.info({ ticket })
                 res.status(200).json({ ticket });
             } else {
                 res.status(404).json({ error: `Ticket with ID: ${id} not found` });
             }
         } catch (error) {
-            console.error(`Error loading ticket: ${error}`, error);
+            customLogger.error(`Error loading ticket: ${error}`, { ...error });
             res.status(500).json({ error: 'Error retrieving ticket' });
         }
     }
 
     static async getAll(req, res) {
         try {
-            console.log("Ticket Router > getAll", { dto: req.dto })
+            customLogger.info("Ticket Router > getAll", { dto: req.dto })
 
             // Llamada a la capa de negocio
             const managerOutput = await TicketManager.getAll(req.dto);
@@ -40,14 +42,14 @@ class TicketController {
             res.json({ message: "Lista de Tickets:", response })
 
         } catch (error) {
-            console.error(`Error loading tickets: ${error}`, error);
+            customLogger.error(`Error loading tickets: ${error}`, { ...error });
             res.status(500).json({ error: 'Error retrieving tickets' });
         }
     }
 
     static async add(req, res) {
         try {
-            console.log("================= ADD ===============");
+            customLogger.info("================= ADD ===============");
 
             const newTicket = await TicketManager.add(req.dto);
 
@@ -57,7 +59,7 @@ class TicketController {
             });
 
         } catch (err) {
-            console.error("Error al guardar el Ticket:", err);
+            customLogger.error("Error al guardar el Ticket:", { ...err });
             return res.status(500).json({
                 error: "Error en la base de datos",
                 details: err.message
@@ -67,7 +69,7 @@ class TicketController {
 
     static async update(req, res) {
         try {
-            console.log("================= UPDATE ===============");
+            customLogger.info("================= UPDATE ===============");
 
             const updatedTicket = await TicketManager.update(req.dto)
 
@@ -77,7 +79,7 @@ class TicketController {
             });
 
         } catch (err) {
-            console.error("Error al actualizar el Ticket:", err);
+            customLogger.error("Error al actualizar el Ticket:", { ...err });
             return res.status(500).json({
                 error: "Error en la base de datos",
                 details: err.message

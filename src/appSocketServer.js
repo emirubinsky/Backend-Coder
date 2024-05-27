@@ -1,7 +1,10 @@
 
 import { Server } from "socket.io";
 
-export default function initializeSocketServer(httpServer){
+import { customLogger } from './appHelpers/logger.helper.js';
+customLogger.info("App Socket Server > LISTO");
+
+export default function initializeSocketServer(httpServer) {
     // Servidor WebSocket
     const io = new Server(httpServer);
 

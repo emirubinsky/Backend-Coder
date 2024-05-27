@@ -3,6 +3,8 @@
 // TODO hacer todo el camino de mas elaborado...
 import User from "../dao/mongo/models/user.model.js"
 
+import { customLogger } from '../appHelpers/logger.helper.js';
+
 
 import bcrypt from "bcrypt";
 import passport from "passport";
@@ -25,7 +27,7 @@ const userController = {
             res.json(userDetail);
         }
         catch (err) {
-            console.error("Error al ver los detalles:", err);
+            customLogger.error("Error al ver los detalles:", err);
             return res.status(500).json({ error: "Error en la base de datos", details: err.message });
         }
     },
@@ -39,7 +41,7 @@ const userController = {
         const { email, password } = req.body;
 
         try {
-            console.log("login > ", { email, password })
+            customLogger.info("login > ", { email, password })
             passport.authenticate("local", (err, user, info) => {
                 if (err) {
                     return next(err);
@@ -59,19 +61,19 @@ const userController = {
                 req.session.user = user;
                 req.session.isAuthenticated = true;
 
-                
+
                 res.cookie("jwt", access_token, {
                     httpOnly: true,
                 })
-                
 
-                console.log("Datos del login:", user, "token:", access_token);
+
+                customLogger.info("Datos del login:", user, "token:", access_token);
 
                 res.json({ message: "Success", user, access_token });
             })(req, res, next);
 
         } catch (error) {
-            console.error("Error al iniciar sesión:", error);
+            customLogger.error("Error al iniciar sesión:", { ...error });
             return res.status(500).json({ error: "Error interno del servidor" });
         }
     },
@@ -113,12 +115,12 @@ const userController = {
 
             req.session.isAuthenticated = true;
 
-            console.log("Datos del registro:", newUser, "token:", access_token);
+            customLogger.info("Datos del registro:", newUser, "token:", access_token);
 
             res.json({ message: "Success", newUser, access_token });
 
         } catch (error) {
-            console.error("Error al registrar usuario:", error);
+            customLogger.error("Error al registrar usuario:", { ...error });
             next(error);
         }
     },
@@ -130,12 +132,12 @@ const userController = {
     // Redirige al usuario a la página de inicio después de iniciar sesión con GitHub
     handleGitHubCallback: async (req, res) => {
         try {
-            // console.log("handleGitHubCallback > inicio", { req, res })
+            // customLogger.info("handleGitHubCallback > inicio", { req, res })
 
             // Genera el token de acceso
             const access_token = generateAuthToken(req.user);
 
-            console.log("handleGitHubCallback > access_token listo")
+            customLogger.info("handleGitHubCallback > access_token listo")
 
             // Establece la sesión del usuario
             req.session.email = req.user.email;
@@ -144,15 +146,15 @@ const userController = {
             req.session.user = req.user;
             req.session.isAuthenticated = true;
 
-            console.log("Token login github:", access_token);
-            
+            customLogger.info("Token login github:", access_token);
+
             //res.cookie('jwt', access_token); // Set JWT token in cookie
 
             // TODO: luego
             res.cookie("jwt", access_token, {
                 httpOnly: true,
             })
-            
+
             // INFO: Prohibido esto, sino mandamos como una doble respuesta y da problemas
             /*
             .send({
@@ -167,7 +169,7 @@ const userController = {
             res.redirect("/home");
 
         } catch (error) {
-            console.log('Error en el callback de GitHub:', error);
+            customLogger.info('Error en el callback de GitHub:', { ...error });
             res.status(500).json({ error: "Error interno del servidor" });
         }
     },
@@ -181,10 +183,10 @@ const userController = {
             res.clearCookie('jwt');
 
             return res.render("users_login")
-            
+
             //res.json({ message: "Logout funciona" });
         } catch (error) {
-            console.error("Error al cerrar sesión:", error);
+            customLogger.error("Error al cerrar sesión:", { ...error });
             res.status(500).json({ error: "Error interno del servidor" });
         }
     }

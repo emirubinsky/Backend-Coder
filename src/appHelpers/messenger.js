@@ -10,6 +10,9 @@ import {
     PHONE_NUMBER_TO
 } from "../util.js";
 
+import { customLogger } from '../appHelpers/logger.helper.js';
+customLogger.info("Messenger > LISTO")
+
 // Nodemailer setup
 const mailOptions = {
     service: "gmail",
@@ -40,11 +43,12 @@ const mandarEmail = async ({ datos }) => {
             subject: subject,
             html: htmlContent,
         });
-        console.log("Correo enviado", result);
+        customLogger.debug("Correo enviado", result);
     } catch (error) {
-        console.error("Error enviando correo:", {
+        customLogger.error("Error enviando correo:", {
             to, subject, message,
-            error
+            error,
+            stack: error.stack
         });
     }
 };
@@ -57,9 +61,9 @@ const mandarSms = async (datos) => {
             to: to, // cliente
             from: PHONE_NUMBER, // número de Twilio
         });
-        console.log("Mensaje enviado", result);
+        customLogger.debug("Mensaje enviado", result);
     } catch (error) {
-        console.error("Error enviando SMS:", error);
+        customLogger.error("Error enviando SMS:", { ...error });
     }
 };
 

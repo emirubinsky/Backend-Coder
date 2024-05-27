@@ -1,5 +1,8 @@
 // middleware/validationMiddleware.js
 import { body, query, param, validationResult } from 'express-validator';
+import { customLogger } from '../appHelpers/logger.helper.js';
+import ValidationError from '../appHelpers/errors/validation.error.js'
+import { ENUM_ERROR_TYPES } from '../appHelpers/enums/enum.collection.js';
 
 const REQ_PARAM_TICKET_ID = 'cid'
 
@@ -19,10 +22,15 @@ export const validateTicket = [
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            console.log("TICKET VALIDATION MDW > validateCart > error")
-            return res.status(400).json({
-                errors: errors.array()
-            });
+            const message = "TICKET VALIDATION MDW > validateCart > error"
+            const customError = ValidationError.createError({
+                cause: "TICKET > Validation > validateTicket",
+                message,
+                code: ENUM_ERROR_TYPES.VALIDATION_ERROR,
+                items: errors.array()
+            })
+            customLogger.error(message, { ...customError })
+            return next(customError) //res.status(400).json(customError);
         }
         next();
     }
@@ -34,7 +42,15 @@ export const validateTicketId = [
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
+            const message = "TICKET VALIDATION MDW > validateTicketId > error"
+            const customError = ValidationError.createError({
+                cause: "TICKET > Validation > validateTicketId",
+                message,
+                code: ENUM_ERROR_TYPES.VALIDATION_ERROR,
+                items: errors.array()
+            })
+            customLogger.error(message, { ...customError })
+            return next(customError) //res.status(400).json(customError);
         }
         next();
     }
@@ -48,12 +64,19 @@ export const validateTicketQuery = [
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            console.log("TICKET VALIDATION MDW > validateTicketQuery > error")
-            return res.status(400).json({
-                errors: errors.array()
-            });
+
+            const message = "TICKET VALIDATION MDW > validateTicketQuery > error"
+            const customError = ValidationError.createError({
+                cause: "TICKET > Validation > validateTicketQuery",
+                message,
+                code: ENUM_ERROR_TYPES.VALIDATION_ERROR,
+                items: errors.array()
+            })
+            customLogger.error(message, { ...customError })
+            return next(customError) //res.status(400).json(customError);
+
         }
-        console.log("TICKET VALIDATION MDW > validateTicketQuery > OK")
+        customLogger.info("TICKET VALIDATION MDW > validateTicketQuery > OK")
         next();
     }
 ];

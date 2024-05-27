@@ -10,7 +10,6 @@ export default class CartRepository {
          * - e invocaría a métodos "homologados" (o interfaz) que 
          * -- en definitva haria uso de las capacidades de mongo.
          */
-        console.log("Repository > Cart", { dao })
         this.dao = dao;
     }
 

@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 import { auth, authToken, isUser, isAdmin } from "../middlewares/auth.js";
+import { customLogger } from '../appHelpers/logger.helper.js';
 
 import axios from 'axios'
 
@@ -67,7 +68,7 @@ router.get("/products/list", auth, isAdmin, async (req, res) => {
       });
     const response = axiosResponse.data
 
-    console.log(response.Query)
+    customLogger.info(response.Query)
 
     // Presentamos datos y los mandamos a traves del renderizado
     res.render("product_list", {
@@ -75,7 +76,7 @@ router.get("/products/list", auth, isAdmin, async (req, res) => {
     });
 
   } catch (error) {
-    console.error(`Error cargando /products/list: ${error}`, error);
+    customLogger.error(`Error cargando /products/list: ${error}`, { ...error });
     res.status(500).json({ errorx: 'Error /products/list', errorMessage: error.message, stack: error.stack });
   }
 
@@ -106,7 +107,7 @@ router.get("/products", auth, isUser, async (req, res) => {
     });
     const response = axiosResponse.data
 
-    console.log("/products", response)
+    customLogger.info("/products", response)
 
     // Presentamos datos y los mandamos a traves del renderizado
     res.render("product_shopping", {
@@ -114,7 +115,7 @@ router.get("/products", auth, isUser, async (req, res) => {
     });
 
   } catch (error) {
-    console.error(`Error loading /products: ${error}`, error);
+    customLogger.error(`Error loading /products: ${error}`, { ...error });
     res.status(500).json({ errorx: 'Error /products', errorMessage: error.message, stack: error.stack });
   }
 
@@ -127,10 +128,10 @@ router.get("/products/:id", auth, async (req, res) => {
     // Procesamos request-response
     // Obtención de parametros desde el body/query/url
     const id = req.params.id
-    const responseAPI = await axios.get(`http://localhost:8080/api/products/${id}`,{
+    const responseAPI = await axios.get(`http://localhost:8080/api/products/${id}`, {
       // Forward the original request's cookies
       headers: {
-        Cookie: req.headers.cookie 
+        Cookie: req.headers.cookie
       },
       // Esto ayuda a hacer un carry over the credenciales.
       withCredentials: true
@@ -148,7 +149,7 @@ router.get("/products/:id", auth, async (req, res) => {
     });
 
   } catch (error) {
-    console.error(`Error loading /products/:id: ${error}`, error);
+    customLogger.error(`Error loading /products/:id: ${error}`, { ...error });
     res.status(500).json({ errorx: 'Error /products/:id', errorMessage: error.message, stack: error.stack });
   }
 });
@@ -158,10 +159,10 @@ router.get("/products/update/:id", auth, isAdmin, async (req, res) => {
 
   try {
     const id = req.params.id
-    const responseAPI = await axios.get(`http://localhost:8080/api/products/${id}`,{
+    const responseAPI = await axios.get(`http://localhost:8080/api/products/${id}`, {
       // Forward the original request's cookies
       headers: {
-        Cookie: req.headers.cookie 
+        Cookie: req.headers.cookie
       },
       // Esto ayuda a hacer un carry over the credenciales.
       withCredentials: true
@@ -179,7 +180,7 @@ router.get("/products/update/:id", auth, isAdmin, async (req, res) => {
     });
 
   } catch (error) {
-    console.error(`Error loading /products/update/:id: ${error}`, error);
+    customLogger.error(`Error loading /products/update/:id: ${error}`, { ...error });
     res.status(500).json({ errorx: 'Error /products/update/:id', errorMessage: error.message, stack: error.stack });
   }
 
@@ -198,7 +199,7 @@ router.get("/product/add", auth, isAdmin, (req, res) => {
     res.render("product_add", { something: "foo" })
 
   } catch (error) {
-    console.error(`Error loading /product/add: ${error}`, error);
+    customLogger.error(`Error loading /product/add: ${error}`, { ...error });
     res.status(500).json({ errorx: 'Error /product/add', errorMessage: error.message, stack: error.stack });
   }
 })
@@ -208,7 +209,7 @@ router.get("/product/add", auth, isAdmin, (req, res) => {
 router.get("/cart/:id", auth, isUser, async (req, res) => {
 
   try {
-    console.log("VIEWS > /cart/:id", req.params)
+    customLogger.info("VIEWS > /cart/:id", req.params)
 
     const id = req.params.id
     const responseAPI = await axios.get(`http://localhost:8080/api/carts/${id}`,
@@ -227,7 +228,7 @@ router.get("/cart/:id", auth, isUser, async (req, res) => {
       status: "SUCCESS",
       Cart: responseAPI.data.cart
     };
-    console.log("/cart/:id", {
+    customLogger.info("/cart/:id", {
       response
     })
     // Presentamos datos y los mandamos a traves del renderizado
@@ -237,7 +238,7 @@ router.get("/cart/:id", auth, isUser, async (req, res) => {
     })
 
   } catch (error) {
-    console.error(`Error loading /cart/:id: ${error}`, error);
+    customLogger.error(`Error loading /cart/:id: ${error}`, { ...error });
     res.status(500).json({ errorx: 'Error /cart/:id', errorMessage: error.message, stack: error.stack });
   }
 })
@@ -268,7 +269,7 @@ router.get("/carts", auth, isUser, async (req, res) => {
       });
     const response = axiosResponse.data
 
-    console.log("/carts > response", response.response)
+    customLogger.info("/carts > response", response.response)
 
     // Presentamos datos y los mandamos a traves del renderizado
     res.render("carts", {
@@ -276,7 +277,7 @@ router.get("/carts", auth, isUser, async (req, res) => {
     })
 
   } catch (error) {
-    console.error(`Error loading /carts: ${error}`, error);
+    customLogger.error(`Error loading /carts: ${error}`, { ...error });
     res.status(500).json({ errorx: 'Error /carts', errorMessage: error.message, stack: error.stack });
   }
 
@@ -301,7 +302,7 @@ router.get("/tickets", auth, isUser, async (req, res) => {
       });
     const response = axiosResponse.data
 
-    console.log("/tickets > response", response.response)
+    customLogger.info("/tickets > response", response.response)
 
     // Presentamos datos y los mandamos a traves del renderizado
     res.render("tickets", {
@@ -309,7 +310,7 @@ router.get("/tickets", auth, isUser, async (req, res) => {
     })
 
   } catch (error) {
-    console.error(`Error loading /tickets: ${error}`, error);
+    customLogger.error(`Error loading /tickets: ${error}`, { ...error });
     res.status(500).json({ errorx: 'Error /tickets', errorMessage: error.message, stack: error.stack });
   }
 })

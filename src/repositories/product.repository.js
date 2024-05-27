@@ -10,7 +10,6 @@ export default class ProductRepository {
          * - e invocaría a métodos "homologados" (o interfaz) que 
          * -- en definitva haria uso de las capacidades de mongo.
          */
-        console.log("Repository > Product", { dao })
         this.dao = dao;
     }
 
