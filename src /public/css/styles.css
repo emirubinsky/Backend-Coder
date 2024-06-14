@@ -1,0 +1,295 @@
+/*
+body {
+    /* Gradient background using main color (#557f7b) /
+    background: linear-gradient(to bottom right, #557f7b, #ffffff);
+    /* Set default font and other styles /
+    font-family: 'Roboto', sans-serif; /* Use a thinner font (Roboto) /
+    color: #333;
+}
+*/
+
+body {
+    font-family: 'Roboto', sans-serif; /* Use Roboto for a thinner font */
+    color: #333;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* Prevent horizontal scroll */
+    position: relative;
+    background: linear-gradient(to bottom right, #557f7b, #ffffff);
+    background-attachment: fixed; /* Fix the background position */
+}
+
+.header, .footer {
+    background-color: #000;
+    color: #fff;
+    padding: 10px 0;
+    text-align: center;
+}
+
+.logo {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%; /* Make the logo circular */
+    margin-bottom: 10px;
+}
+
+.container {
+    position: relative;
+    z-index: 1; /* Ensure content is above Monstera shapes */
+}
+
+/* Override Bootstrap button colors */
+.form-control {
+    border-color: #557f7b; /* Override form element border color */
+}
+
+.btn-primary {
+    background-color: #557f7b; /* Override button background color */
+    border-color: #557f7b; /* Override button border color */
+}
+
+.btn-primary:hover {
+    background-color: #446664; /* Darker shade on hover */
+    border-color: #446664;
+}
+
+/* Footer */
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #000;
+    color: #fff;
+    padding: 10px 0;
+    text-align: center;
+}
+
+.footer a {
+    color: #fff;
+    text-decoration: none;
+    margin: 0 10px;
+}
+
+.social-icons {
+    margin-top: 10px;
+}
+
+.social-icons a {
+    color: #fff; /* Set the color of social icons to white */
+    font-size: 20px;
+    margin: 0 10px;
+}
+
+
+/* Monstera */
+
+
+.monstera-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* Position Monstera shapes behind other content */
+}
+
+.monstera {
+    width: 200px;
+    height: 200px;
+    position: absolute;
+    opacity: 0.2;
+    background-image: url('../img/public/monstera.png');
+    background-size: cover;
+    z-index: -1; /* Position Monstera shapes behind other content */
+}
+
+.monstera:nth-child(odd) {
+    transform: rotate(45deg);
+}
+
+.monstera:nth-child(even) {
+    transform: rotate(0deg);
+}
+
+@media (max-width: 768px) {
+    .monstera {
+        width: 150px;
+        height: 150px;
+    }
+}
+
+/*
+.monstera-shape {
+    position: absolute;
+    top: -50px;
+    left: -50px;
+    width: 200px;
+    height: 200px;
+    background-image: url('../img/public/monstera.png');
+    background-size: cover;
+    opacity: 0.2;
+    z-index: -1;
+}
+*/
+
+
+/* Login */
+
+.form-signin {
+    max-width: 350px; /* Adjust form width */
+    margin: auto; /* Center the form */
+}
+.social-login {
+    margin-top: 20px;
+    border-top: 1px solid #ccc;
+    padding-top: 20px;
+}
+
+/* Products */
+
+.product-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 20px;
+    max-height: calc(100vh - 100px); /* Limit height to 100% viewport height minus header/footer */
+    overflow-y: auto; /* Enable vertical scrolling within the container */
+}
+
+.product-card {
+    width: calc(33.33% - 20px); /* Adjust for 3 products per row with spacing */
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
+
+.product-image {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.product-image img {
+    max-width: 100%;
+    max-height: 150px;
+    object-fit: contain;
+}
+
+.product-details {
+    text-align: center;
+}
+
+.category img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+}
+
+.price {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.stock-indicator {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: #fff;
+    font-weight: bold;
+}
+
+.in-stock {
+    background-color: #557f7b; /* Main color for in-stock */
+}
+
+.out-of-stock {
+    background-color: #ff0000; /* Red color for out-of-stock */
+}
+
+.buttons {
+    margin-top: 10px;
+}
+
+.buttons button {
+    padding: 8px 12px;
+    margin-right: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: #fff;
+}
+
+.detail-button {
+    background-color: #557f7b; /* Main color for detail button */
+}
+
+.cart-button {
+    background-color: #557f7b; /* Main color for cart button */
+}
+
+
+/* Override the estilos Boostrap */
+.card{
+    background-color: #f5f5f554;
+}
+
+.table{
+    background-color: #f5f5f554;
+}
+.table
+> :not(caption) > * > * {
+    background-color: #f5f5f554;
+}
+
+
+/* */
+/* Custom CSS for product page - Intento carousel*/
+.thumbnail-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover; /* Ensure the entire image is visible within the square */
+    border: 1px solid #dee2e6; /* Add a light border around each thumbnail */
+}
+
+
+.product-image {
+    max-width: 40%; /* Restrict maximum width of main product image */
+    height: auto; /* Maintain aspect ratio */
+    display: block; /* Ensure image is displayed as a block element */
+    margin: 0 auto; /* Center the image horizontally */
+}
+
+.thumbnail-image-old {
+    max-width: 30%; /* Restrict maximum width of thumbnails */
+    height: auto; /* Maintain aspect ratio */
+}
+
+.carousel-item img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    width: auto;
+    padding: 0;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    height: 100%;
+    width: 100%;
+}
+
+.carousel-control-prev {
+    margin-left: -30px; /* Adjust spacing of previous button */
+}
+
+.carousel-control-next {
+    margin-right: -30px; /* Adjust spacing of next button */
+}

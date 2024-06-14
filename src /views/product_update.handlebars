@@ -1,0 +1,110 @@
+{{#with response}}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h2 class="mb-4 text-center">Update Product</h2>
+            <form method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="_method" value="PUT"> <!-- Use PUT method for update -->
+
+                    <!-- Hidden input field to store product ID -->
+                    <input type="hidden" id="productId" name="productId" value="{{Product._id}}">
+
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title</label>
+                    <input type="text" class="form-control" id="title" name="title" value="{{Product.title}}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" id="description" name="description" rows="3" required>{{Product.description}}</textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="code" class="form-label">Code</label>
+                    <input type="text" class="form-control" id="code" name="code" value="{{Product.code}}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="category" class="form-label">Category</label>
+                    <select class="form-select" id="category" name="category" required>
+                        <option value="">Select Category</option>
+                        <option value="electronics" {{#eq Product.category 'electronics'}}selected{{/eq}}>Electronics
+                        </option>
+                        <option value="clothing" {{#eq Product.category 'clothing'}}selected{{/eq}}>Clothing</option>
+                        <option value="books" {{#eq Product.category 'books'}}selected{{/eq}}>Books</option>
+                        <!-- Add more category options as needed -->
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="brand" class="form-label">Brand</label>
+                    <input type="text" class="form-control" id="brand" name="brand" value="{{Product.brand}}">
+                </div>
+                <div class="mb-3">
+                    <label for="price" class="form-label">Price</label>
+                    <input type="number" class="form-control" id="price" name="price" value="{{Product.price}}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="stock" class="form-label">Stock</label>
+                    <input type="number" class="form-control" id="stock" name="stock" value="{{Product.stock}}" required>
+                </div>
+                 <div class="mb-3">
+                    <label for="image" class="form-label">Main Image</label>
+                    <img src="/img/products/{{Product.image}}" alt="Current Main Image" style="max-height: 100px; margin-bottom: 10px;">
+                    <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                </div>
+
+                <div class="mb-3">
+                    <label for="fileInput" class="form-label">Add Thumbnail Images</label>
+                    <input type="file" class="form-control" id="fileInput" accept="image/*" multiple>
+                </div>
+
+                <!-- Table to display uploaded thumbnail images -->
+                <div class="mb-3">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Thumbnail Image</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="thumbnailList">
+                            <!-- This section will be dynamically populated with uploaded thumbnails -->
+                            <!--
+                            {{#if Product.thumbnails}}
+                            {{#each Product.thumbnails}}
+                                
+                                <tr>
+                                    <td><img src="/img/products/{{this}}" style="max-height: 100px;"></td>
+                                    <td><button class="btn btn-danger remove-thumbnail">Remove</button></td>
+                                </tr>
+                            {{/each}}
+                            {{/if}}
+                            -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Display existing thumbnails -->
+                {{#if Product.thumbnails}}
+                <div class="mb-3">
+                    <label class="form-label">Existing Thumbnails:</label>
+                    <div>
+                        {{#each Product.thumbnails}}
+                        <img src="/img/products/{{this}}" alt="Thumbnail" style="max-height: 100px; margin-right: 10px;">
+                        {{/each}}
+                    </div>
+                </div>
+                {{/if}}
+                <!-- End display existing thumbnails -->
+
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="status" name="status" {{#if Product.status}}checked{{/if}}>
+                    <label class="form-check-label" for="status">Active</label>
+                    <input type="hidden" name="active" value="true"> <!-- Hidden field to store true/false value -->
+                </div>
+                <button type="submit" class="btn btn-primary" id="updateProductBtn">Update Product</button>
+            </form>
+        </div>
+    </div>
+</div>
+{{/with}}
+
+<script src="/socket.io/socket.io.js"></script>
+<script type="module" src="/js/product_update.js"></script>

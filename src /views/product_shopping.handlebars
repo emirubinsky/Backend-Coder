@@ -1,0 +1,93 @@
+
+<div class="container mt-4 mb-4">
+    <div class="row justify-content-center">
+        <!-- Ordenar por precio -->
+        <div class="col-md-3">
+            <label>Ordenar por...</label>
+            <ul>
+                <li>
+                    <a href="?sort=desc" class="btn btn-primary">Mayor precio</a>
+                </li>
+                <li>
+                    <a href="?sort=asc" class="btn btn-primary">Menor precio</a>
+                </li>
+            </ul>
+        </div>
+        <!-- Product Filter Section -->
+        <div class="col-md-3">
+            <form action="/products/" method="GET" class="form-inline">
+                <label for="categoryFilter" class="mr-2">Filtrar por categoría:</label>
+                <select name="category" id="categoryFilter" class="form-control mr-2">
+                    <option value="">Todas las categorías</option>
+                    <option value="tecnologia">Tecnología</option>
+                    <option value="libros">Libros</option>
+                    <option value="ropa">Ropa</option>
+                </select>
+                <button type="submit" class="btn btn-primary">Filtrar</button>
+            </form>
+        </div>
+        <!-- -->
+        <div class="col-md-3">
+            <button 
+                id="goToCartBtn" 
+                data-cart-id="{{user.cart.id}}"
+                class="btn btn-lg btn-outline-dark btn-block mb-3"
+                >Ir al Carrito
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<!-- Product List Section -->
+<div class="container">
+    <div class="row">
+        {{#each response.Products}}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100">
+                <img src="/img/{{this.image}}" class="card-img-top" alt="{{this.title}}">
+                <div class="card-body text-center">
+                    <h5 class="card-title">{{this.title}}</h5>
+                    <p class="card-text">Precio: ${{this.price}}</p>
+                    <p class="card-text">Stock:  {{this.stock}}</p>
+                    <div class="btn-group" role="group">
+                        <a href="/products/{{this._id}}" class="btn btn-primary"><i class="fas fa-eye"></i> Detalles</a>
+                        <button class="btn btn-success btn-add-to-cart " 
+                            data-product-id="{{this._id}}">
+                            <i class="fas fa-shopping-cart"></i> Agregar al carrito</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</div>
+
+<!-- Pagination Section -->
+<div class="container mt-4 mb-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    {{#if response.Query.hasPrevPage}}
+                    <li class="page-item">
+                        <a class="page-link" href="{{response.Query.prevLink}}">Anterior</a>
+                    </li>
+                    {{/if}}
+                    <li class="page-item disabled">
+                        <span class="page-link">Página {{response.Query.page}} de {{response.Query.totalPages}}</span>
+                    </li>
+                    {{#if response.Query.hasNextPage}}
+                    <li class="page-item">
+                        <a class="page-link" href="{{response.Query.nextLink}}">Siguiente</a>
+                    </li>
+                    {{/if}}
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+
+<script src="/socket.io/socket.io.js"></script>
+<script type="module" src="/js/product_shopping.js"></script>
