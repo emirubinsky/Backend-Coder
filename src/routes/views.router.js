@@ -37,7 +37,25 @@ router.get("/register", (req, res) => {
   res.render("users_register");
 });
 
-// Recuperar contraseña??? (TODO: No terminada aún.)
+// Solicitar enlace para recuperar constraseña
+router.get("/forgot_password", (req, res) => {
+  res.render("users_password_forgot");
+});
+
+// Solicitar enlace para recuperar constraseña
+router.get("/password_change", (req, res) => {
+  res.render("users_password_change");
+});
+
+
+// Vista para reestablecer una contraseña
+userRouter.get("/resetPassword/:token", (req, res) => {
+  // TODO - podriamos validar aqui la validez temporal del token???
+  res.render("users_password_reset");
+});
+//userController.getResetPassword);
+
+// Recuperar contraseña
 router.get("/restore", (req, res) => {
   res.render("users_restore");
 });

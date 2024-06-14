@@ -24,5 +24,10 @@ userRouter.post("/login", userController.login);
 // Maneja la solicitud de registros de usuarios
 userRouter.post("/register", userController.register);
 
+// Maneja la solicitud de recuperar contraseña
+userRouter.post("/requestPasswordReset", userController.requestPasswordReset);
+
+// Maneja la solicitud para cambiar la contraseña del usuario
+userRouter.post("/resetPassword/:token", userController.resetPassword);
 
 export default userRouter;

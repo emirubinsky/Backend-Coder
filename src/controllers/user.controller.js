@@ -5,12 +5,13 @@ import User from "../dao/mongo/models/user.model.js"
 
 import { customLogger } from '../appHelpers/logger.helper.js';
 
-
 import bcrypt from "bcrypt";
 import passport from "passport";
 import jwt from 'jsonwebtoken'
 
 import { JWT_SECRET } from "../util.js"
+
+import messenger from "../appHelpers/messenger.js";
 
 const userController = {
     /* Metodo para el proyecto en algun futuro
@@ -189,7 +190,106 @@ const userController = {
             customLogger.error("Error al cerrar sesión:", { ...error });
             res.status(500).json({ error: "Error interno del servidor" });
         }
-    }
+    },
+
+    requestPasswordReset: async (req, res) => {
+        const { email } = req.body;
+        try {
+            const user = await User.findOne({ email });
+            if (!user) {
+                return res.status(404).json({ error: "Usuario no encontrado" });
+            }
+
+            const resetToken = crypto.randomBytes(20).toString('hex');
+            const resetTokenExpires = Date.now() + 3600000;
+
+            const userId = user._id
+            const updateData = { resetToken, resetTokenExpires }
+            await User.findByIdAndUpdate(userId, updateData, { new: true })
+
+            const resetUrl = `http://${req.headers.host}/api/sessions/resetPassword/${resetToken}`;
+            const mailOptions = {
+                to: user.email,
+                from: EMAIL_USERNAME,
+                subject: 'Restablecimiento de contraseña',
+                text: `Está recibiendo esto porque usted (o alguien más) ha solicitado el restablecimiento de la contraseña de su cuenta.\n\n
+                Haga clic en el siguiente enlace, o péguelo en su navegador para completar el proceso:\n\n
+                ${resetUrl}\n\n
+                Si no solicitó esto, ignore este correo y su contraseña permanecerá sin cambios.\n`
+            };
+
+            customLogger.info("USER MANAGER > EMAIL > ", { mailOptions })
+            await messenger.transport.sendMail(mailOptions)
+
+            res.status(200).json({ message: 'Correo de restablecimiento de contraseña enviado con éxito' });
+        } catch (error) {
+            console.error("Error al solicitar restablecimiento de contraseña:", error);
+            res.status(500).json({ error: "Error interno del servidor" });
+        }
+    },
+
+    resetPassword: async (req, res) => {
+        const { token } = req.params;
+        const { newPassword } = req.body;
+        const userId = req.session.userId;
+
+        try {
+            const user = await User.findOne({ token });
+            //userService.getUserByResetToken(token);
+
+            if (!user || user.resetTokenExpires < Date.now()) {
+                return res.status(400).json({ error: "Token de restablecimiento inválido o expirado" });
+            }
+
+            const hashedPassword = await bcrypt.hash(newPassword, 10);
+            const updateDataPwd = { password: hashedPassword }
+            await User.findByIdAndUpdate(userId, updateDataPwd, { new: true })
+            // userService.updatePassword(userId, newPassword);
+
+            const updateDataToken = { resetToken: null, resetTokenExpires: null }
+            await User.findByIdAndUpdate(userId, updateDataToken, { new: true })
+            // userService.clearPasswordResetToken(userId);
+
+            res.status(200).json({ message: "Contraseña restablecida con éxito" });
+        } catch (error) {
+            console.error("Error al restablecer la contraseña:", error);
+            res.status(500).json({ error: "Error interno del servidor" });
+        }
+    },
+
+    changePassword: async (req, res) => {
+        const userId = req.params.uid;
+        const { oldPassword, newPassword } = req.body;
+
+        try {
+            // const changedPassword = await userService.changePassword(userId, oldPassword, newPassword);
+            // res.json(changedPassword);
+
+            logger.info(`Cambiando las contraseña del user: ${userId}`);
+            const existingUser = await User.findOne({userId}) //userRepository.findUser(userId);
+            if (!existingUser) {
+                logger.warn(`User no encontrado: ${userId}`);
+                throw new Error("El usuario no existe");
+            }
+
+            const isPasswordValid = await bcrypt.compare(oldPassword, existingUser.password);
+            if (!isPasswordValid) {
+                logger.warn(`Contraseña antigua no válida para user: ${userId}`);
+                throw new Error("La contraseña antigua es incorrecta");
+            }
+
+            const hashedPassword = await bcrypt.hash(newPassword, 10);
+            existingUser.password = hashedPassword;
+
+            await existingUser.save();
+            logger.info(`La contraseña cambió exitosamente para el user: ${userId}`);
+            return { message: "Contraseña actualizada correctamente" };
+        }
+        catch (error) {
+            console.error("Error al cambiar la contraseña:", error);
+            res.status(500).json({ error: "Error interno del servidor" });
+        }
+    },
 }
 
 export default userController;

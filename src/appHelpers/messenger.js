@@ -68,6 +68,7 @@ const mandarSms = async (datos) => {
 };
 
 export default {
+    transport,
     mandarEmail,
     mandarSms,
 };

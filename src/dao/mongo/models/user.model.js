@@ -29,6 +29,8 @@ const userSchema = new mongoose.Schema({
         ref: MONGO_COLLECTIONS_NAME_CART
     },
     role: { type: String, default: "user" }, // TODO: Evitar hard-code
+    resetToken: String,
+    resetTokenExpires: Date
 });
 
 const User = mongoose.model(MONGO_COLLECTIONS_NAME_USER, userSchema);
