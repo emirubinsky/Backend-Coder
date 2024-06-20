@@ -100,7 +100,7 @@ class TicketController {
                 id: ticketId,
             });
 
-        } catch (error) {
+        } catch (err) {
             return res.status(500).json({
                 error: "Error en la base de datos",
                 details: err.message

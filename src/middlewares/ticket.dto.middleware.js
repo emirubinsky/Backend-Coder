@@ -29,7 +29,7 @@ export const createTicketDTO = (req, res, next) => {
 
         next();
     } catch (error) {
-        customLogger.error(error.message, { ...customError })
+        customLogger.error(error.message, { ...error })
         res.status(400).json({
             reason: 'MIDDLEWARE > TICKET DTO > Invalid cart data',
             errorMessage: error.message
@@ -67,7 +67,7 @@ export const createTicketQueryDTO = (req, res, next) => {
 
         next();
     } catch (error) {
-        customLogger.error(error.message, { ...customError })
+        customLogger.error(error.message, { ...error })
         res.status(400).json({
             reason: 'MIDDLEWARE > TICKET QUERY DTO > Invalid ticket-query data',
             errorMessage: error.message

@@ -50,15 +50,15 @@ class ProductManager {
 
         // return res.json({ message: "Producto actualizado!", product: updatedProduct });
       } else {
-        return res.status(403).json({ message: 'No tienes permiso para realizar esta acción' });
+        throw new Error('No tienes permiso para realizar esta acción');
       }
     } catch (err) {
       console.error('Error:', err);
-      return res.status(500).json({ error: "Error en la base de datos", details: err.message });
+      throw err
     }
   }
 
-  static async delete(id) {
+  static async delete(id, userId, userRole) {
 
     try {
       const productId = id
@@ -72,11 +72,11 @@ class ProductManager {
 
         // return res.json({ message: "Producto actualizado!", product: updatedProduct });
       } else {
-        return res.status(403).json({ message: 'No tienes permiso para realizar esta acción' });
+        throw new Error('No tienes permiso para realizar esta acción');
       }
     } catch (err) {
       console.error('Error:', err);
-      return res.status(500).json({ error: "Error en la base de datos", details: err.message });
+      throw err
     }
 
   }

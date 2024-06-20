@@ -1,0 +1,239 @@
+openapi: 3.0.0
+info:
+  title: API de Carritos
+  description: Documentación de API para la gestión de carritos.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+paths:
+  /api/carts/{cid}:
+    get:
+      summary: Obtener un carrito por ID
+      parameters:
+        - in: path
+          name: cid
+          required: true
+          description: ID del carrito a obtener
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Un solo carrito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Carrito'
+        '401':
+          description: No autorizado
+        '404':
+          description: Carrito no encontrado
+
+    put:
+      summary: Actualizar un carrito existente por ID con nuevos productos
+      parameters:
+        - in: path
+          name: cid
+          required: true
+          description: ID del carrito a actualizar
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Carrito'
+      responses:
+        '200':
+          description: Carrito actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Carrito'
+        '400':
+          description: Solicitud incorrecta
+        '401':
+          description: No autorizado
+        '404':
+          description: Carrito no encontrado
+
+    delete:
+      summary: Eliminar un carrito por ID
+      parameters:
+        - in: path
+          name: cid
+          required: true
+          description: ID del carrito a eliminar
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Carrito eliminado
+        '401':
+          description: No autorizado
+        '404':
+          description: Carrito no encontrado
+
+  /api/carts:
+    get:
+      summary: Obtener una lista de carritos
+      parameters:
+        - in: query
+          name: query
+          description: Filtrar carritos por consulta
+          schema:
+            type: string
+        - in: query
+          name: limit
+          description: Limitar el número de resultados
+          schema:
+            type: integer
+        - in: query
+          name: page
+          description: Página de resultados
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Una lista de carritos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Carrito'
+        '400':
+          description: Solicitud incorrecta
+
+    post:
+      summary: Añadir un nuevo carrito
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Carrito'
+      responses:
+        '201':
+          description: Carrito creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Carrito'
+        '400':
+          description: Solicitud incorrecta
+        '401':
+          description: No autorizado
+
+  /api/carts/user:
+    post:
+      summary: Inicializar un nuevo carrito para el usuario autenticado
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Carrito'
+      responses:
+        '201':
+          description: Carrito inicializado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Carrito'
+        '400':
+          description: Solicitud incorrecta
+        '401':
+          description: No autorizado
+
+  /api/carts/{cid}/products/{pid}:
+    put:
+      summary: Actualizar la cantidad de un producto en el carrito
+      parameters:
+        - in: path
+          name: cid
+          required: true
+          description: ID del carrito
+          schema:
+            type: string
+        - in: path
+          name: pid
+          required: true
+          description: ID del producto a actualizar en el carrito
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: integer
+                  example: 2
+      responses:
+        '200':
+          description: Cantidad de producto actualizada en el carrito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Carrito'
+        '400':
+          description: Solicitud incorrecta
+        '401':
+          description: No autorizado
+        '404':
+          description: Carrito o producto no encontrado
+
+    delete:
+      summary: Eliminar un producto del carrito
+      parameters:
+        - in: path
+          name: cid
+          required: true
+          description: ID del carrito
+          schema:
+            type: string
+        - in: path
+          name: pid
+          required: true
+          description: ID del producto a eliminar del carrito
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Producto eliminado del carrito
+        '401':
+          description: No autorizado
+        '404':
+          description: Carrito o producto no encontrado
+
+components:
+  schemas:
+    ProductoCarrito:
+      type: object
+      properties:
+        product:
+          type: string
+          example: "60d21b4667d0d8992e610c0e"
+        quantity:
+          type: integer
+          example: 1
+        price:
+          type: number
+          example: 199.99
+
+    Carrito:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "60d21b4667d0d8992e610c0d"
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductoCarrito'
+        user:
+          type: string
+          example: "user123"

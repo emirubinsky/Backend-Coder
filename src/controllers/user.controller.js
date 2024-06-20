@@ -16,6 +16,16 @@ import { JWT_SECRET } from "../util.js"
 
 import messenger from "../appHelpers/messenger.js";
 
+import {
+    __dirname,
+    MAIL_USERNAME,
+    MAIL_PASSWORD,
+    TWILIO_SSID,
+    AUTH_TOKEN,
+    PHONE_NUMBER,
+    PHONE_NUMBER_TO
+} from "../util.js";
+
 const userController = {
     /* Metodo para el proyecto en algun futuro
     getUserById: async (req, res) => {
@@ -213,7 +223,7 @@ const userController = {
             const resetUrl = `http://${req.headers.host}/api/sessions/resetPassword/${resetToken}`;
             const mailOptions = {
                 to: user.email,
-                from: EMAIL_USERNAME,
+                from: MAIL_USERNAME,
                 subject: 'Restablecimiento de contraseña',
                 text: `Está recibiendo esto porque usted (o alguien más) ha solicitado el restablecimiento de la contraseña de su cuenta.\n\n
                 Haga clic en el siguiente enlace, o péguelo en su navegador para completar el proceso:\n\n
@@ -268,16 +278,16 @@ const userController = {
             // const changedPassword = await userService.changePassword(userId, oldPassword, newPassword);
             // res.json(changedPassword);
 
-            logger.info(`Cambiando las contraseña del user: ${userId}`);
+            customLogger.info(`Cambiando las contraseña del user: ${userId}`);
             const existingUser = await User.findOne({userId}) //userRepository.findUser(userId);
             if (!existingUser) {
-                logger.warn(`User no encontrado: ${userId}`);
+                customLogger.warn(`User no encontrado: ${userId}`);
                 throw new Error("El usuario no existe");
             }
 
             const isPasswordValid = await bcrypt.compare(oldPassword, existingUser.password);
             if (!isPasswordValid) {
-                logger.warn(`Contraseña antigua no válida para user: ${userId}`);
+                customLogger.warn(`Contraseña antigua no válida para user: ${userId}`);
                 throw new Error("La contraseña antigua es incorrecta");
             }
 
@@ -285,7 +295,7 @@ const userController = {
             existingUser.password = hashedPassword;
 
             await existingUser.save();
-            logger.info(`La contraseña cambió exitosamente para el user: ${userId}`);
+            customLogger.info(`La contraseña cambió exitosamente para el user: ${userId}`);
             return { message: "Contraseña actualizada correctamente" };
         }
         catch (error) {
@@ -301,7 +311,8 @@ const userController = {
         try {
             const currentUser = await UserManager.getOne(userId)
 
-            const userDTO = new UserDTO(...currentUser, role = newRole)
+            const role = newRole
+            const userDTO = new UserDTO(...currentUser, role )
             
             const updatedUser = await UserManager.update(userDTO);
             

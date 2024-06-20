@@ -49,7 +49,7 @@ router.get("/password_change", (req, res) => {
 
 
 // Vista para reestablecer una contraseña
-userRouter.get("/resetPassword/:token", auth, (req, res) => {
+router.get("/resetPassword/:token", auth, (req, res) => {
   // TODO - podriamos validar aqui la validez temporal del token???
   res.render("users_password_reset");
 });

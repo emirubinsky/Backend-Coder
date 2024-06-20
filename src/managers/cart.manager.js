@@ -118,12 +118,12 @@ class CartManager {
             }
 
             if(userRole !== "admin" || "premium") {
-                logger.warn(`User no autorizado`);
+                customLogger.warn(`User no autorizado`);
                 throw new Error("Usted no esta autorizado");
             }
 
             if(userRole == "premium" && userId == product.owner) {
-                logger.warn(`User es autor de este producto`);
+                customLogger.warn(`User es autor de este producto`);
                 throw new Error("Usted es el creador de este producto, no puede agregarlo al carrito");
             }
 
@@ -181,12 +181,12 @@ class CartManager {
             }
 
             if(userRole !== "admin" || "premium") {
-                logger.warn(`User no autorizado`);
+                customLogger.warn(`User no autorizado`);
                 throw new Error("Usted no esta autorizado");
             }
 
             if(userRole == "premium" && userId == product.owner) {
-                logger.warn(`User es autor de este producto`);
+                customLogger.warn(`User es autor de este producto`);
                 throw new Error("Usted es el creador de este producto, no puede agregarlo al carrito");
             }
 

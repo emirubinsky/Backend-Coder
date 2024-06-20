@@ -1,3 +1,4 @@
+/*
 import __dirname from './dirname.config'
 import dotenv from "dotenv";
 
@@ -22,3 +23,4 @@ export const PHONE_NUMBER_TO = process.env.PHONE_NUMBER_TO
 console.log("ENVIROMENT CONFIG ending, these are the .env readings", {
     ...process.env
 })
+*/

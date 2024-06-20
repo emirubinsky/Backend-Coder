@@ -1,4 +1,5 @@
 import winston from "winston";
+import process from 'process'
 const { combine, timestamp, printf, colorize, align, errors } = winston.format;
 
 const customLevelsOptions = {

@@ -94,9 +94,12 @@ class ProductController {
 
     static async delete(req, res) {
         try {
+            const userId = req.session.userId;
+            const userRole = req.session.userRole;
+
             const productId = req.params.id;
 
-            const deletionOutput = await ProductManager.delete(productId);
+            const deletionOutput = await ProductManager.delete(productId, userId, userRole);
 
             return res.json({
                 message: "Operacion de producto procesada",
@@ -104,7 +107,7 @@ class ProductController {
                 id: productId,
             });
 
-        } catch (error) {
+        } catch (err) {
             customLogger.error("Error al actualizar el Producto:", { ...err });
             return res.status(500).json({
                 error: "Error en la base de datos",

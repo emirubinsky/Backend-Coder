@@ -13,7 +13,6 @@ export default class UserMongoService {
 
         const result = await model
             .findOne({ _id: id })
-            .populate('products.product')
             .lean()
         /* 
         populate ?

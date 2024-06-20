@@ -1,9 +1,10 @@
 import express from "express";
+import process from "process";
 import http from "http";
 import { __dirname } from "./util.js";
 import { customLogger } from '../src/appHelpers/logger.helper.js';
-
 import HandleBarsRegister from "./appHelpers/handleBarsRegister.js";
+import swagger_setup from "./appHelpers/swagger.helper.js";
 import handlebars from "express-handlebars";
 import initializeSocketServer from './appSocketServer.js';
 import bodyParser from "body-parser";
@@ -16,6 +17,24 @@ import cors from "cors";
 import router from "./routes/router.js";
 import messenger from "./appHelpers/messenger.js";
 
+process.on('uncaughtException', (err) => {
+    console.error('unhandledRejection:', err);
+
+    customLogger.fatal('Uncaught Exception', { message: err.message, stack: err.stack });
+    throw err;
+    process.exit(1); // Exit the process after logging the fatal error
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('unhandledRejection:', reason);
+    if (reason instanceof Error) {
+        customLogger.fatal('Unhandled Rejection', { message: reason.message, stack: reason.stack });
+    } else {
+        customLogger.fatal('Unhandled Rejection', { reason });
+    }
+    throw reason;
+    process.exit(1); // Exit the process after logging the fatal error
+});
 
 /**
  *  Aca hubo un tema entre clase 21 > 22
@@ -42,7 +61,7 @@ import { MONGO_URL } from "./util.js";
 
 try {
     const PORT = 8080;
-
+    
     // FileStore fue la primera version de session que usamos. CLASE 19
     // const fileStore = FileStore(session); // TODO: Estamos usando el FileStore?
     const app = express();
@@ -50,21 +69,7 @@ try {
 
     /* Inicializamos manejo de errores GLOBALES */
     // Catch unhandled errors
-    
-    process.on('uncaughtException', (err) => {
-        customLogger.fatal('Uncaught Exception', { message: err.message, stack: err.stack });
-        process.exit(1); // Exit the process after logging the fatal error
-    });
-    
-    process.on('unhandledRejection', (reason, promise) => {
-        if (reason instanceof Error) {
-            customLogger.fatal('Unhandled Rejection', { message: reason.message, stack: reason.stack });
-        } else {
-            customLogger.fatal('Unhandled Rejection', { reason });
-        }
-        process.exit(1); // Exit the process after logging the fatal error
-    });
-    
+        
     // Middleware para analizar el cuerpo de la solicitud JSON
     app.use(express.json());
 
@@ -137,6 +142,11 @@ try {
     // app.set("PORT", process.env.PORT || PORT); // Usualmente 8000 o 4000
 
     initializeSocketServer(httpServer)
+
+
+    // Inicializar Swagger
+    swagger_setup(app, __dirname)
+
 } catch (error) {
     console.log("ERROR > ",error)
 }

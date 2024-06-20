@@ -10,7 +10,7 @@ export default class CustomError {
 
         error.name = name;
         error.code = code;
-        error.data = data
+        // error.data = data
 
         throw error;
     }

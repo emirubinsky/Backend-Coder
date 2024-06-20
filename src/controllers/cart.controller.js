@@ -13,7 +13,7 @@ class CartController {
             const cart = await CartManager.getOne(id, true);
 
             if (cart) {
-                consoleLogger.info({ cart })
+                customLogger.info({ cart })
                 res.status(200).json({ cart });
             } else {
                 res.status(404).json({ error: `Cart with ID: ${id} not found` });
@@ -121,7 +121,7 @@ class CartController {
                 id: cartId,
             });
 
-        } catch (error) {
+        } catch (err) {
             return res.status(500).json({
                 error: "Error en la base de datos",
                 details: err.message

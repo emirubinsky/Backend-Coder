@@ -1,4 +1,5 @@
 console.log("Loading UTILS ... <<<<<<<<<<--------------");
+import process from 'process'
 import { fileURLToPath } from "url";
 import path, { dirname } from "path";
 import dotenv from "dotenv";

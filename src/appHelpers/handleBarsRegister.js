@@ -8,7 +8,7 @@ customLogger.info("HandleBarsRegister > LISTO")
 class HandleBarsRegister {
 
   static registerHelpers() {
-
+    customLogger.info("HandleBarsRegister > REGISTRANDO")
     // Por ahora tenemos un solo Register asique lo dejamos aqui.
     // Si crecen entonces sería mejor derivar a muchos metodos.
 
