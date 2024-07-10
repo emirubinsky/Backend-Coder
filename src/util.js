@@ -114,6 +114,32 @@ export function configureProductMulter() {
     });
 }
 
+export function configureProfileMulter() {
+    const storage = multer.diskStorage({
+        destination: function (req, file, cb) {
+            cb(null, path.join(__dirname, 'public', 'user','profiles'));
+        },
+        filename: function (req, file, cb) {
+            cb(null, file.originalname);
+        },
+    });    
+
+    return multer({ storage: storage });
+}
+
+export function configureDocumentMulter() {
+    const storage = multer.diskStorage({
+        destination: function (req, file, cb) {
+            cb(null, path.join(__dirname, 'public', 'user', 'documents'));
+        },
+        filename: function (req, file, cb) {
+            cb(null, file.originalname);
+        },
+    });    
+
+    return multer({ storage: storage });
+}
+
 export const createHash = (password) => bcrypt.hashSync(password, bcrypt.genSaltSync(10))
 
 export const isValidPassword = (user, password) => {

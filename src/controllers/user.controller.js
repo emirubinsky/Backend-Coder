@@ -67,11 +67,18 @@ const userController = {
                     user.role = "admin";
                 }
 
+                // Actualizar el campo last_connection
+                const userId = req.user._id
+                const currentUser = await UserManager.getOne(userId)
+                const last_connection = new Date();
+                const userDTO = new UserDTO({ ...currentUser, last_connection })
+                const updatedUser = await UserManager.update(userDTO);
+
                 // Generar token JWT
                 const access_token = generateAuthToken(user);
 
                 req.session.email = email;
-                req.session.userId = user._id;
+                req.session.userId = userId;
                 req.session.user = user;
                 req.session.isAuthenticated = true;
 
@@ -100,11 +107,22 @@ const userController = {
         const { first_name, last_name, email, age, password } = req.body;
 
         try {
+            const file = req.file;
+
             const existingUser = await User.findOne({ email });
 
             if (existingUser) {
                 return res.status(400).json({ error: "El usuario ya existe" });
             }
+
+            /* Manejo imagen de perfil */
+            const imageName = file ? file.filename : null;
+
+            if (!imageName) {
+                logger.warn(`Imagen invalida para el perfil del usuario: ${imageName}`);
+                throw { code: 'INVALID_IMAGE' };
+            }
+
 
             const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -117,6 +135,8 @@ const userController = {
                 age: age,
                 password: hashedPassword,
                 role,
+                profile: imageName,
+                last_connection: new Date()
             });
 
             await newUser.save();
@@ -124,9 +144,7 @@ const userController = {
             const access_token = generateAuthToken(newUser);
 
             req.session.userId = newUser._id;
-
             req.session.user = newUser;
-
             req.session.isAuthenticated = true;
 
             customLogger.info("Datos del registro:", newUser, "token:", access_token);
@@ -148,6 +166,13 @@ const userController = {
         try {
             // customLogger.info("handleGitHubCallback > inicio", { req, res })
 
+            // Actualizar el campo last_connection
+            const userId = req.user._id
+            const currentUser = await UserManager.getOne(userId)
+            const last_connection = new Date();
+            const userDTO = new UserDTO({ ...currentUser, last_connection })
+            const updatedUser = await UserManager.update(userDTO);
+
             // Genera el token de acceso
             const access_token = generateAuthToken(req.user);
 
@@ -156,7 +181,7 @@ const userController = {
             // Establece la sesión del usuario
             req.session.email = req.user.email;
             req.session.token = access_token;
-            req.session.userId = req.user._id;
+            req.session.userId = userId;
             req.session.user = req.user;
             req.session.isAuthenticated = true;
 
@@ -190,6 +215,13 @@ const userController = {
 
     logOut: async (req, res) => {
         try {
+            // Actualizar el campo last_connection
+            const userId = req.session.userId;
+            const currentUser = await UserManager.getOne(userId)
+            const last_connection = new Date();
+            const userDTO = new UserDTO({ ...currentUser, last_connection })
+            const updatedUser = await UserManager.update(userDTO);
+
             req.session.userId = null;
             req.session.user = null;
             req.session.isAuthenticated = false;
@@ -279,7 +311,7 @@ const userController = {
             // res.json(changedPassword);
 
             customLogger.info(`Cambiando las contraseña del user: ${userId}`);
-            const existingUser = await User.findOne({userId}) //userRepository.findUser(userId);
+            const existingUser = await User.findOne({ userId }) //userRepository.findUser(userId);
             if (!existingUser) {
                 customLogger.warn(`User no encontrado: ${userId}`);
                 throw new Error("El usuario no existe");
@@ -304,24 +336,50 @@ const userController = {
         }
     },
 
-    changeUserRole: async (req, res) => {
+    changeToUserRole: async (req, res) => {
         const userId = req.params.uid;
-        const { newRole } = req.body;
+
+        // TODO: Ya no va a ser necesario porque esto seria "cambiar USER"
+        // const { newRole } = req.body;
 
         try {
-            const currentUser = await UserManager.getOne(userId)
+            const updatedUser = await UserManager.changeToUserRole(userId)
 
-            const role = newRole
-            const userDTO = new UserDTO(...currentUser, role )
-            
-            const updatedUser = await UserManager.update(userDTO);
-            
             res.json(updatedUser);
         } catch (error) {
-            console.error("Error al cambiar el rol del usuario:", error);
+            console.error("Error al cambiar el rol del usuario a USER:", error);
+            res.status(500).json({ error: "Error interno del servidor" });
+        }
+    },
+
+    changeToPremiumRole: async (req, res) => {
+        const userId = req.params.uid;
+        const files = req.files;
+    
+        try {
+            const updatedPremium = await UserManager.changeToPremiumRole(userId, files);
+            res.json(updatedPremium);
+        } catch (error) {
+            console.error("Error al cambiar el rol del usuario a PREMIUM:", error);
             res.status(500).json({ error: "Error interno del servidor" });
         }
     },  
+
+    uploadDocs: async (req, res) => {
+        const userId = req.params.uid;
+        const files = req.files;
+
+        try {
+            customLogger.info("uploadDocs >", { userId, files })
+            const uploadedDocs = await UserManager.uploadDocs(userId, files);
+            customLogger.info("uploadDocs >", { uploadedDocs })
+            res.json(uploadedDocs);
+        }
+        catch (error) {
+            customLogger.error("Error al subir los documents:", error);
+            res.status(500).json({ error: "Error interno del servidor" });
+        }
+    },
 }
 
 export default userController;

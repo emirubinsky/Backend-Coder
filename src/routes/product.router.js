@@ -20,7 +20,11 @@ import ProductController from "../controllers/product.controller.js";
 import { requestLogger, responseLogger, errorLogger } from '../middlewares/logger.middleware.js';
 
 const productRouter = express.Router();
-const imgUpload = configureProductMulter(); // TODO - Esto estaría bueno llevarlo a otra parte, para que ya esta configurado y facil de acceder
+const productMulter = configureProductMulter(); // TODO - Esto estaría bueno llevarlo a otra parte, para que ya esta configurado y facil de acceder
+const productImageAndThumbnailMulter = productMulter.fields([
+    { name: 'image', maxCount: 1 },
+    { name: 'thumbnails', maxCount: 5 }]
+)
 
 // Maneja la solicitud para ver los detalles de UN producto
 productRouter.get("/:id",
@@ -44,10 +48,7 @@ productRouter.post("/",
     authToken,
     // isAdmin,
     isPremiumOrAdmin,
-    imgUpload.fields([
-        { name: 'image', maxCount: 1 },
-        { name: 'thumbnails', maxCount: 5 }]
-    ),
+    productImageAndThumbnailMulter,
     validateProduct,
     createProductDTO,
     responseLogger, // esta aquí para sobre-escribir el res.send y asi "interceptar" y loguear la respuesta
@@ -60,10 +61,7 @@ productRouter.put("/:id",
     authToken,
     // isAdmin,
     isPremiumOrAdmin,
-    imgUpload.fields([
-        { name: 'image', maxCount: 1 },
-        { name: 'thumbnails', maxCount: 5 }]
-    ),
+    productImageAndThumbnailMulter,
     validateProductId,
     validateProduct,
     createProductDTO,

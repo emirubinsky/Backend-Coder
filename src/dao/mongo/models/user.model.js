@@ -30,7 +30,15 @@ const userSchema = new mongoose.Schema({
     },
     role: { type: String, default: "user" }, // TODO: Evitar hard-code
     resetToken: String,
-    resetTokenExpires: Date
+    resetTokenExpires: Date,
+    profile: String,
+    documents: [
+        {
+            name: { type: String, required: true },
+            reference: { type: String, required: true }
+        }
+    ],
+    last_connection: Date,
 });
 
 const User = mongoose.model(MONGO_COLLECTIONS_NAME_USER, userSchema);

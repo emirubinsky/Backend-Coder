@@ -120,3 +120,12 @@ export const isPremiumOrAdmin = (req, res, next) => {
         return res.status(403).json({ error: 'Acceso no autorizado' });
     }
 }
+
+export const isAll = (req, res, next) => {
+    if(req.user && req.user.role === 'admin' || req.user.role === 'premium' || req.user.role === 'user') {
+        next();
+    }
+    else {
+        return res.status(403).json({ error: 'Acceso no autorizado' });
+    }
+}
