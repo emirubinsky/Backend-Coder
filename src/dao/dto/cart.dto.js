@@ -6,7 +6,7 @@ class CartDTO {
         products,
         user
     }) {
-        this.products = products.map(p => new CartProductDTO(p.product, p.quantity, p.price));
+        this.products = products.map(p => new CartProductDTO(p.product, p.quantity, p.price, p.replace));
         this.user = user;
         
         if (id !== -1) {

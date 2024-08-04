@@ -9,6 +9,7 @@
                         <th scope="col">ID</th>
                         <th scope="col">Producto</th>
                         <th scope="col">Precio Unitario</th>
+                        <th scope="col">Stock</th>
                         <th scope="col">Cantidad</th>
                         <th scope="col">Subtotal</th>
                         <th scope="col">Borrar</th>
@@ -20,13 +21,29 @@
                         <td>{{product._id}}</td>
                         <td>{{this.product.title}}</td>
                         <td>${{this.product.price}}</td>
+                        <td>{{this.product.stock}}</td>
                         <td>{{this.quantity}}</td>
                         <td>${{multiply this.quantity this.product.price}}</td>
                         <td>
-                            <button class="btn btn-danger delete-btn" data-product-id="{{this.product._id}}"
+                            <button class="btn sm btn-success"
+                                onclick="modifyQuantity('{{../Cart._id}}', '{{this.product._id}}', 1)"
+                                data-product-id="{{this.product._id}}" data-product-qty="{{this.quantity}}"
+                                data-increase-url="http://localhost:8080/api/carts/{{../Cart._id}}/products/{{this.product._id}}">
+                                Uno más
+                            </button>
+
+                            <button class="btn sm btn-warning"
+                                onclick="modifyQuantity('{{../Cart._id}}', '{{this.product._id}}', -1)"
+                                data-product-id="{{this.product._id}}" data-product-qty="{{this.quantity}}"
+                                data-decrease-url="http://localhost:8080/api/carts/{{../Cart._id}}/products/{{this.product._id}}">
+                                Uno menos
+                            </button>
+
+                            <button class="btn sm btn-danger delete-btn" data-product-id="{{this.product._id}}"
                                 data-delete-url="http://localhost:8080/api/carts/{{../Cart._id}}/products/{{this.product._id}}"
                                 onclick="deleteProductFromCart('{{../Cart._id}}', '{{this.product._id}}')">Eliminar
-                                producto</button>
+                                producto
+                            </button>
                         </td>
                     </tr>
                     {{/each}}
@@ -41,7 +58,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Resumen del Pedido</h5>
                     <p class="card-text">Total de Productos: {{Cart.products.length}}</p>
-                    <p class="card-text">Total a Pagar: ${{Cart.total}}</p>
+                    <p class="card-text">Total a Pagar: ${{calculateTotal Cart.products}}</p>
                 </div>
             </div>
         </div>
@@ -57,13 +74,14 @@
             </div>
         </div>
         <div class="col-md-6 offset-md-3">
+            {{#if Cart.products.length}}
             <div class="text-center">
-                <p>{{Cart._id}}</p>
                 <button id="continueToTicket" data-cart-id="{{Cart._id}}"
                     class="btn btn-lg btn-outline-dark btn-block mb-3" onclick="confirmCartToTicket('{{Cart._id}}')">
                     Confirmar Compra
                 </button>
             </div>
+            {{/if}}
         </div>
     </div>
 </div>

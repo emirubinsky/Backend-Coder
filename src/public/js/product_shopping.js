@@ -44,13 +44,17 @@ function handleAddToCart(event) {
     fetch(url, {
         method: 'PUT',
         headers: {
+            "authorization": `Bearer ${token}`,
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({ userId, cartId, productId, quantity })
     })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Error al agregar el producto al carrito');
+
+                return response.json().then(badResult => {
+                    throw new Error(badResult.details);
+                });
             }
             return response.json();
         })

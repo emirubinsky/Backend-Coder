@@ -72,8 +72,9 @@ export const updateQuantityCartDTO = (req, res, next) => {
 
         const { quantity, replace = false } = req.body
 
-        customLogger.info(req.body);
-        customLogger.info(req.session); 
+        customLogger.info('comenzando updateQuantityCartDTO')
+        customLogger.debug('body', req.body);
+        console.log('body', req.body);
 
         /*
                 {
@@ -94,7 +95,7 @@ export const updateQuantityCartDTO = (req, res, next) => {
             id: cartId
         });
 
-        customLogger.info("createCartDTO", {
+        customLogger.info("updateQuantityCartDTO", {
             dto
         })
 

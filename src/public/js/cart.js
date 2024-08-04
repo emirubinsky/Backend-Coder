@@ -28,12 +28,64 @@ async function deleteProductFromCart(cid, pid) {
                 type: 'success',
                 message: `Producto con ID ${pid} eliminado del carrito ${cid}`
             })
+            window.location.reload()
 
         } else {
             console.error(`Error al eliminar el producto con ID ${pid} del carrito`);
             showCustomAlert({
                 type: 'error',
                 message: `Error al eliminar el producto con ID ${pid} del carrito`,
+                stack: response
+            })
+        }
+    } catch (error) {
+        console.error('Error de red:', error);
+        showCustomAlert({
+            type: 'error',
+            message: `Error generico`,
+            stack: error
+        })
+    }
+}
+
+// Función para eliminar un producto del carrito usando Fetch
+async function modifyQuantity(cid, pid, quantityExtra) {
+    console.log("id del carrito:", cid);
+    console.log("id del producto:", pid);
+    console.log("id del producto:", quantityExtra);
+
+    try {
+        const incrementado = quantityExtra > 0
+
+        const userId = localStorage.getItem('userId');
+        const cartId = cid//localStorage.getItem('cartId');
+
+        const productId = pid//event.target.getAttribute('data-product-id');
+        const quantityNow = parseInt(event.target.getAttribute('data-product-qty'));
+        const quantity = quantityNow + quantityExtra
+
+        const response = await fetch(`http://localhost:8080/api/carts/${cid}/products/${pid}`, {
+            method: 'PUT',
+            headers: {
+                "authorization": `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+            , body: JSON.stringify({ userId, cartId, productId, quantity, replace: true })
+        });
+
+        if (response.ok) {
+            console.log(`Producto con ID ${pid} ${incrementado ? 'incrementado' : 'reducido'} en el carrito ${cid}`);
+            showCustomAlert({
+                type: 'success',
+                message: `Producto con ID ${pid} ${incrementado ? 'incrementado' : 'reducido'} en el carrito ${cid}`
+            })
+            window.location.reload()
+
+        } else {
+            console.error(`Error al intentar: Producto con ID ${pid} ${incrementado ? 'incrementado' : 'reducido'} en el carrito ${cid}`);
+            showCustomAlert({
+                type: 'error',
+                message: `Error al intentar: Producto con ID ${pid} ${incrementado ? 'incrementado' : 'reducido'} en el carrito ${cid}`,
                 stack: response
             })
         }

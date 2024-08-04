@@ -44,12 +44,14 @@ class HandleBarsRegister {
     // Helper function to calculate total amount for a ticket's cart items
     Handlebars.registerHelper('calculateTotal', function (products) {
 
-      customLogger.info("calculateTotal", products)
 
       let total = 0;
-      products.forEach(product => {
-        total += (product.price * product.quantity);
+
+      products.forEach(productItem => {
+        console.log("products.forEach(productItem", productItem)
+        total += (productItem.product.price * productItem.quantity);
       });
+
       return total.toFixed(2);
     });
 
