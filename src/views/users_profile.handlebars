@@ -1,22 +1,7 @@
 <div class="text-center">
     <h1>Tu perfil (sin datos sensibles)</h1>
-
-    <div class="container mt-5">
-        <div class="" id="userProfile">
-            <div class="text-center">
-                <div class="card">
-                    <img src="/img/user/profiles/{{user.profile}}" class="card-img-top img-fluid" alt="{{this.first_name}}"
-                        style="max-height: 400px; aspect-ratio: 3/2; object-fit: contain;" />
-                    <div class="card-body">
-                        <p class="card-text first_name">Nombre: {{user.first_name}}</p>
-                        <p class="card-text last_name">Apellido: {{user.last_name}}</p>
-                        <p class="card-text email">Email: {{user.email}}</p>
-                        <p class="card-text age">Edad: {{user.age}}</p>
-                        <p class="card-text user-role">Rol: {{user.role}}</p>
-                        <p class="card-text last_connection">Última vez conectado: {{user.last_connection}}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    {{!-- Cambiamos name por first_name --}}
+    <p>{{user.first_name}}</p> 
+    <p>{{user.email}}</p>
+    <p>{{user.age}}</p>
 </div>
