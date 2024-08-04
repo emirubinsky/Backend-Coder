@@ -1,6 +1,12 @@
 import { userService } from "../repositories/index.js";
 import UserDTO from "../../src/dao/dto/user.dto.js"
 
+import messenger from "../appHelpers/messenger.js";
+
+import {
+  MAIL_USERNAME,
+} from "../util.js";
+
 class UserManager {
   static async getOne(id) {
     // Perform business logic operations
@@ -132,6 +138,77 @@ class UserManager {
     } catch (error) {
       throw new Error("Error al subir documentos: " + error.message);
     }
+  }
+
+  static async findAllInactiveUsers(minutes) {
+
+    try {
+      // Variable para eliminar los usuarios que tengan 2 dias seguidos sin conectarse
+      const inactivityPeriod = minutes * 1000;
+
+      /* Se encarga de buscar a los usuarios que cumplan con el parámetro de inactividad 
+      y enviar el mensaje de usuario eliminado por inactividad */
+      const inactiveUsers = await userService.findInactiveUsers(inactivityPeriod);
+
+      return
+
+    } catch (error) {
+      throw new Error("Error al ejecutar findAllInactiveUsers: " + error.message);
+    }
+  }
+
+  static async deleteAllInactiveUsers() {
+
+    try {
+      // Variable para eliminar los usuarios que tengan 2 dias seguidos sin conectarse
+      const inactivityPeriod = 2 * 24 * 60 * 60 * 1000;
+
+      /* Se encarga de buscar a los usuarios que cumplan con el parámetro de inactividad 
+      y enviar el mensaje de usuario eliminado por inactividad */
+      const inactiveUsers = await userService.findInactiveUsers(inactivityPeriod);
+
+      const results = inactiveUsers.map(async (inactiveUser) => {
+        if (inactiveUser.role == "admin") {
+          return res.status(404).json({ error: "No se puede eliminar el administrador" });
+        }
+
+        // Elimina a los usuarios inactivos
+        const deleteInactiveUser = await userService.deleteInactiveUser(inactiveUser._id);
+
+        if (!deleteInactiveUser) {
+          return {
+            user: inactiveUser.email,
+            success: false,
+            message: "No se ha podido eliminar el usuario inactivo"
+          }
+        }
+
+        const mailOptions = {
+          to: inactiveUser.email,
+          from: MAIL_USERNAME,
+          subject: 'Se le ha eliminado su cuenta por inactividad',
+          text: `Está recibiendo este mensaje porque usted no se ha conectado en 2 dias seguidos y su cuenta ha sido eliminada por inactividad.`
+        };
+
+        await messenger.transport.sendMail(mailOptions)
+
+        return {
+          user: inactiveUser.email,
+          success: true,
+          message: 'Correo de aviso de eliminación de usuario enviado con éxito'
+        }
+      })
+
+      return {
+        message: 'Proceso de limpieza terminado',
+        results
+      };
+
+    } catch (error) {
+      console.error("Error en el proceso de limpieza", error);
+      throw new Error("Error al ejecutar deleteAllInactiveUsers: " + error.message);
+    }
+
   }
 
 }

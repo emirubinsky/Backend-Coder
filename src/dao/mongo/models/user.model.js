@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import mongoosePaginate from "mongoose-paginate-v2";
 
 const MONGO_COLLECTIONS_NAME_USER = 'User' 
 const MONGO_COLLECTIONS_NAME_PRODUCT = 'Product'
@@ -41,6 +42,7 @@ const userSchema = new mongoose.Schema({
     last_connection: Date,
 });
 
+userSchema.plugin(mongoosePaginate);
 const User = mongoose.model(MONGO_COLLECTIONS_NAME_USER, userSchema);
 
 export default User;

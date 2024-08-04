@@ -36,5 +36,7 @@ export default function initializeSocketServer(httpServer) {
             io.emit("clearCart", clearCart);
         });
     });
+
+    customLogger.info("App Socket Server > ESCUCHANDO");
 }
 

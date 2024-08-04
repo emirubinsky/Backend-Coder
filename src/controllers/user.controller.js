@@ -19,11 +19,6 @@ import messenger from "../appHelpers/messenger.js";
 import {
     __dirname,
     MAIL_USERNAME,
-    MAIL_PASSWORD,
-    TWILIO_SSID,
-    AUTH_TOKEN,
-    PHONE_NUMBER,
-    PHONE_NUMBER_TO
 } from "../util.js";
 
 const userController = {
@@ -47,6 +42,43 @@ const userController = {
     },
     */
 
+    getUsers: async (req, res) => {
+        let currentPage = req.query.page || 1;
+
+        try {
+            // Se encarga de traer la lista de usuarios
+            const response = await UserManager.getUsers(currentPage);
+
+        } catch (error) {
+            console.error("Error al obtener la lista de usuarios:", error);
+            res.status(500).json({ error: "Error interno del servidor" });
+        }
+    },
+
+    getAll: async (req, res) => {
+        try {
+            customLogger.info("Users Router > getAll", { dto: req.dto })
+
+            // Llamada a la capa de negocio
+            const managerOutput = await UserManager.getAll(req.dto);
+
+            // Construir la respuesta JSON
+            // TODO: Debería ser un DTO de salida
+            const response = {
+                status: SUCCESS,
+                Products: managerOutput.products,
+                Query: managerOutput.pagination,
+            };
+
+            // Envío respuesta
+            res.json({ message: "Lista de Usuarios:", response })
+
+        } catch (error) {
+            customLogger.error(`Error loading Usuarios: ${error}`, { ...error });
+            res.status(500).json({ error: 'Error retrieving Usuarios' });
+        }
+    },
+
     getLogin: async (req, res) => {
         res.render("login");
     },
@@ -56,7 +88,7 @@ const userController = {
 
         try {
             customLogger.info("login > ", { email, password })
-            passport.authenticate("local", (err, user, info) => {
+            passport.authenticate("local", async (err, user, info) => {
                 if (err) {
                     return next(err);
                 }
@@ -68,7 +100,7 @@ const userController = {
                 }
 
                 // Actualizar el campo last_connection
-                const userId = req.user._id
+                const userId = user._id
                 const currentUser = await UserManager.getOne(userId)
                 const last_connection = new Date();
                 const userDTO = new UserDTO({ ...currentUser, last_connection })
@@ -355,7 +387,7 @@ const userController = {
     changeToPremiumRole: async (req, res) => {
         const userId = req.params.uid;
         const files = req.files;
-    
+
         try {
             const updatedPremium = await UserManager.changeToPremiumRole(userId, files);
             res.json(updatedPremium);
@@ -363,7 +395,7 @@ const userController = {
             console.error("Error al cambiar el rol del usuario a PREMIUM:", error);
             res.status(500).json({ error: "Error interno del servidor" });
         }
-    },  
+    },
 
     uploadDocs: async (req, res) => {
         const userId = req.params.uid;
@@ -380,6 +412,54 @@ const userController = {
             res.status(500).json({ error: "Error interno del servidor" });
         }
     },
+
+    findAllInactiveUsers: async (req, res) => {
+        try {
+            customLogger.info("findAllInactiveUsers > START")
+
+            const minutes = req.params.minutes
+
+            const results = await UserManager.findAllInactiveUsers(minutes);
+
+            res.json(results);
+        }
+        catch (error) {
+            customLogger.error("Error al findAllInactiveUsers:", error);
+            res.status(500).json({ error: "Error interno del servidor" });
+        }
+    },
+
+    deleteAllInactiveUsers: async (req, res) => {
+        try {
+            customLogger.info("deleteAllInactiveUsers > START")
+
+            const results = await UserManager.deleteAllInactiveUsers();
+
+            res.json(results);
+        }
+        catch (error) {
+            customLogger.error("Error al deleteAllInactiveUsers:", error);
+            res.status(500).json({ error: "Error interno del servidor" });
+        }
+    },
+
+    deleteUser: async (req, res) => {
+        const userId = req.params.uid;
+
+        try {
+            // Se encarga de ser una herramienta para el administrador para borrar el usuario por su ID
+            const deleteUser = await UserManager.delete(userId);
+
+            if (!deleteUser) {
+                return res.status(404).json({ error: "No se ha podido eliminar el usuario" });
+            }
+
+            res.status(200).json({ message: 'Eliminación del usuario con exito' });
+        } catch (error) {
+            console.error("Error al eliminar el usuario:", error);
+            res.status(500).json({ error: "Error interno del servidor" });
+        }
+    }
 }
 
 export default userController;

@@ -38,6 +38,25 @@ export default class UserMongoService {
         }
     }
 
+    async findInactiveUsers(inactivityPeriod) {
+        const inactivityDate = new Date(Date.now() - inactivityPeriod);
+        try {
+            const user = await model.find({ last_connection: { $lt: inactivityDate } })
+            return user;
+        } catch (error) {
+            throw new Error("Error al buscar usuarios inactivos: " + error.message);
+        }
+    }
+
+    async deleteInactiveUser(userId){
+        try {
+            const deleteInactiveUser = await model.deleteOne({ _id: userId });
+            return deleteInactiveUser;
+        } catch (error) {
+            throw new Error("Error al eliminar el usuario inactivo: " + error.message);
+        }
+    }
+
     async getAll({
         host,
         protocol,

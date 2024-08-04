@@ -58,28 +58,37 @@ import passport from 'passport'
 // import auth from "./config/auth.js"; // Esto no lo usamos más. Esta todo en ./config/passport.config.js
 
 import { MONGO_URL } from "./util.js";
+customLogger.info("SERVER IMPORTS - OK")
 
 try {
+    customLogger.info("SERVER SETUP - INICIO")
+
     const PORT = 8080;
     
     // FileStore fue la primera version de session que usamos. CLASE 19
     // const fileStore = FileStore(session); // TODO: Estamos usando el FileStore?
     const app = express();
+    customLogger.info("http.createServer > ...setup")
     const httpServer = http.createServer(app); // INFO: Esto no sería necesario, Express automatiza esta parte.
-
+    customLogger.info("http.createServer > ...setup OK")
     /* Inicializamos manejo de errores GLOBALES */
     // Catch unhandled errors
         
     // Middleware para analizar el cuerpo de la solicitud JSON
+    customLogger.info("express.json > ...setup")
     app.use(express.json());
+    customLogger.info("express.json > ...setup OK")
 
     // Middleware para utilizar cookies
     app.use(cookieParser());
+    customLogger.info("cookieParser > ...setup  OK")
 
     // Middleware para usar cors
     app.use(cors());
+    customLogger.info("cors > ...setup  OK")
 
     // Middleware para usar el session para autenticaciones de usuarios
+    customLogger.info("MONGO SESSION > ...setup")
     app.use(
         session({
             store: new MongoStore({
@@ -93,13 +102,17 @@ try {
             saveUninitialized: false,
         })
     );
+    customLogger.info("MONGO SESSION > ...setup OK")
 
     // Middleware adicional para analizar el cuerpo de la solicitud JSON en cartRouter
+    customLogger.info("BODY PARSER > ...setup")
     app.use(bodyParser.json());
+    customLogger.info("BODY PARSER > ...setup OK")
 
     app.use(express.urlencoded({ extended: true }));
 
     // Middleware de Passport para la autenticación de sesión
+    customLogger.info("PASSPORT > ...yendo")
     initilizePassport(); // Inicializar Passport y sus estrategias. Antiguamente usabamos un archivo "auth.js"
     app.use(passport.initialize()); // Esto llama al middleware y lo inicializa
     app.use(passport.session()); // Info: alters the request object and change the 'user' value that is currently the session id (from the client cookie)
@@ -126,6 +139,7 @@ try {
     });
 
     // Middlewares para el enrutamiento
+    customLogger.info("INICIANDO ROUTER ...........")
     app.use("/", router);
     // app.use("/", viewsRouter); // <- esto vive en el routes.js
     // app.use("/api/sessions", sessionsRouter); // <- esto vive en el routes.js
@@ -148,5 +162,6 @@ try {
     swagger_setup(app, __dirname)
 
 } catch (error) {
-    console.log("ERROR > ",error)
+    customLogger.error('APP ERROR FATAL ', { ...error });
+    console.error("ERROR > ",error)
 }
