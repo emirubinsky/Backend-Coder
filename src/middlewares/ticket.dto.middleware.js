@@ -48,7 +48,9 @@ export const createTicketQueryDTO = (req, res, next) => {
         // Obtención de parametros desde el queryString
 
         // Formacion del objeto query para perfeccionar la query.
-        const query = {};
+        const query = {
+            user: req.session.userId
+        };
 
         const dto = new TicketQueryDTO({
             host: req.get('host'),
