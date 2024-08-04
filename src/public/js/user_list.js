@@ -1,6 +1,6 @@
 
 const prodURL = "https://backend-final-production-8834.up.railwayx.app/api/sessions/"
-const socket = io.connect('https://backend-final-production-8834.up.railway.app/');
+const socket = io.connect('http://localhost:8080');
 
 const token = localStorage.getItem("token");
 
@@ -59,7 +59,7 @@ function handleChangeUserRole(event) {
     const userId = event.target.getAttribute('data-user-id');
 
     // Realizar la solicitud HTTP PUT para cambiar el rol del usuario
-    fetch(`http://localhost:8080/api/sessions/swapRole/${userId}`, {
+    fetch(`http://localhost:8080/users/swapRole/${userId}`, {
         method: 'PUT',
         headers: {
             'Authorization': `Bearer ${token}`,

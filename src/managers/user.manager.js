@@ -69,7 +69,7 @@ class UserManager {
     }
 
     if (currentUser.role !== "premium") {
-      logger.warn("Acceso no autorizado");
+      customLogger.warn("Acceso no autorizado");
       throw new Error("No se puede cambiar a otro rol si no es PREMIUM")
     }
 
@@ -114,9 +114,6 @@ class UserManager {
 
         return updatedUser
       }
-
-      // Guardar los cambios en la base de datos
-      await user.save();
       return user;
     } catch (error) {
       throw new Error("Error al cambiar el rol del usuario: " + error.message);
@@ -127,29 +124,37 @@ class UserManager {
     try {
       const user = await UserManager.getOne(userId);
 
-      logger.info(`Cambiando rol de usuario ${userId}, con rol ${user.role}`);
+      customLogger.info(`Cambiando rol de usuario ${userId}, con rol ${user.role}`);
 
       if (!user) {
         throw new Error("El usuario no existe");
       }
 
+      let newRole = null
       if (user.role === "premium") {
-        user.role = "user";
+        newRole = "user";
       } else if (user.role === "user") {
-        user.role = "premium";
+        newRole = "premium";
       } else if (user.role === "admin") {
-        logger.warn("No se puede cambiar el rol de admin")
+        customLogger.warn("No se puede cambiar el rol de admin")
       } else {
-        logger.warn("Acceso no autorizado");
+        customLogger.warn("Acceso no autorizado");
       }
 
-      // Guardar los cambios en la base de datos
-      await user.save();
-      logger.info(`Cambio de rol de usuario exitoso: ${user.role}`);
-      return user;
+      if (newRole === null) {
+        throw new Error("Error al cambiar el rol del usuario > accion no permitida")
+      }
+
+      // Procesamos el cambio de role
+      const userDTO = new UserDTO({ ...user, role: newRole, id: userId })
+      const updatedUser = await UserManager.update(userDTO);
+
+      customLogger.info(`Cambio de rol de usuario exitoso: ${user.role}`);
+
+      return updatedUser
     } catch (error) {
-      logger.error(`Error al cambiar el rol del usuario: ${userId}`);
-      throw new Error("Error interno del servidor");
+      customLogger.error(`Error al cambiar el rol del usuario: ${userId}`, error);
+      throw new Error("Error interno del servidor > " + error.message);
     }
   }
 

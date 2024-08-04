@@ -28,7 +28,7 @@ export default class UserMongoService {
 
         return result
     }
-    
+
     async findByEmail(email) {
         try {
             const user = await model.findOne({ email });
@@ -44,10 +44,10 @@ export default class UserMongoService {
         try {
             const filter = {
                 $or: [
-                  { last_connection: { $exists: false } },
-                  { last_connection: { $lt: inactivityDate } }
+                    { last_connection: { $exists: false } },
+                    { last_connection: { $lt: inactivityDate } }
                 ]
-              };
+            };
 
             const users = await model.find(filter)//{ last_connection: { $lte: inactivityDate } }
 
@@ -60,7 +60,7 @@ export default class UserMongoService {
         }
     }
 
-    async deleteInactiveUser(userId){
+    async deleteInactiveUser(userId) {
         try {
             const deleteInactiveUser = await model.deleteOne({ _id: userId });
             return deleteInactiveUser;
@@ -69,43 +69,25 @@ export default class UserMongoService {
         }
     }
 
-    async getAll({
-        host,
-        protocol,
-        baseUrl,
-        query,
-        limit,
-        page
-    }) {
+    async getAll(productQueryDTO) {
+
+        const {
+            host,
+            protocol,
+            baseUrl,
+            query,
+            limit,
+            page,
+            sort
+        } = productQueryDTO
+
         const options = {
             page,
-            limit,
-            populate: {
-                path: 'products.product', // populate the product field in the products array
-                select: "_id title price"
-            }
+            limit
             //sort
         }
 
         const userPaginationOutput = await model.paginate(query, options);
-
-        // Access paginated users with populated 'items'
-        // Access paginated users with populated 'products'
-        userPaginationOutput.docs.forEach((user) => {
-            customLogger.info('-------');
-            customLogger.info('User ID:', user._id);
-            customLogger.info('User:', user.user);
-            customLogger.info('Products:', user.products);
-            user.products
-                .filter(userProduct => userProduct.product !== null)
-                .forEach((userProduct) => {
-                    customLogger.info('Product ID:', userProduct.product._id);
-                    //customLogger.info('Product Name:', userProduct.product.name);
-                    customLogger.info('Product Title:', userProduct.product.title);
-                    customLogger.info('Quantity:', userProduct.quantity);
-                });
-        });
-        //
 
         const users = userPaginationOutput.docs.map(user => user.toObject());
 
@@ -138,10 +120,9 @@ export default class UserMongoService {
         }
     }
 
-    async insert({ products, user }) {
+    async insert({ user }) {
 
         const newEntity = new User({
-            products,
             user
         });
 
@@ -164,26 +145,26 @@ export default class UserMongoService {
         }
 
         /*
-Datos a validar: user-password: $2b$10$S8.a5WV50d0l.7aF7TkgueiMlfBMwEL.k4zh8qvOmCm9wF1ZI9B2K, password: 123
-MONGO > user.service > update {
-  filter: { _id: undefined },
-  userDTO: UserDTO {
-    first_name: 'Roberto',
-    last_name: 'Perez',
-    full_name: 'Roberto, Perez',
-    email: 'admin_perez@mail.com',
-    age: 34,
-    password: '$2b$10$S8.a5WV50d0l.7aF7TkgueiMlfBMwEL.k4zh8qvOmCm9wF1ZI9B2K',
-    role: 'admin',
-    profile: undefined,
-    last_connection: 2024-08-01T19:04:48.120Z,
-    documents: undefined
-  }
-}
-MONGO > user.service > updatedDoc { updatedDoc: null }
-login > updatedUser { updatedUser: null }
+            Datos a validar: user-password: $2b$10$S8.a5WV50d0l.7aF7TkgueiMlfBMwEL.k4zh8qvOmCm9wF1ZI9B2K, password: 123
+            MONGO > user.service > update {
+            filter: { _id: undefined },
+            userDTO: UserDTO {
+                first_name: 'Roberto',
+                last_name: 'Perez',
+                full_name: 'Roberto, Perez',
+                email: 'admin_perez@mail.com',
+                age: 34,
+                password: '$2b$10$S8.a5WV50d0l.7aF7TkgueiMlfBMwEL.k4zh8qvOmCm9wF1ZI9B2K',
+                role: 'admin',
+                profile: undefined,
+                last_connection: 2024-08-01T19:04:48.120Z,
+                documents: undefined
+            }
+            }
+            MONGO > user.service > updatedDoc { updatedDoc: null }
+            login > updatedUser { updatedUser: null }
         */
-       
+
         console.log("MONGO > user.service > update", { filter, userDTO })
 
         const updatedDoc = await model.findOneAndUpdate(filter, userDTO, {

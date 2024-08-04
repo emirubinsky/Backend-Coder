@@ -358,9 +358,10 @@ router.get("/users/list", auth, isAdmin, async (req, res) => {
     // Make a request to the API route to get product data
     const queryParams = {
       ...req.query,
-      view: true
+      view: true,
+      adm: true
     };
-    const axiosResponse = await apiClient.get('http://localhost:8080/api/users', {
+    const axiosResponse = await apiClient.get('http://localhost:8080/users', {
 
       // Forward the original request's cookies
       headers: {
@@ -374,6 +375,11 @@ router.get("/users/list", auth, isAdmin, async (req, res) => {
     const response = axiosResponse.data
 
     customLogger.info("/users_list", response)
+
+    // Presentamos datos y los mandamos a traves del renderizado
+    res.render("users_list", {
+      response: response.response
+    })
 
   } catch (error) {
     customLogger.error(`Error loading /users/list: ${error}`, { ...error });

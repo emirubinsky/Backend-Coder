@@ -1,5 +1,5 @@
 // middleware/dtoMiddleware.js
-import UserQueryDTO from '../dao/dto/product.query.dto.js';
+import UserQueryDTO from '../dao/dto/user.query.dto.js';
 
 import { customLogger } from '../appHelpers/logger.helper.js';
 
@@ -12,7 +12,7 @@ export const createUserQueryDTO = (req, res, next) => {
         const {
             limit = 5,
             page = 1,
-            view = false,
+            view = true,
             adm = false
         } = req.query != null ? req.query : {};
 
@@ -28,7 +28,11 @@ export const createUserQueryDTO = (req, res, next) => {
             baseUrlHandled = baseUrlHandled.replace("/api", "")
         }
 
-        customLogger.info("createUserQueryDTO", { view, baseUrl: req.baseUrl })
+        if (adm) {
+            baseUrlHandled = baseUrlHandled.replace("/users", "/users/list")
+        }
+
+        customLogger.info("createUserQueryDTO", { view, baseUrl: req.baseUrl, baseUrlHandled })
 
         const dto = new UserQueryDTO({
             host: req.get('host'),

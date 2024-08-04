@@ -65,8 +65,8 @@ const userController = {
             // Construir la respuesta JSON
             // TODO: Debería ser un DTO de salida
             const response = {
-                status: SUCCESS,
-                Products: managerOutput.products,
+                status: "SUCCESS",
+                Users: managerOutput.users,
                 Query: managerOutput.pagination,
             };
 
