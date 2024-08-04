@@ -51,6 +51,8 @@ class ProductController {
         try {
             customLogger.info("================= ADD ===============");
 
+            req.dto.owner = req.session.userId;
+
             const newProduct = await ProductManager.add(req.dto);
 
             return res.json({

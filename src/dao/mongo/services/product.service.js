@@ -64,7 +64,7 @@ export default class ProductMongoService {
 
   async insert(productDTO) {
 
-    const { title, brand, description, code, price, stock, status, category, image, thumbnails } = productDTO
+    const { title, brand, description, code, price, stock, status, category, image, thumbnails, owner } = productDTO
 
     const newEntity = new Product({
       title,
@@ -76,7 +76,8 @@ export default class ProductMongoService {
       status,
       category,
       image,
-      thumbnails
+      thumbnails,
+      owner
     });
 
     const newInsertedDoc = await newEntity.save()

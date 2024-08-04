@@ -5,6 +5,8 @@ import {
   MAIL_USERNAME,
 } from "../util.js";
 
+import { customLogger } from '../appHelpers/logger.helper.js';
+
 class ProductManager {
   static async getOne(id) {
     // Perform business logic operations
@@ -26,9 +28,26 @@ class ProductManager {
   }
 
   static async add(productDTO) {
-    const serviceOutput = await productService.insert(productDTO);
 
-    return serviceOutput
+    try {
+      // Ownership
+      const user = await userService.getOne(productDTO.owner);
+
+      // Si el usuario no esta logueado o registrado
+      if (!user) {
+        customLogger.error(`User no encontrado: ${owner}`);
+        throw { code: 'USER_NOT_FOUND' };
+      }
+
+      const serviceOutput = await productService.insert(productDTO);
+
+      return serviceOutput
+
+    } catch (error) {
+      console.log(`Error al agregar el producto - ${error.message}`);
+      customLogger.error(`Error al agregar el producto - ${error.message}`);
+      throw { code: 'PRODUCT_CREATION_FAILED', message: error.message };
+    }
   }
 
   /**
@@ -50,7 +69,14 @@ class ProductManager {
       const user = await userService.getOne(userId);
 
       /* Revisión de ownership */
-      if (userRole === 'admin' || (userRole === 'premium' && user && user._id.toString() == product.owner._id.toString())) {
+      const isAdmin = userRole === 'admin'
+      const isPremium = userRole === 'premium'
+      const isTheOwner = user._id.toString() == product.owner._id.toString()
+
+      const isAllowedToUpdate = isAdmin || (isPremium && isTheOwner)
+
+      /* Revisión de ownership */
+      if (isAllowedToUpdate) {
         return await productService.update(productDTO);
 
         // return res.json({ message: "Producto actualizado!", product: updatedProduct });
