@@ -14,6 +14,7 @@ async function deleteProductFromCart(cid, pid) {
     console.log("id del producto:", pid);
 
     try {
+        showLoading();
         const response = await fetch(`http://localhost:8080/api/carts/${cid}/products/${pid}`, {
             method: 'DELETE',
             headers: {
@@ -23,6 +24,7 @@ async function deleteProductFromCart(cid, pid) {
         });
 
         if (response.ok) {
+            hideLoading()
             console.log(`Producto con ID ${pid} eliminado del carrito ${cid}`);
             showCustomAlert({
                 type: 'success',
@@ -31,6 +33,7 @@ async function deleteProductFromCart(cid, pid) {
             window.location.reload()
 
         } else {
+            hideLoading()
             console.error(`Error al eliminar el producto con ID ${pid} del carrito`);
             showCustomAlert({
                 type: 'error',
@@ -45,6 +48,8 @@ async function deleteProductFromCart(cid, pid) {
             message: `Error generico`,
             stack: error
         })
+    } finally {
+        hideLoading()
     }
 }
 
@@ -64,6 +69,7 @@ async function modifyQuantity(cid, pid, quantityExtra) {
         const quantityNow = parseInt(event.target.getAttribute('data-product-qty'));
         const quantity = quantityNow + quantityExtra
 
+        showLoading()
         const response = await fetch(`http://localhost:8080/api/carts/${cid}/products/${pid}`, {
             method: 'PUT',
             headers: {
@@ -74,6 +80,7 @@ async function modifyQuantity(cid, pid, quantityExtra) {
         });
 
         if (response.ok) {
+            hideLoading()
             console.log(`Producto con ID ${pid} ${incrementado ? 'incrementado' : 'reducido'} en el carrito ${cid}`);
             showCustomAlert({
                 type: 'success',
@@ -82,6 +89,7 @@ async function modifyQuantity(cid, pid, quantityExtra) {
             window.location.reload()
 
         } else {
+            hideLoading()
             console.error(`Error al intentar: Producto con ID ${pid} ${incrementado ? 'incrementado' : 'reducido'} en el carrito ${cid}`);
             showCustomAlert({
                 type: 'error',
@@ -96,6 +104,8 @@ async function modifyQuantity(cid, pid, quantityExtra) {
             message: `Error generico`,
             stack: error
         })
+    } finally {
+        hideLoading()
     }
 }
 
@@ -158,6 +168,7 @@ async function confirmCartToTicket(cid) {
             }
         })
 
+        showLoading()
         const response = await fetch(`http://localhost:8080/api/tickets`, {
             method: 'POST',
             headers: {
@@ -170,12 +181,14 @@ async function confirmCartToTicket(cid) {
         });
 
         if (response.ok) {
+            hideLoading()
             console.log(`Creado el ticket a partir del del carrito ${cid}`);
             showCustomAlert({
                 type: 'success',
                 message: `Producto con ID ${pid} eliminado del carrito ${cid}`
             })
         } else {
+            hideLoading()
             console.error(`Algo ha pasado al intentar crear un Ticket`);
             showCustomAlert({
                 type: 'warning',
@@ -189,5 +202,7 @@ async function confirmCartToTicket(cid) {
             message: `Error generico`,
             stack: error
         })
+    } finally {
+        hideLoading()
     }
 }

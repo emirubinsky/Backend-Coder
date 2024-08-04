@@ -7,6 +7,7 @@ console.log("SOY HOME!");
 function onLoad() {
     const userId = localStorage.getItem("userId")
 
+    showLoading()
     fetch('http://localhost:8080/api/carts/user', {
         method: 'POST',
         body: JSON.stringify({
@@ -47,7 +48,8 @@ function onLoad() {
                 message: `Error en la inicializacion de carrito`,
                 stack: error
             })
-        });
+        })
+        .finally(() => hideLoading());
 
 }
 

@@ -27,13 +27,7 @@
 </head>
 
 <body>
-    <!--
-    <div class="monstera-shape"></div>
-    <div class="monstera-shape" style="transform: rotate(45deg);"></div>
-    -->
-
     <!-- Generate Monstera shapes dynamically -->
-
     <div class="monstera-container">
         {{#each monsteraShapes}}
         <div class="monstera" style="top: {{this.top}}; left: {{this.left}};"></div>
@@ -45,20 +39,20 @@
         <!-- <img src="/path/to/logo.png" alt="Organica Arqs Logo" class="logo"> -->
         <h2><a href="/home">Organica</a></h2>
 
-        <!-- Add more navigation links as needed -->
-        <!--
-        <div class="sub-header">
-            <a href="/products">Products</a>
-            <a href="/cart">Cart</a>
-            <a href="/about">About Us</a>
-        </div>
-        -->
     </div>
 
     <div>
         {{{body}}}
         <!-- This will be replaced by child views -->
     </div>
+
+    <!-- Div Loading -->
+    <div id="loading-overlay" style="display:none;">
+        <div class="spinner">
+            <img src="/img/public/monstera_walk.gif" alt="Loading...">
+        </div>
+    </div>
+
 
     <div class="footer">
         <div class="social-icons">
@@ -72,7 +66,8 @@
 
 
     <script>
-
+        /* FUNCIONES GLOBALES */
+        // Funcion para Sweet Alert centralizado
         function showCustomAlert({ type, message, stack = '' }) {
             Swal.fire({
                 title: type.charAt(0).toUpperCase() + type.slice(1), // Capitalize the type for the title
@@ -85,6 +80,14 @@
             });
         }
 
+        // Funcion para comandar el Loading
+        function showLoading() {
+            document.getElementById('loading-overlay').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading-overlay').style.display = 'none';
+        }
     </script>
 
     <script>

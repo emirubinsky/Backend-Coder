@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
         event.preventDefault();
 
         try {
+            showLoading();
             const form = document.querySelector('form');
             const formData = new FormData(form);
             console.log("formData", formData)
@@ -46,6 +47,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const data = await response.json();
 
             if (response.ok && data.Product && data.Product._id) {
+                hideLoading();
                 showCustomAlert({
                     type: 'success',
                     message: `Producto creado correctamente`
@@ -53,7 +55,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 window.location.href = `http://localhost:8080/products/${data.Product._id}`;
             } else {
-                throw new Error('Invalid response from server');
+                hideLoading();
+                if (data.hasOwnProperty('details')) {
+                    throw new Error(data.details);
+                } else {
+                    throw new Error('Revise el formulario y vuelva a intentar');
+                }
             }
         } catch (error) {
             const form = document.getElementById('formAdd')
@@ -68,6 +75,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 message: `Error en la insercion de nuevo producto`,
                 stack: error
             })
+        } finally {
+            hideLoading();
         }
     });
 

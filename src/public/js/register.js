@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const obj = {};
             formData.forEach((val, key) => obj[key]=val);
 
+            showLoading();
             fetch('http://localhost:8080/users/register', {
                 method: 'POST',
                 body: formData,
@@ -45,7 +46,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     message: `Error en el inicio de sesión`,
                     stack: error
                 })
-            });
+            })
+            .finally(() => hideLoading());
         });
     }
 });

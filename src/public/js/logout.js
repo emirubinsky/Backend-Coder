@@ -3,6 +3,7 @@ const logout = async () => {
     console.log("Token antes de enviarlo al servidor:", token);
 
     try {
+        showLoading();
         const response = await fetch('http://localhost:8080/users/logout', {
             method: 'GET',
             headers: {
@@ -11,10 +12,12 @@ const logout = async () => {
         });
 
         if (response.ok) {
+            hideLoading()
             console.log('Logout exitoso');
             localStorage.removeItem("token");
             window.location.replace("/users/login");
         } else {
+            hideLoading()
             const errorMessage = await response.text();
             console.error('Error en el logout:', errorMessage);
         }
@@ -25,6 +28,8 @@ const logout = async () => {
             message: `Error en el logout`,
             stack: error
         })
+    } finally {
+        hideLoading()
     }
 };
 

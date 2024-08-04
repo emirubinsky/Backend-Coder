@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const newPassword = document.getElementById("newPassword").value;
 
         try {
+            showLoading()
             const response = await fetch(`http://localhost:8080/users/changePassword/${userId}`, {
                 method: "PUT",
                 headers: {
@@ -28,6 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 throw new Error(data.error || "Error al cambiar la contraseña");
             }
 
+            hideLoading()
             showCustomAlert({
                 type: 'success',
                 message: "Contraseña actualizada correctamente"
@@ -36,6 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // La contraseña se cambió exitosamente, redirigir a otra página o mostrar un mensaje de éxito
             window.location.href = "http://localhost:8080/home";
         } catch (error) {
+            hideLoading()
             errorMessage.textContent = error.message;
             errorMessage.style.display = "block";
 
@@ -44,6 +47,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 message: `"Ocurrió un error`,
                 stack: error
             })
+        } finally {
+            hideLoading()
         }
     });
 });

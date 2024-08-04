@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         try {
             // `https://backend-final-production-8834.up.railway.app/api/sessions/user/$
+            showLoading()
             const response = await fetch(`http://localhost:8080/users/role/${userId}`, {
                 method: 'PUT',
                 body: formData,
@@ -25,6 +26,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 const result = await response.json();
                 
                 if (response.ok) {
+                    hideLoading()
                     showCustomAlert({
                         type: 'success',
                         message: `Actualizacion de ROL exitosa! => Ahora es USER`
@@ -32,6 +34,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     // "https://backend-final-production-8834.up.railway.app/api/sessions/login"
                     window.location.href = "http://localhost:8080/login"; 
                 } else {
+                    hideLoading()
                     errorMessage.style.display = "block";
                     errorMessage.textContent = result.error || "Ocurrió un error al cambiar el rol del usuario.";
 
@@ -55,6 +58,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 message: `"Ocurrió un error al cambiar el rol del usuario`,
                 stack: error
             })
+        } finally {
+            hideLoading()
         }
     });
 });

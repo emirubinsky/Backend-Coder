@@ -74,6 +74,68 @@ export const validateProduct = [
     }
 ];
 
+export const validateProducOnUpdate = [
+    body('title').isString().withMessage('Name must be a string'),
+    body('price').isFloat({ gt: 0 }).withMessage('Price must be a positive number'),
+    body('category').isString().withMessage('Category must be a string'),
+    body('description').optional().isString().withMessage('Description must be a string'),
+
+    (req, res, next) => {
+        customLogger.debug('Body:', req.body); // Debugging statement
+        customLogger.debug('Files:', req.files); // Debugging statement
+
+        // Validate the main image file
+        if(req.files){
+            if (!req.files || !req.files.image || !req.files.image[0] || !isImage(req.files.image[0])) {
+
+                const message = 'Image must be a valid image file'
+                const customError = ValidationError.createError({
+                    cause: "Product > Validation > File",
+                    message,
+                    code: ENUM_ERROR_TYPES.VALIDATION_FILE_ERROR,
+                    items: [{ msg: message }]
+                })
+                customLogger.error(message, { ...customError })
+                return next(customError) //res.status(400).json(customError);
+            }
+        }
+
+        // Validate thumbnails if they are present
+        if (req.files.thumbnails) {
+            const thumbnails = req.files.thumbnails;
+            for (const file of thumbnails) {
+                if (!isImage(file)) {
+                    const message = 'Each thumbnail must be a valid image file'
+                    const customError = ValidationError.createError({
+                        cause: "Product > Validation > File",
+                        message,
+                        code: ENUM_ERROR_TYPES.VALIDATION_FILE_ERROR,
+                        items: [{ msg: message }]
+                    })
+                    customLogger.error(message, { ...customError })
+                    return next(customError) //res.status(400).json(customError);
+                }
+            }
+        }
+        next();
+    },
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            const message = 'Product VALIDATION MDW > validateProduct > error'
+            const customError = ValidationError.createError({
+                cause: "Product > Validation > validateProduct",
+                message,
+                code: ENUM_ERROR_TYPES.VALIDATION_ERROR,
+                items: errors.array()
+            })
+            customLogger.error(message, { ...customError })
+            return next(customError) //res.status(400).json(customError);
+        }
+        next();
+    }
+];
+
 export const validateProductId = [
     param('id').isMongoId().withMessage('Invalid ID format'),
     (req, res, next) => {

@@ -9,6 +9,7 @@ import {
 
 import {
     validateProduct,
+    validateProducOnUpdate,
     validateProductId,
     validateProductQuery
 } from "../middlewares/product.validation.middleware.js"
@@ -63,7 +64,7 @@ productRouter.put("/:id",
     isPremiumOrAdmin,
     productImageAndThumbnailMulter,
     validateProductId,
-    validateProduct,
+    validateProducOnUpdate,
     createProductDTO,
     responseLogger, // esta aquí para sobre-escribir el res.send y asi "interceptar" y loguear la respuesta
     ProductController.update);

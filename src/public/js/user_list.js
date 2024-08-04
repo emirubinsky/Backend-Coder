@@ -12,6 +12,7 @@ function handleDeleteUser(event) {
 
     const userId = event.target.getAttribute('data-user-id');
 
+    showLoading();
     // Realizar la solicitud HTTP DELETE para eliminar el usuario
     fetch(`http://localhost:8080/users/${userId}`, {
         method: 'DELETE',
@@ -21,7 +22,9 @@ function handleDeleteUser(event) {
     })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Error al eliminar el usuario');
+                return response.json().then(badResult => {
+                    throw new Error(badResult.details);
+                });
             }
             return response.json();
         })
@@ -29,10 +32,21 @@ function handleDeleteUser(event) {
             console.log('Usuario eliminado:', data);
             // Emitir el evento "deleteUser" al servidor con el ID del usuario a eliminar
             socket.emit('deleteUser', userId);
+            showCustomAlert({
+                type: 'success',
+                message: 'Usuario Eliminado'
+            })
+            window.location.reload()
         })
         .catch(error => {
             console.error('Error al eliminar el usuario:', error);
-        });
+            showCustomAlert({
+                type: 'error',
+                message: 'Error al eliminar el usuario',
+                stack: error
+            })
+        })
+        .finally(() => hideLoading());
 }
 
 // Agregar un event listener para el evento click en el contenedor userList
@@ -59,6 +73,7 @@ function handleChangeUserRole(event) {
     const userId = event.target.getAttribute('data-user-id');
 
     // Realizar la solicitud HTTP PUT para cambiar el rol del usuario
+    showLoading();
     fetch(`http://localhost:8080/users/swapRole/${userId}`, {
         method: 'PUT',
         headers: {
@@ -67,7 +82,9 @@ function handleChangeUserRole(event) {
     })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Error al cambiar el rol del usuario');
+                return response.json().then(badResult => {
+                    throw new Error(badResult.details);
+                });
             }
             return response.json();
         })
@@ -75,10 +92,17 @@ function handleChangeUserRole(event) {
             console.log('Rol editado:', data);
             // Emitir el evento "swapRole" al servidor con el ID del usuario cuyo rol se cambió
             socket.emit('swapRole', { userId, user: data });
+            window.location.reload()
         })
         .catch(error => {
             console.error('Error al cambiar el rol del usuario:', error);
-        });
+            showCustomAlert({
+                type: 'error',
+                message: 'Error al cambiar el rol del usuario',
+                stack: error
+            })
+        })
+        .finally(() => hideLoading());
 }
 
 // Agregar un event listener para el evento click en el contenedor userList

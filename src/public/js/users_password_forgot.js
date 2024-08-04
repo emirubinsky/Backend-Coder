@@ -1,13 +1,14 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     const form = document.querySelector("form");
     const errorMessage = document.getElementById("errorMessage");
 
-    form.addEventListener("submit", async function(event) {
+    form.addEventListener("submit", async function (event) {
         event.preventDefault();
 
         const email = document.getElementById("email").value;
 
         try {
+            showLoading()
             const response = await fetch("http://localhost:8080/users/requestPasswordReset", {
                 method: "POST",
                 headers: {
@@ -19,25 +20,36 @@ document.addEventListener("DOMContentLoaded", function() {
             const result = await response.json();
 
             if (response.ok) {
+                hideLoading()
                 showCustomAlert({
                     type: 'success',
                     message: "Se ha enviado un enlace de restablecimiento de contraseña a su email."
                 })
                 form.reset();
             } else {
+                hideLoading()
                 errorMessage.style.display = "block";
-                errorMessage.textContent = result.error || "Ocurrió un error al enviar el enlace de restablecimiento de contraseña.";
+                errorMessage.textContent = "Ocurrió un error al enviar el enlace de restablecimiento de contraseña.";
+
+                showCustomAlert({
+                    type: 'error',
+                    message: `"Ocurrió un error al enviar el enlace de restablecimiento de contraseña.`,
+                    stack: error
+                })
             }
         } catch (error) {
+            hideLoading()
             console.error("Error enviando el formulario:", error);
             errorMessage.style.display = "block";
             errorMessage.textContent = "Ocurrió un error al enviar el enlace de restablecimiento de contraseña.";
 
             showCustomAlert({
                 type: 'error',
-                message: `"Ocurrió un error`,
+                message: `"Ocurrió un error al enviar el enlace de restablecimiento de contraseña.`,
                 stack: error
             })
+        } finally {
+            hideLoading()
         }
     });
 });

@@ -145,7 +145,7 @@ router.get("/products", auth, isUserOrPremium, async (req, res) => {
 });
 
 // Mostrar el detalle de un producto
-router.get("/products/:id", auth, async (req, res) => {
+router.get("/products/:id", auth, isUserOrPremium, async (req, res) => {
 
   try {
     // Procesamos request-response
@@ -181,6 +181,8 @@ router.get("/products/:id", auth, async (req, res) => {
 router.get("/products/update/:id", auth, isPremiumOrAdmin, async (req, res) => {
 
   try {
+    customLogger.debug('HOLA /products/update/:id');
+
     const id = req.params.id
     const responseAPI = await axios.get(`http://localhost:8080/api/products/${id}`, {
       // Forward the original request's cookies
@@ -192,11 +194,14 @@ router.get("/products/update/:id", auth, isPremiumOrAdmin, async (req, res) => {
     });
 
     // Construir la respuesta JSON
+    customLogger.debug('HOLA /products/update/:id > Construir la respuesta JSON')
     const response = {
       status: "SUCCESS",
       Product: responseAPI.data.product
     };
 
+    customLogger.debug('HOLA /products/update/:id > render')
+    console.log('HOLA /products/update/:id > render', response)
     // Presentamos datos y los mandamos a traves del renderizado
     res.render("product_update", {
       response

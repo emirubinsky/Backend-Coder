@@ -39,8 +39,9 @@ function handleAddToCart(event) {
     const quantity = 1
 
     // Realizar una solicitud HTTP POST para agregar el producto al carrito
-    const url = `http://localhost:8080/api/carts/${cartId}/products/${productId}` 
+    const url = `http://localhost:8080/api/carts/${cartId}/products/${productId}`
 
+    showLoading();
     fetch(url, {
         method: 'PUT',
         headers: {
@@ -72,16 +73,17 @@ function handleAddToCart(event) {
                 message: `Error al agregar el producto al carrito`,
                 stack: error
             })
-        });
+        })
+        .finally(() => hideLoading());
 }
 
 
-/* Boton de ir al carrito */ 
+/* Boton de ir al carrito */
 
 const goToCartBtn = document.getElementById('goToCartBtn');
 goToCartBtn.addEventListener('click', () => {
     const cartId = localStorage.getItem('cartId')
-    
+
     // Construir la URL del carrito utilizando el ID seleccionado
     const cartUrl = `http://localhost:8080/cart/${cartId}`;
 

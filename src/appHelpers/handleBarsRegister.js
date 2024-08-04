@@ -22,6 +22,12 @@ class HandleBarsRegister {
     * Ejemplo en donde se usa: realTimeProducts.handlebars
     */
     Handlebars.registerHelper('eq', function (a, b, options) {
+      customLogger.debug("#eq", {
+        a, b, options
+      })
+      console.log("#eq", {
+        a, b, options
+      })
       return a === b ? options.fn(this) : options.inverse(this);
     });
 
@@ -67,6 +73,7 @@ class HandleBarsRegister {
       return grandTotal.toFixed(2);
     });
 
+    /*
     Handlebars.registerHelper('eq', function (v1, operator, v2, options) {
       switch (operator) {
         case '==':
@@ -93,6 +100,7 @@ class HandleBarsRegister {
           return options.inverse(this);
       }
     });
+    */
   }
 
 }

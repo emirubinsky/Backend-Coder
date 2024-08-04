@@ -56,9 +56,13 @@ class ProductManager {
    * - Y un puñado de props para actualizar (opcional)
    */
   static async update(productDTO, userId, userRole) {
-
+    console.log("probando Product > update")
     if (productDTO.image === null) {
       delete productDTO.image
+    }
+
+    if (productDTO.thumbnails === null) {
+      delete productDTO.thumbnails
     }
 
     const productId = productDTO.id

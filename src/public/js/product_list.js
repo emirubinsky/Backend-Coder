@@ -41,6 +41,7 @@ function handleDeleteProduct(event) {
     // Realizar una solicitud HTTP POST para agregar el producto al carrito
     const url = `http://localhost:8080/api/products/${productId}` 
 
+    showLoading();
     fetch(url, {
         method: 'DELETE',
         headers: {
@@ -49,7 +50,9 @@ function handleDeleteProduct(event) {
     })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Error al querer borrar el producto del sistema');
+                return response.json().then(badResult => {
+                    throw new Error(badResult.details);
+                });
             }
             return response.json();
         })
@@ -68,7 +71,8 @@ function handleDeleteProduct(event) {
                 message: `Error al querer borrar el producto del sistema`,
                 stack: error
             })
-        });
+        })
+        .finally(() => hideLoading());
 }
 
 function handleUpdateProduct(event) {

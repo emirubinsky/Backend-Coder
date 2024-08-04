@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     // Function to fetch existing thumbnails and populate storedFiles
     async function populateStoredFiles(productId) {
         try {
+            showLoading();
             const response = await fetch(`http://localhost:8080/api/products/${productId}`);
             const data = await response.json();
             console.log("populateStoredFiles > ", data);
@@ -39,6 +40,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                     }
                 }
             }
+            hideLoading();
         } catch (error) {
             console.error('Error fetching thumbnails:', error);
             showCustomAlert({
@@ -46,6 +48,8 @@ document.addEventListener('DOMContentLoaded', async function () {
                 message: `Algoaaa`,
                 stack: error
             })
+        } finally {
+            hideLoading();
         }
     }
 
@@ -126,6 +130,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         event.preventDefault();
 
         try {
+            showLoading();
             const form = document.querySelector('form');
             const formData = new FormData(form);
             console.log("formData", formData)
@@ -153,7 +158,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             const data = await response.json();
 
             if (response.ok && data.Product && data.Product._id) {
-
+                hideLoading();
                 showCustomAlert({
                     type: 'success',
                     message: `Producto actualizado correctamente`
@@ -161,10 +166,17 @@ document.addEventListener('DOMContentLoaded', async function () {
 
                 window.location.href = `http://localhost:8080/products/${data.Product._id}`;
             } else {
-                throw new Error('Invalid response from server');
+                hideLoading();
+                if (data.hasOwnProperty('details')) {
+                    throw new Error(data.details);
+                } else {
+                    throw new Error('Revise el formulario y vuelva a intentar');
+                }
+
             }
         } catch (error) {
-            const form = document.getElementById('formAdd')
+            hideLoading();
+            const form = document.getElementById('formUpdate')
             const errorDiv = document.createElement('div');
             errorDiv.classList.add('alert', 'alert-danger');
             errorDiv.textContent = 'Failed to update product. Please try again.';
@@ -176,6 +188,8 @@ document.addEventListener('DOMContentLoaded', async function () {
                 message: `Error en la actualizacion de nuevo producto`,
                 stack: error
             })
+        } finally {
+            hideLoading();
         }
     });
 });

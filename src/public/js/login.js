@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
         formData.forEach((val, key) => obj[key] = val);
         const errorMessage = document.getElementById('errorMessage');
 
+        showLoading();
         fetch('http://localhost:8080/users/login', {
             method: 'POST',
             body: JSON.stringify(obj),
@@ -43,7 +44,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     message: `Error en el inicio de sesión:`,
                     stack: error
                 })
-            });
+            })
+            .finally(() => hideLoading());
     });
 
 });
@@ -76,6 +78,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const errorMessage = document.getElementById('errorMessage');
 
+            showLoading();
             fetch('http://localhost:8080/users/github', {
                 method: 'GET',
                 headers: {
@@ -104,7 +107,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         message: `Error en el inicio de sesión`,
                         stack: error
                     })
-                });
+                })
+                .finally(() => hideLoading());
         })
     }
 })
