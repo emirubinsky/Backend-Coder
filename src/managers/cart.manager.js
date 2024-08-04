@@ -117,40 +117,45 @@ class CartManager {
                 return new Error('Product not found - We can not continue');
             }
 
-            if(userRole !== "admin" || "premium") {
-                customLogger.warn(`User no autorizado`);
+            if (product.stock < 1) {
+                customLogger.warning(`Producto fuera de stock: ${productId}`);
+                throw new Error("Producto fuera de stock");
+            }
+
+            if (userRole !== "user" && userRole !== "premium") {
+                customLogger.warning(`User no autorizado`);
                 throw new Error("Usted no esta autorizado");
             }
 
-            if(userRole == "premium" && userId == product.owner) {
-                customLogger.warn(`User es autor de este producto`);
+            if (userRole == "premium" && userId == product.owner) {
+                customLogger.warning(`User es autor de este producto`);
                 throw new Error("Usted es el creador de este producto, no puede agregarlo al carrito");
             }
 
             const validation = await this.validateCartProduct(product, newQuantity)
 
             // Check if product already exists in the cart
-            
+
             customLogger.info("productos antes de", cart.products)
 
             const existingProduct = cart.products.find(item => item.product._id.toString() === product._id.toString());
 
             if (existingProduct) {
-                if(replaceQuantity){
+                if (replaceQuantity) {
                     existingProduct.quantity = newQuantity;
-                }else{
+                } else {
                     existingProduct.quantity += newQuantity;
                 }
-                
+
             } else {
                 cart.products.push({
                     product: product._id,
                     quantity: newQuantity
                 });
             }
-            
+
             customLogger.info("productos despues de", cart.products)
-            
+
             const serviceOutput = await CartManager.update(cart)
             return serviceOutput
         } catch (error) {
@@ -180,24 +185,41 @@ class CartManager {
                 return new Error('Product not found - We can not continue');
             }
 
-            if(userRole !== "admin" || "premium") {
-                customLogger.warn(`User no autorizado`);
+            if (userRole !== "user" && userRole !== "premium") {
+                customLogger.warning(`User no autorizado`);
                 throw new Error("Usted no esta autorizado");
             }
 
-            if(userRole == "premium" && userId == product.owner) {
-                customLogger.warn(`User es autor de este producto`);
+            if (userRole == "premium" && userId == product.owner) {
+                customLogger.warning(`User es autor de este producto`);
                 throw new Error("Usted es el creador de este producto, no puede agregarlo al carrito");
             }
 
-            cart.products = cart.products.filter(item => !item.product.equals(product._id));
+            customLogger.debug("removeProductFromCart > product list before", {
+                productIdToRemove: productId,
+                products: cart.products.map(p => p._id + " | " + p.product.title)
+            })
+
+            // Si, productItem.product es el ID DE PRODUCTO
+            // productItem.product._id es otro id...
+            const newList = cart.products.filter(productItem => productItem.product._id.toString() !== productId.toString()); // 662fc2915b775e033491202d          
+
+            cart.products = []
+            cart.products = newList
+
+            customLogger.debug("removeProductFromCart > product list after", {
+                productIdToRemove: productId,
+                newList,
+                products: cart.products.map(p => p.product._id + " | " + p.product.title)
+            })
 
             // TODO - unificar bien el tema _id
             cart.id = cart._id
 
             return await CartManager.update(cart)
         } catch (error) {
-            customLogger.info("removeProductFromCart > ERROR", {
+            console.log("removeProductFromCart > ERROR", { error })
+            customLogger.warning("removeProductFromCart > ERROR", {
                 reason: error.message
             })
             throw error
@@ -221,7 +243,7 @@ class CartManager {
                 );
                 // Handle `result` here if needed
             }
-
+            1
             return {
                 success: true
             }

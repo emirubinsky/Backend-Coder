@@ -75,7 +75,7 @@ class ProductController {
             customLogger.info("================= UPDATE ===============");
 
             const userId = req.session.userId;
-            const userRole = req.session.userRole;
+            const userRole = req.session.user.role;
 
             const updatedProduct = await ProductManager.update(req.dto, userId, userRole)
 
@@ -97,7 +97,7 @@ class ProductController {
     static async delete(req, res) {
         try {
             const userId = req.session.userId;
-            const userRole = req.session.userRole;
+            const userRole = req.session.user.role;
 
             const productId = req.params.id;
 

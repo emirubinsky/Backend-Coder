@@ -69,7 +69,7 @@ class UserManager {
     }
 
     if (currentUser.role !== "premium") {
-      customLogger.warn("Acceso no autorizado");
+      customLogger.warning("Acceso no autorizado");
       throw new Error("No se puede cambiar a otro rol si no es PREMIUM")
     }
 
@@ -136,9 +136,9 @@ class UserManager {
       } else if (user.role === "user") {
         newRole = "premium";
       } else if (user.role === "admin") {
-        customLogger.warn("No se puede cambiar el rol de admin")
+        customLogger.warning("No se puede cambiar el rol de admin")
       } else {
-        customLogger.warn("Acceso no autorizado");
+        customLogger.warning("Acceso no autorizado");
       }
 
       if (newRole === null) {

@@ -135,10 +135,10 @@ class CartController {
             customLogger.info("================= UPDATE QUANTITY ===============");
 
             const userId = req.session.userId;
-            const userRole = req.session.userRole
+            const userRole = req.session.user.role
 
             const dto = req.dto
-
+            customLogger.debug("Cart Controller > to CartManager.updateProductQuantity", { sessionData: req.session })
             const updatedCart = await CartManager.updateProductQuantity(dto, userId, userRole)
 
             return res.json({
@@ -161,7 +161,7 @@ class CartController {
             customLogger.info("================= REMOVE PRODUCT ===============");
 
             const userId = req.session.userId;
-            const userRole = req.session.userRole
+            const userRole = req.session.user.role
 
             const {
                 cid: cartId,

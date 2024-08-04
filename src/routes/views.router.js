@@ -107,7 +107,7 @@ router.get("/products/list", auth, isPremiumOrAdmin, async (req, res) => {
 
 
 // Obtener todos los productos para ir a comprar
-router.get("/products", auth, isUser, async (req, res) => {
+router.get("/products", auth, isUserOrPremium, async (req, res) => {
 
   // TODO: esto debería estar en un viewController.js
   try {
@@ -117,7 +117,7 @@ router.get("/products", auth, isUser, async (req, res) => {
       ...req.query,
       view: true
     };
-    const axiosResponse = await apiClient.get('http://localhost:8080/api/products', {
+    const axiosResponse = await apiClient.get('http://localhost:8080/api/products/', {
 
       // Forward the original request's cookies
       headers: {
@@ -229,7 +229,7 @@ router.get("/product/add", auth, isPremiumOrAdmin, (req, res) => {
 
 /*** CARRITOS ***/
 // Ver Carrito
-router.get("/cart/:id", auth, isUser, async (req, res) => {
+router.get("/cart/:id", auth, isUserOrPremium, async (req, res) => {
 
   try {
     customLogger.info("VIEWS > /cart/:id", req.params)
@@ -267,7 +267,7 @@ router.get("/cart/:id", auth, isUser, async (req, res) => {
 })
 
 // Listar carritos
-router.get("/carts", auth, isUser, async (req, res) => {
+router.get("/carts", auth, isUserOrPremium, async (req, res) => {
 
   try {
 
@@ -308,7 +308,7 @@ router.get("/carts", auth, isUser, async (req, res) => {
 
 /*** TICKETS ***/
 // Listar Tickets
-router.get("/tickets", auth, isUser, async (req, res) => {
+router.get("/tickets", auth, isUserOrPremium, async (req, res) => {
   try {
 
     const apiClient = axios.create({ baseUrl: '/tickets' });

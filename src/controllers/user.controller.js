@@ -219,6 +219,7 @@ const userController = {
             req.session.token = access_token;
             req.session.userId = userId;
             req.session.user = req.user;
+            req.session.user.role = req.user.role;
             req.session.isAuthenticated = true;
 
             customLogger.info("Token login github:", access_token);
@@ -349,13 +350,13 @@ const userController = {
             customLogger.info(`Cambiando las contraseña del user: ${userId}`);
             const existingUser = await User.findOne({ userId }) //userRepository.findUser(userId);
             if (!existingUser) {
-                customLogger.warn(`User no encontrado: ${userId}`);
+                customLogger.warning(`User no encontrado: ${userId}`);
                 throw new Error("El usuario no existe");
             }
 
             const isPasswordValid = await bcrypt.compare(oldPassword, existingUser.password);
             if (!isPasswordValid) {
-                customLogger.warn(`Contraseña antigua no válida para user: ${userId}`);
+                customLogger.warning(`Contraseña antigua no válida para user: ${userId}`);
                 throw new Error("La contraseña antigua es incorrecta");
             }
 

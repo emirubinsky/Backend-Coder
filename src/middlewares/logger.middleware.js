@@ -11,7 +11,7 @@ export const responseLogger = (req, res, next) => {
     const oldSend = res.send;
 
     res.send = function (data) {
-        customLogger.info(`Response: ${res.statusCode} ${res.statusMessage}`, { metadata: data });
+        // customLogger.info(`Response: ${res.statusCode} ${res.statusMessage}`, { metadata: data });
         res.send = oldSend;
         return res.send(data);
     };

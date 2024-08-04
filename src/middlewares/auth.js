@@ -80,6 +80,7 @@ export const isAdmin = (req, res, next) => {
     if (req.session && req.session.user && req.session.user.role === 'admin') {
         return next();
     } else {
+        console.log("isUserOrPremium > 403", { sessionData: req.session })
         return res.status(403).json({ message: 'Acceso no autorizado' });
     }
 };
@@ -90,6 +91,7 @@ export const isUser = (req, res, next) => {
         next();
     }
     else {
+        console.log("isUser > 403", { sessionData: req.session })
         return res.status(403).json({ error: 'Acceso no autorizado' });
     }
 }
@@ -99,6 +101,7 @@ export const isPremium = (req, res, next) => {
     if (req.session && req.session.user && req.session.user.role === 'premium') {
         return next();
     } else {
+        console.log("isPremium > 403", { sessionData: req.session })
         return res.status(403).json({ message: 'Acceso no autorizado' });
     }
 };
@@ -108,24 +111,27 @@ export const isUserOrPremium = (req, res, next) => {
         next();
     }
     else {
+        console.log("isUserOrPremium > 403", { sessionData: req.session })
         return res.status(403).json({ error: 'Acceso no autorizado' });
     }
 }
 
 export const isPremiumOrAdmin = (req, res, next) => {
-    if(req.session && req.session.user && req.session.user.role === 'premium' || req.session.user.role === 'admin') {
+    if (req.session && req.session.user && req.session.user.role === 'premium' || req.session.user.role === 'admin') {
         next();
     }
     else {
+        console.log("isPremiumOrAdmin > 403", { sessionData: req.session })
         return res.status(403).json({ error: 'Acceso no autorizado' });
     }
 }
 
 export const isAll = (req, res, next) => {
-    if(req.user && req.user.role === 'admin' || req.user.role === 'premium' || req.user.role === 'user') {
+    if (req.user && req.user.role === 'admin' || req.user.role === 'premium' || req.user.role === 'user') {
         next();
     }
     else {
+        console.log("isAll > 403", { sessionData: req.session })
         return res.status(403).json({ error: 'Acceso no autorizado' });
     }
 }
