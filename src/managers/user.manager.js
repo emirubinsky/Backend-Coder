@@ -7,6 +7,8 @@ import {
   MAIL_USERNAME,
 } from "../util.js";
 
+import { customLogger } from '../appHelpers/logger.helper.js';
+
 class UserManager {
   static async getOne(id) {
     // Perform business logic operations
@@ -62,18 +64,17 @@ class UserManager {
   static async changeToUserRole(userId) {
     const currentUser = await UserManager.getOne(userId)
 
-    if (!user) {
+    if (!currentUser) {
       throw new Error("El usuario no existe");
     }
 
-    if (user.role === "premium") {
-      user.role = "user"
-    } else {
+    if (currentUser.role !== "premium") {
       logger.warn("Acceso no autorizado");
       throw new Error("No se puede cambiar a otro rol si no es PREMIUM")
     }
 
-    const userDTO = new UserDTO({ ...currentUser, role: user.role })
+    const userDTO = new UserDTO({ ...currentUser, role: "user", id: userId})
+    customLogger.info("changeToUserRole >>>", userDTO );
 
     const updatedUser = await UserManager.update(userDTO);
 
@@ -105,8 +106,9 @@ class UserManager {
         await UserManager.uploadDocs(userId, files.comprobanteCuenta);
 
         // Procesamos el cambio de role
-        user.role = "premium"
-        const userDTO = new UserDTO({ ...currentUser, role: user.role })
+        const userDTO = new UserDTO({ ...user, role:  "premium", id: userId})
+
+        customLogger.info("changeToPremiumRole >>>", userDTO );
 
         const updatedUser = await UserManager.update(userDTO);
 
@@ -128,6 +130,10 @@ class UserManager {
         throw new Error("Usuario no encontrado");
       }
 
+      if(typeof user.documents === 'undefined'  || user.documents === null ){
+        user.documents = []
+      }
+
       documents.forEach(doc => {
         user.documents.push({
           name: doc.originalname,
@@ -135,7 +141,7 @@ class UserManager {
         });
       });
 
-      const userDTO = new UserDTO({ ...currentUser, documents })
+      const userDTO = new UserDTO({ ...user, documents })
 
       return await UserManager.update(userDTO);
 

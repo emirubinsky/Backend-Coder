@@ -3,7 +3,6 @@
     <div class="container mt-5">
         <h1 class="mb-4">Bienvenido {{user.first_name}} - Rol: {{user.role}}</h1>
         <div class="row justify-content-center">
-            <!-- {{#eq user.role "admin"}}-->
             {{#ifRole user.role "admin" "premium"}}
             <!-- If user is ADMIN -->
             <div class="col-md-4 mb-4">
@@ -37,23 +36,38 @@
                     </div>
                 </div>
             </div>
-            <!--
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Ver Carritos</h5>
-                        <p class="card-text">Ver carritos no confirmados</p>
-                        <a href="/carts" class="btn btn-primary btn-block">Ir a Carritos</a>
-                    </div>
-                </div>
-            </div>
-            -->
             <div class="col-md-4 mb-4">
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Ver Tickets</h5>
                         <p class="card-text">Ver tickets de compras</p>
                         <a href="/tickets" class="btn btn-primary btn-block">Ir a Tickets</a>
+                    </div>
+                </div>
+            </div>
+            {{/ifRole}}
+
+            {{#ifRole user.role "user"}}
+            <!-- If user is CLIENT -->
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Premium!</h5>
+                        <p class="card-text">Completar datos para alcanzar el nivel</p>
+                        <a href="/change_role_premium" class="btn btn-primary btn-block">Ir a Cambio de Rol</a>
+                    </div>
+                </div>
+            </div>
+            {{/ifRole}}
+
+            {{#ifRole user.role "premium"}}
+            <!-- If user is CLIENT -->
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Basic!</h5>
+                        <p class="card-text">Completar datos para alcanzar el nivel</p>
+                        <a href="/change_role_user" class="btn btn-primary btn-block">Ir a Cambio de Rol</a>
                     </div>
                 </div>
             </div>

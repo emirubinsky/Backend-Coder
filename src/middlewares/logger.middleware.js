@@ -45,6 +45,7 @@ export const errorLogger = (err, req, res, next) => {
     if (err.isCustom) {
         res.json(err);
     } else {
+        customLogger.error(`Error: ${err.message}`, { ...err });
         res.send('Something went wrong!');
     }
 };

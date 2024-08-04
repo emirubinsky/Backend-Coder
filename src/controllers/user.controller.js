@@ -122,10 +122,11 @@ const userController = {
                     httpOnly: true,
                 })
 
+                const userToSend = { id: userId, userId, ...currentUser, last_connection }
 
-                customLogger.info("Datos del login:", updatedUser, "token:", access_token);
+                customLogger.info("Datos del login:", userId, "token:", access_token);
 
-                res.json({ message: "Success", updatedUser, access_token });
+                res.json({ message: "Success", userId, access_token });
             })(req, res, next);
 
         } catch (error) {
@@ -390,6 +391,11 @@ const userController = {
     changeToPremiumRole: async (req, res) => {
         const userId = req.params.uid;
         const files = req.files;
+
+        console.info("changeToPremiumRole", {
+            userId,
+            files
+        });
 
         try {
             const updatedPremium = await UserManager.changeToPremiumRole(userId, files);

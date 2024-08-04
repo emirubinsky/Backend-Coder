@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { auth, authToken, isUser, isAdmin, isUserOrPremium, isPremiumOrAdmin } from "../middlewares/auth.js";
+import { auth, authToken, isUser, isAdmin, isUserOrPremium, isPremiumOrAdmin, isPremium } from "../middlewares/auth.js";
 import { customLogger } from '../appHelpers/logger.helper.js';
 
 import axios from 'axios'
@@ -337,5 +337,16 @@ router.get("/tickets", auth, isUser, async (req, res) => {
     res.status(500).json({ errorx: 'Error /tickets', errorMessage: error.message, stack: error.stack });
   }
 })
+
+
+/*** CAMBIO DE ROL ***/
+router.get("/change_role_premium", auth, isUser, (req, res) => {
+  res.render("users_change_role_premium");
+});
+
+router.get("/change_role_user", auth, isPremium, (req, res) => {
+  res.render("users_change_role_user");
+});
+
 
 export default router;

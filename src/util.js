@@ -117,27 +117,41 @@ export function configureProductMulter() {
 export function configureProfileMulter() {
     const storage = multer.diskStorage({
         destination: function (req, file, cb) {
-            cb(null, path.join(__dirname, 'public', 'user','profiles'));
+            cb(null, path.join(__dirname, 'public', 'img', 'user','profiles'));
         },
         filename: function (req, file, cb) {
             cb(null, file.originalname);
         },
     });    
 
-    return multer({ storage: storage });
+    return multer({
+        storage: storage,
+        onError: function (err, next) {
+
+            console.log("Multer upload Error", err)
+            next()
+        }
+    });
 }
 
 export function configureDocumentMulter() {
     const storage = multer.diskStorage({
         destination: function (req, file, cb) {
-            cb(null, path.join(__dirname, 'public', 'user', 'documents'));
+            cb(null, path.join(__dirname, 'public', 'img', 'user', 'documents'));
         },
         filename: function (req, file, cb) {
             cb(null, file.originalname);
         },
     });    
 
-    return multer({ storage: storage });
+    return multer({
+        storage: storage,
+        onError: function (err, next) {
+
+            console.log("Multer upload Error", err)
+            next()
+        }
+    });
 }
 
 export const createHash = (password) => bcrypt.hashSync(password, bcrypt.genSaltSync(10))
