@@ -40,9 +40,30 @@ export default class UserMongoService {
 
     async findInactiveUsers(inactivityPeriod) {
         const inactivityDate = new Date(Date.now() - inactivityPeriod);
+        console.log('findInactiveUsers > inactivityDate:', inactivityDate);
         try {
-            const user = await model.find({ last_connection: { $lt: inactivityDate } })
-            return user;
+            const filter = {
+                $or: [
+                  { last_connection: { $exists: false } },
+                  { last_connection: { $lt: inactivityDate } }
+                ]
+              };
+
+            const users = await model.find(filter)//{ last_connection: { $lte: inactivityDate } }
+
+            const inactiveUsers = []
+
+            /*
+            users.forEach(user => {
+                console.log('findInactiveUsers > users:', {
+                    userId: user._id,
+                    lastConnection: user.last_connection
+                });
+            })
+            */
+
+            console.log('findInactiveUsers > users:', users);
+            return users;
         } catch (error) {
             throw new Error("Error al buscar usuarios inactivos: " + error.message);
         }
@@ -82,7 +103,7 @@ export default class UserMongoService {
         userPaginationOutput.docs.forEach((user) => {
             customLogger.info('-------');
             customLogger.info('User ID:', user._id);
-            customLogger.info('User ID:', user.user);
+            customLogger.info('User:', user.user);
             customLogger.info('Products:', user.products);
             user.products
                 .filter(userProduct => userProduct.product !== null)

@@ -150,7 +150,7 @@ class UserManager {
       y enviar el mensaje de usuario eliminado por inactividad */
       const inactiveUsers = await userService.findInactiveUsers(inactivityPeriod);
 
-      return
+      return inactiveUsers
 
     } catch (error) {
       throw new Error("Error al ejecutar findAllInactiveUsers: " + error.message);

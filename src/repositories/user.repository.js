@@ -25,6 +25,20 @@ export default class UserRepository {
         return result
     }
 
+    async findInactiveUsers(inactivityPeriod) {
+
+        const result = await this.dao.findInactiveUsers(inactivityPeriod)
+
+        return result
+    }
+
+    async deleteInactiveUser(userId){
+
+        const result = await this.dao.deleteInactiveUser(userId)
+
+        return result
+    }
+
     async insert(UserDTO) {
         const result = await this.dao.insert(UserDTO)
 
