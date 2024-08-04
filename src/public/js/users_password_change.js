@@ -28,11 +28,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 throw new Error(data.error || "Error al cambiar la contraseña");
             }
 
+            showCustomAlert({
+                type: 'success',
+                message: "Contraseña actualizada correctamente"
+            })
+
             // La contraseña se cambió exitosamente, redirigir a otra página o mostrar un mensaje de éxito
             window.location.href = "http://localhost:8080/home";
         } catch (error) {
             errorMessage.textContent = error.message;
             errorMessage.style.display = "block";
+
+            showCustomAlert({
+                type: 'error',
+                message: `"Ocurrió un error`,
+                stack: error
+            })
         }
     });
 });

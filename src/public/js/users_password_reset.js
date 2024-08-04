@@ -20,7 +20,10 @@ document.addEventListener("DOMContentLoaded", function() {
             const result = await response.json();
 
             if (response.ok) {
-                alert("Contraseña restablecida correctamente.");
+                showCustomAlert({
+                    type: 'success',
+                    message: `Contraseña restablecida correctamente.`
+                })
                 window.location.href = "http://localhost:8080/login"; 
             } else {
                 errorMessage.style.display = "block";
@@ -30,6 +33,12 @@ document.addEventListener("DOMContentLoaded", function() {
             console.error("Error submitting reset password form:", error);
             errorMessage.style.display = "block";
             errorMessage.textContent = "Ocurrió un error al restablecer la contraseña.";
+
+            showCustomAlert({
+                type: 'error',
+                message: `"Ocurrió un error`,
+                stack: error
+            })
         }
     });
 });

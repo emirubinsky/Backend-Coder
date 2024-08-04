@@ -46,16 +46,28 @@ document.addEventListener('DOMContentLoaded', function () {
             const data = await response.json();
 
             if (response.ok && data.Product && data.Product._id) {
+                showCustomAlert({
+                    type: 'success',
+                    message: `Producto creado correctamente`
+                })
+
                 window.location.href = `http://localhost:8080/products/${data.Product._id}`;
             } else {
                 throw new Error('Invalid response from server');
             }
         } catch (error) {
+            const form = document.getElementById('formAdd')
             const errorDiv = document.createElement('div');
             errorDiv.classList.add('alert', 'alert-danger');
-            errorDiv.textContent = 'Failed to add product. Please try again.';
+            errorDiv.textContent = 'Error en la insercion de nuevo producto. Revise el formulario.';
             form.insertAdjacentElement('beforebegin', errorDiv);
             console.error('Error:', error);
+
+            showCustomAlert({
+                type: 'error',
+                message: `Error en la insercion de nuevo producto`,
+                stack: error
+            })
         }
     });
 

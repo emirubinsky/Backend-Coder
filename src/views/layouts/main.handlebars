@@ -9,13 +9,17 @@
 
     <!-- Link to favicon -->
     <link rel="shortcut icon" href="/img/public/favicon.ico" type="image/x-icon">
-    
+
     <!-- Link to Bootstrap CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <!-- Link to Google Fonts (Roboto) -->
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet">
     <!-- Link to Font Awesome CSS for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <!-- Link to CSS for SWAL -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
     <link rel="stylesheet" href="/css/styles.css"> <!-- Link to your CSS file -->
 
@@ -29,13 +33,13 @@
     -->
 
     <!-- Generate Monstera shapes dynamically -->
-    
+
     <div class="monstera-container">
         {{#each monsteraShapes}}
         <div class="monstera" style="top: {{this.top}}; left: {{this.left}};"></div>
         {{/each}}
     </div>
-    
+
 
     <div class="header">
         <!-- <img src="/path/to/logo.png" alt="Organica Arqs Logo" class="logo"> -->
@@ -52,7 +56,8 @@
     </div>
 
     <div>
-        {{{body}}} <!-- This will be replaced by child views -->
+        {{{body}}}
+        <!-- This will be replaced by child views -->
     </div>
 
     <div class="footer">
@@ -65,6 +70,22 @@
         <p>&copy; {{year}} Organica Arqs</p>
     </div>
 
+
+    <script>
+
+        function showCustomAlert({ type, message, stack = '' }) {
+            Swal.fire({
+                title: type.charAt(0).toUpperCase() + type.slice(1), // Capitalize the type for the title
+                text: message,
+                icon: type, // 'success', 'error', 'warning', 'info', 'question'
+                showConfirmButton: true,
+                timer: 10000, // 10 seconds
+                footer: stack ? `<pre style="text-align: left;">${stack}</pre>` : '', // Display stack trace if provided
+                position: 'center'
+            });
+        }
+
+    </script>
 
     <script>
         // Generate Monstera shapes positions
@@ -91,14 +112,13 @@
         crossorigin="anonymous"></script>
 
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
-     <!--<script src="https://unpkg.com/boxicons"></script> -->
+    <!--<script src="https://unpkg.com/boxicons"></script> -->
 
 
     <!-- nuestras librerias compartidas aqui -->
-    
+
     <script src="/js/logout.js"></script>
 
-    <!-- <script type="module" src="js/cartInMemory.js"></script>-->
     <!-- <script type="module" src="js/product_list.js"></script>-->
     <!-- <script type="module" src="js/cart.js"></script> -->
 </body>

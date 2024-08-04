@@ -55,10 +55,19 @@ function handleDeleteProduct(event) {
         })
         .then(data => {
             console.log('Producto eliminado:', data);
+            showCustomAlert({
+                type: 'success',
+                message: `Producto eliminado correctamente.`
+            })
             window.location.reload()
         })
         .catch(error => {
             console.error('Error al querer borrar el producto del sistema', error);
+            showCustomAlert({
+                type: 'error',
+                message: `Error al querer borrar el producto del sistema`,
+                stack: error
+            })
         });
 }
 
@@ -68,6 +77,11 @@ function handleUpdateProduct(event) {
 
     if (!token) {
         console.log("Usuario no logueado o registrado");
+        showCustomAlert({
+            type: 'warning',
+            message: `Usuario no logueado o registrado`,
+            stack: error
+        })
         window.location.href = "http://localhost:8080/"
     }
 

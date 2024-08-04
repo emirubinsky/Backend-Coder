@@ -24,11 +24,26 @@ async function deleteProductFromCart(cid, pid) {
 
         if (response.ok) {
             console.log(`Producto con ID ${pid} eliminado del carrito ${cid}`);
+            showCustomAlert({
+                type: 'success',
+                message: `Producto con ID ${pid} eliminado del carrito ${cid}`
+            })
+
         } else {
             console.error(`Error al eliminar el producto con ID ${pid} del carrito`);
+            showCustomAlert({
+                type: 'error',
+                message: `Error al eliminar el producto con ID ${pid} del carrito`,
+                stack: response
+            })
         }
     } catch (error) {
         console.error('Error de red:', error);
+        showCustomAlert({
+            type: 'error',
+            message: `Error generico`,
+            stack: error
+        })
     }
 }
 
@@ -51,17 +66,25 @@ socket.on('deleteProductCart', (deleteProductCartId) => {
     if (cartElement) {
         cartElement.parentElement.parentElement.remove();
         console.log(`Producto con ID ${deleteProductCartId} eliminado`);
+        showCustomAlert({
+            type: 'success',
+            message: `Producto con ID ${pid} eliminado del carrito ${cid}`
+        })
     } else {
         console.log(`No se encontró el producto con ID ${deleteProductCartId}`);
+        showCustomAlert({
+            type: 'warning',
+            message: `No se encontró el producto con ID ${deleteProductCartId}`
+        })
     }
 });
 
 
-/* Boton de retornar al paso anterior */ 
+/* Boton de retornar al paso anterior */
 
 const returnToShoppingBtn = document.getElementById('returnToShopping');
 returnToShoppingBtn.addEventListener('click', () => {
-    
+
     // Construir la URL del carrito utilizando el ID seleccionado
     const shoppingUrl = `http://localhost:8080/products`;
 
@@ -70,15 +93,15 @@ returnToShoppingBtn.addEventListener('click', () => {
 });
 
 
-/* Boton de ir a confirmar la compra */ 
+/* Boton de ir a confirmar la compra */
 
 async function confirmCartToTicket(cid) {
     console.log("id del carrito:", cid);
-    
+
     try {
 
         console.log({
-            body:{
+            body: {
                 cartId: cid
             }
         })
@@ -96,10 +119,23 @@ async function confirmCartToTicket(cid) {
 
         if (response.ok) {
             console.log(`Creado el ticket a partir del del carrito ${cid}`);
+            showCustomAlert({
+                type: 'success',
+                message: `Producto con ID ${pid} eliminado del carrito ${cid}`
+            })
         } else {
             console.error(`Algo ha pasado al intentar crear un Ticket`);
+            showCustomAlert({
+                type: 'warning',
+                message: `Algo ha pasado al intentar crear un Ticket`,
+                stack: response
+            })
         }
     } catch (error) {
-        console.error('Error de red:', error);
+        showCustomAlert({
+            type: 'error',
+            message: `Error generico`,
+            stack: error
+        })
     }
 }

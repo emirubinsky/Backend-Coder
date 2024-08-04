@@ -26,11 +26,11 @@ document.addEventListener('DOMContentLoaded', async function () {
             const response = await fetch(`http://localhost:8080/api/products/${productId}`);
             const data = await response.json();
             console.log("populateStoredFiles > ", data);
-    
+
             if (response.ok && data.product && data.product.thumbnails) {
                 for (const thumbnailUrl of data.product.thumbnails) {
                     console.log("thumbnailUrl", thumbnailUrl);
-    
+
                     if (thumbnailUrl !== null) {
                         const blob = await fetch(`http://localhost:8080/img/products/${thumbnailUrl}`).then(res => res.blob());
                         const file = new File([blob], thumbnailUrl.substring(thumbnailUrl.lastIndexOf('/') + 1));
@@ -41,6 +41,11 @@ document.addEventListener('DOMContentLoaded', async function () {
             }
         } catch (error) {
             console.error('Error fetching thumbnails:', error);
+            showCustomAlert({
+                type: 'warning',
+                message: `Algoaaa`,
+                stack: error
+            })
         }
     }
 
@@ -148,16 +153,29 @@ document.addEventListener('DOMContentLoaded', async function () {
             const data = await response.json();
 
             if (response.ok && data.Product && data.Product._id) {
+
+                showCustomAlert({
+                    type: 'success',
+                    message: `Producto actualizado correctamente`
+                })
+
                 window.location.href = `http://localhost:8080/products/${data.Product._id}`;
             } else {
                 throw new Error('Invalid response from server');
             }
         } catch (error) {
+            const form = document.getElementById('formAdd')
             const errorDiv = document.createElement('div');
             errorDiv.classList.add('alert', 'alert-danger');
             errorDiv.textContent = 'Failed to update product. Please try again.';
             form.insertAdjacentElement('beforebegin', errorDiv);
             console.error('Error:', error);
+
+            showCustomAlert({
+                type: 'error',
+                message: `Error en la actualizacion de nuevo producto`,
+                stack: error
+            })
         }
     });
 });

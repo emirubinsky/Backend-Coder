@@ -4,32 +4,29 @@
 
 console.log("SOY HOME!");
 
-function onLoad(){
-
-    console.log("Document is fully loaded.");
-
+function onLoad() {
     const userId = localStorage.getItem("userId")
 
     fetch('http://localhost:8080/api/carts/user', {
         method: 'POST',
-        body: JSON.stringify({ 
-            user: userId 
+        body: JSON.stringify({
+            user: userId
         }),
         headers: {
             'Content-Type': 'application/json',
             "Access-Control-Allow-Origin": "*"
         }
     })
-    .then(response => {
-        if (response.status === 200) {
-            // La respuesta exitosa
-            return response.json();
-        } else {
-            console.log("hubo un error")
-            // Si la respuesta no es exitosa, mostrar un mensaje de error
-            throw new Error('Problemas al inicializar carrito');
-        }
-    })
+        .then(response => {
+            if (response.status === 200) {
+                // La respuesta exitosa
+                return response.json();
+            } else {
+                console.log("hubo un error")
+                // Si la respuesta no es exitosa, mostrar un mensaje de error
+                throw new Error('Problemas al inicializar carrito');
+            }
+        })
         .then(response => {
 
             /*
@@ -42,10 +39,14 @@ function onLoad(){
             console.log("cartId:", cartId);
             console.log("Carrito inicializado/obtenido !!!");
 
-            
         })
         .catch(error => {
             console.error('Error en la inicializacion de carrito', error);
+            showCustomAlert({
+                type: 'error',
+                message: `Error en la inicializacion de carrito`,
+                stack: error
+            })
         });
 
 }

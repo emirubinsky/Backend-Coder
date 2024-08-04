@@ -38,6 +38,11 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .catch(error => {
                 console.error('Error en el inicio de sesión:', error);
+                showCustomAlert({
+                    type: 'error',
+                    message: `Error en el inicio de sesión:`,
+                    stack: error
+                })
             });
     });
 
@@ -94,6 +99,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 })
                 .catch(error => {
                     console.error('Error en el inicio de sesión:', error);
+                    showCustomAlert({
+                        type: 'error',
+                        message: `Error en el inicio de sesión`,
+                        stack: error
+                    })
                 });
         })
     }

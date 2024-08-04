@@ -24,6 +24,11 @@ function handleAddToCart(event) {
 
     if (!token) {
         console.log("Usuario no logueado o registrado");
+        showCustomAlert({
+            type: 'warning',
+            message: `Usuario no logueado o registrado`,
+            stack: error
+        })
         window.location.href = "http://localhost:8080/"
     }
 
@@ -51,9 +56,18 @@ function handleAddToCart(event) {
         })
         .then(data => {
             console.log('Producto agregado al carrito:', data);
+            showCustomAlert({
+                type: 'success',
+                message: `Producto agregado al carrito correctamente.`
+            })
         })
         .catch(error => {
             console.error('Error al agregar el producto al carrito:', error);
+            showCustomAlert({
+                type: 'error',
+                message: `Error al agregar el producto al carrito`,
+                stack: error
+            })
         });
 }
 

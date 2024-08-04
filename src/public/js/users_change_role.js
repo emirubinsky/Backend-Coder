@@ -21,11 +21,18 @@ document.addEventListener("DOMContentLoaded", function() {
                 const result = await response.json();
                 
                 if (response.ok) {
-                    alert("Se ha cambiado el rol del usuario.");
+                    showCustomAlert({
+                        type: 'success',
+                        message: `Intercambio de ROL exitosa!`
+                    })
                     window.location.href = "http://localhost:8080/home"; 
                 } else {
-                    errorMessage.style.display = "block";
-                    errorMessage.textContent = result.error || "Ocurrió un error al cambiar el rol del usuario.";
+                    console.error("Respuesta mala!", result.error);
+                    showCustomAlert({
+                        type: 'error',
+                        message: `"Ocurrió un error`,
+                        stack: result
+                    })
                 }
             } else {
                 throw new Error('Respuesta inesperada del servidor');
@@ -34,6 +41,12 @@ document.addEventListener("DOMContentLoaded", function() {
             console.error("Error enviando el formulario:", error);
             errorMessage.style.display = "block";
             errorMessage.textContent = "Ocurrió un error al cambiar el rol del usuario.";
+
+            showCustomAlert({
+                type: 'error',
+                message: `"Ocurrió un error al cambiar el rol del usuario`,
+                stack: error
+            })
         }
     });
 });

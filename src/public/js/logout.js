@@ -20,6 +20,11 @@ const logout = async () => {
         }
     } catch (error) {
         console.error('Error en el logout:', error);
+        showCustomAlert({
+            type: 'error',
+            message: `Error en el logout`,
+            stack: error
+        })
     }
 };
 

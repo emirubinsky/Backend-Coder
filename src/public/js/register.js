@@ -30,10 +30,21 @@ document.addEventListener('DOMContentLoaded', function () {
                 const token = localStorage.setItem('token', data.access_token);
                 console.log("Token:", token);
                 console.log("Inicio de sesión exitoso!");
+
+                showCustomAlert({
+                    type: 'success',
+                    message: `Inicio de sesión exitoso!`
+                })
+
                 window.location.href = "http://localhost:8080/home"
             })
             .catch(error => {
                 console.error('Error en el inicio de sesión:', error);
+                showCustomAlert({
+                    type: 'error',
+                    message: `Error en el inicio de sesión`,
+                    stack: error
+                })
             });
         });
     }
