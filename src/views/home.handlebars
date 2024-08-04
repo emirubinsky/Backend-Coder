@@ -1,8 +1,22 @@
-
 <div class="text-center">
     <div class="container mt-5">
         <h1 class="mb-4">Bienvenido {{user.first_name}} - Rol: {{user.role}}</h1>
         <div class="row justify-content-center">
+
+            {{#ifRole user.role "admin"}}
+            <!-- If user is ADMIN -->
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Listar Usuarios</h5>
+                        <p class="card-text">Administrar los usuarios</p>
+                        <a href="/users/list" class="btn btn-primary btn-block">Ver Listado</a>
+                    </div>
+                </div>
+            </div>
+          
+            {{/ifRole}}
+
             {{#ifRole user.role "admin" "premium"}}
             <!-- If user is ADMIN -->
             <div class="col-md-4 mb-4">
@@ -24,7 +38,7 @@
                 </div>
             </div>
             {{/ifRole}}
-        
+
             {{#ifRole user.role "user" "premium"}}
             <!-- If user is CLIENT -->
             <div class="col-md-4 mb-4">

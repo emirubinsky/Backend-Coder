@@ -78,4 +78,7 @@ userRouter.delete("/", isAdmin, userController.deleteAllInactiveUsers);
 // Maneja la solicitud de eliminar los usuarios por su id
 userRouter.delete("/:uid", authToken, isAdmin, userController.deleteUser);
 
+// Maneja la solicitud para cambiar los roles de los usuarios en la dashboard del admin
+userRouter.put("/swapRole/:uid", authToken, isAdmin, userController.swapUserRole);
+
 export default userRouter;

@@ -468,7 +468,25 @@ const userController = {
             console.error("Error al eliminar el usuario:", error);
             res.status(500).json({ error: "Error interno del servidor" });
         }
-    }
+    },
+
+    swapUserRole: async (req, res) => {
+        const userId = req.params.uid;
+
+        try {
+            // Se encarga de ser una herramienta para el adminstrador para cambiar los roles de los usuarios
+            const changeUserRole = await UserManager.swapUserRole(userId);
+
+            if (!changeUserRole) {
+                return res.status(404).json({ error: "No se ha podido cambiar el rol del usuario" })
+            }
+
+            res.status(200).json({ message: 'Cambio del rol exitoso' });
+        } catch (error) {
+            console.error("Error al cambiar el rol del usuario:", error);
+            res.status(500).json({ error: "Error interno del servidor" });
+        }
+    },
 }
 
 export default userController;

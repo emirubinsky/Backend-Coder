@@ -73,8 +73,8 @@ class UserManager {
       throw new Error("No se puede cambiar a otro rol si no es PREMIUM")
     }
 
-    const userDTO = new UserDTO({ ...currentUser, role: "user", id: userId})
-    customLogger.info("changeToUserRole >>>", userDTO );
+    const userDTO = new UserDTO({ ...currentUser, role: "user", id: userId })
+    customLogger.info("changeToUserRole >>>", userDTO);
 
     const updatedUser = await UserManager.update(userDTO);
 
@@ -106,9 +106,9 @@ class UserManager {
         await UserManager.uploadDocs(userId, files.comprobanteCuenta);
 
         // Procesamos el cambio de role
-        const userDTO = new UserDTO({ ...user, role:  "premium", id: userId})
+        const userDTO = new UserDTO({ ...user, role: "premium", id: userId })
 
-        customLogger.info("changeToPremiumRole >>>", userDTO );
+        customLogger.info("changeToPremiumRole >>>", userDTO);
 
         const updatedUser = await UserManager.update(userDTO);
 
@@ -123,6 +123,36 @@ class UserManager {
     }
   }
 
+  static async swapUserRole(userId) {
+    try {
+      const user = await UserManager.getOne(userId);
+
+      logger.info(`Cambiando rol de usuario ${userId}, con rol ${user.role}`);
+
+      if (!user) {
+        throw new Error("El usuario no existe");
+      }
+
+      if (user.role === "premium") {
+        user.role = "user";
+      } else if (user.role === "user") {
+        user.role = "premium";
+      } else if (user.role === "admin") {
+        logger.warn("No se puede cambiar el rol de admin")
+      } else {
+        logger.warn("Acceso no autorizado");
+      }
+
+      // Guardar los cambios en la base de datos
+      await user.save();
+      logger.info(`Cambio de rol de usuario exitoso: ${user.role}`);
+      return user;
+    } catch (error) {
+      logger.error(`Error al cambiar el rol del usuario: ${userId}`);
+      throw new Error("Error interno del servidor");
+    }
+  }
+
   static async uploadDocs(userId, documents) {
     try {
       const user = await userService.getOne(userId)
@@ -130,7 +160,7 @@ class UserManager {
         throw new Error("Usuario no encontrado");
       }
 
-      if(typeof user.documents === 'undefined'  || user.documents === null ){
+      if (typeof user.documents === 'undefined' || user.documents === null) {
         user.documents = []
       }
 
