@@ -44,6 +44,10 @@ class UserManager {
       delete userDTO.image
     }
 
+    if (userDTO.documents === null) {
+      delete userDTO.documents
+    }
+
     const serviceOutput = await userService.update(userDTO);
 
     return serviceOutput

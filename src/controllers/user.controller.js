@@ -103,15 +103,18 @@ const userController = {
                 const userId = user._id
                 const currentUser = await UserManager.getOne(userId)
                 const last_connection = new Date();
-                const userDTO = new UserDTO({ ...currentUser, last_connection })
+                const userDTO = new UserDTO({ id: userId, ...currentUser, last_connection })
                 const updatedUser = await UserManager.update(userDTO);
 
+                console.log("login > updatedUser", { updatedUser })
+
+
                 // Generar token JWT
-                const access_token = generateAuthToken(user);
+                const access_token = generateAuthToken(updatedUser);
 
                 req.session.email = email;
                 req.session.userId = userId;
-                req.session.user = user;
+                req.session.user = updatedUser;
                 req.session.isAuthenticated = true;
 
 
@@ -120,9 +123,9 @@ const userController = {
                 })
 
 
-                customLogger.info("Datos del login:", user, "token:", access_token);
+                customLogger.info("Datos del login:", updatedUser, "token:", access_token);
 
-                res.json({ message: "Success", user, access_token });
+                res.json({ message: "Success", updatedUser, access_token });
             })(req, res, next);
 
         } catch (error) {
@@ -202,7 +205,7 @@ const userController = {
             const userId = req.user._id
             const currentUser = await UserManager.getOne(userId)
             const last_connection = new Date();
-            const userDTO = new UserDTO({ ...currentUser, last_connection })
+            const userDTO = new UserDTO({ id: userId, ...currentUser, last_connection })
             const updatedUser = await UserManager.update(userDTO);
 
             // Genera el token de acceso

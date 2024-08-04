@@ -53,15 +53,6 @@ export default class UserMongoService {
 
             const inactiveUsers = []
 
-            /*
-            users.forEach(user => {
-                console.log('findInactiveUsers > users:', {
-                    userId: user._id,
-                    lastConnection: user.last_connection
-                });
-            })
-            */
-
             console.log('findInactiveUsers > users:', users);
             return users;
         } catch (error) {
@@ -166,22 +157,40 @@ export default class UserMongoService {
 
     }
 
-    async update({ id, products, user }) {
+    async update(userDTO) {
 
         const filter = {
-            _id: id
+            _id: userDTO.id
         }
 
-        const entityToUpdate = {
-            user,
-            products
-        }
+        /*
+Datos a validar: user-password: $2b$10$S8.a5WV50d0l.7aF7TkgueiMlfBMwEL.k4zh8qvOmCm9wF1ZI9B2K, password: 123
+MONGO > user.service > update {
+  filter: { _id: undefined },
+  userDTO: UserDTO {
+    first_name: 'Roberto',
+    last_name: 'Perez',
+    full_name: 'Roberto, Perez',
+    email: 'admin_perez@mail.com',
+    age: 34,
+    password: '$2b$10$S8.a5WV50d0l.7aF7TkgueiMlfBMwEL.k4zh8qvOmCm9wF1ZI9B2K',
+    role: 'admin',
+    profile: undefined,
+    last_connection: 2024-08-01T19:04:48.120Z,
+    documents: undefined
+  }
+}
+MONGO > user.service > updatedDoc { updatedDoc: null }
+login > updatedUser { updatedUser: null }
+        */
+       
+        console.log("MONGO > user.service > update", { filter, userDTO })
 
-        customLogger.info("MONGO > user.service > update", { filter, entityToUpdate })
-
-        const updatedDoc = await model.findOneAndUpdate(filter, entityToUpdate, {
+        const updatedDoc = await model.findOneAndUpdate(filter, userDTO, {
             returnOriginal: false
         })
+
+        console.log("MONGO > user.service > updatedDoc", { updatedDoc })
 
         return updatedDoc;
     }
