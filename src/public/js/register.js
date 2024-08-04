@@ -11,10 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             fetch('http://localhost:8080/users/register', {
                 method: 'POST',
-                body: JSON.stringify(obj),
-                headers: {
-                    'Content-Type': 'application/json' 
-                }
+                body: formData,
             })
             .then(response => {
                 if (response.status === 200) {

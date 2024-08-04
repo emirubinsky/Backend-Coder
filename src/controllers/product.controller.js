@@ -103,7 +103,7 @@ class ProductController {
 
             return res.json({
                 message: "Operacion de producto procesada",
-                output: deletionOutput, // INFO: Aca es 0 cuando borra algo, N cuando logra encontrar algo y borrarlo
+                output: deletionOutput.deleteProduct, // INFO: Aca es 0 cuando borra algo, N cuando logra encontrar algo y borrarlo
                 id: productId,
             });
 

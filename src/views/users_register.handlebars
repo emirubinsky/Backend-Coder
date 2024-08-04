@@ -24,7 +24,11 @@
                     <label for="password">Contraseña:</label>
                     <input type="password" class="form-control" id="password" name="password" required>
                 </div>
-                <button type="submit" class="btn btn-primary mt-2">Registro</button>
+                <div class="form-group">
+                    <label for="profile">Foto de perfil:</label>
+                    <input type="file" class="form-control" id="profile" name="profile" accept="image/*" required>
+                </div>
+                <button type="submit" class="btn btn-lg btn-outline-dark btn-block mb-3">Registro</button>
             </form>
             <a href="http://localhost:8080/login" class="btn btn-lg btn-outline-dark btn-block mb-3">Return to Login</a>
         </div>

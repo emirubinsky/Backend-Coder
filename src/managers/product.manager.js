@@ -1,4 +1,9 @@
 import { productService, userService } from "../repositories/index.js";
+import messenger from "../appHelpers/messenger.js";
+
+import {
+  MAIL_USERNAME,
+} from "../util.js";
 
 class ProductManager {
   static async getOne(id) {
@@ -66,11 +71,35 @@ class ProductManager {
       const user = await userService.getOne(userId);
 
       /* Revisión de ownership */
-      if (userRole === 'admin' || (userRole === 'premium' && user && user._id.toString() == product.owner._id.toString())) {
+      const isAdmin = userRole === 'admin'
+      const isPremium = userRole === 'premium'
+      const isTheOwner = user._id.toString() == product.owner._id.toString()
 
-        return await productService.deleteOne(id);
+      const isAllowedToDelete = isAdmin || (isPremium && isTheOwner)
 
-        // return res.json({ message: "Producto actualizado!", product: updatedProduct });
+      if (isAllowedToDelete) {
+        const deleteProduct = await productService.deleteOne(id);
+
+        // Revisamos si el producto era de un Premium para avisarle.
+        const productOwner = await userService.getOne(product.owner._id);
+        if (productOwner.role === 'premium') {
+          const mailOptions = {
+            to: user.email,
+            from: MAIL_USERNAME,
+            subject: 'Eliminación de producto',
+            text: `Está recibiendo este mensaje porque se ha eliminado su producto ${product.title}.`
+          };
+
+          customLogger.info("USER MANAGER > EMAIL > ", { mailOptions })
+          const emailSent = await messenger.transport.sendMail(mailOptions)
+
+          return emailSent
+        }
+
+        return {
+          deleteProduct,
+          emailSent
+        }
       } else {
         throw new Error('No tienes permiso para realizar esta acción');
       }

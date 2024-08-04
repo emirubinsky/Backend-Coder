@@ -140,9 +140,9 @@ const userController = {
     },
 
     register: async (req, res, next) => {
-        const { first_name, last_name, email, age, password } = req.body;
-
         try {
+            const { first_name, last_name, email, age, password } = req.body;
+
             const file = req.file;
 
             const existingUser = await User.findOne({ email });
@@ -155,10 +155,9 @@ const userController = {
             const imageName = file ? file.filename : null;
 
             if (!imageName) {
-                logger.warn(`Imagen invalida para el perfil del usuario: ${imageName}`);
+                customLogger.error(`Imagen invalida para el perfil del usuario: ${imageName}`);
                 throw { code: 'INVALID_IMAGE' };
             }
-
 
             const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -188,6 +187,7 @@ const userController = {
             res.json({ message: "Success", newUser, access_token });
 
         } catch (error) {
+            console.log("Error al registrar usuario:", error )
             customLogger.error("Error al registrar usuario:", { ...error });
             next(error);
         }
