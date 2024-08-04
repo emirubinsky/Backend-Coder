@@ -51,7 +51,10 @@ class TicketController {
         try {
             customLogger.info("================= ADD ===============");
 
-            const newTicket = await TicketManager.add(req.dto);
+            const userId = req.session.userId;
+            const userRole = req.session.user.role;
+
+            const newTicket = await TicketManager.add(req.dto, userId, userRole);
 
             return res.json({
                 message: "Ticket creado!!!",

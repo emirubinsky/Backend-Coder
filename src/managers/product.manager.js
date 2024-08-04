@@ -62,7 +62,6 @@ class ProductManager {
     }
 
     const productId = productDTO.id
-    const product = await productService.getProductDetail(productId);
 
     try {
       const product = await productService.getOne(productId);
@@ -71,7 +70,7 @@ class ProductManager {
       /* Revisión de ownership */
       const isAdmin = userRole === 'admin'
       const isPremium = userRole === 'premium'
-      const isTheOwner = user._id.toString() == product.owner._id.toString()
+      const isTheOwner = user._id.toString() == product.owner._id.toString() // ALGO PASO EN user._id
 
       const isAllowedToUpdate = isAdmin || (isPremium && isTheOwner)
 
@@ -83,6 +82,20 @@ class ProductManager {
       } else {
         throw new Error('No tienes permiso para realizar esta acción');
       }
+    } catch (err) {
+      console.error('Error:', err);
+      throw err
+    }
+  }
+
+  static async updateWhileBuying(productDTO) {
+
+    if (productDTO.image === null) {
+      delete productDTO.image
+    }
+
+    try {
+      return await productService.update(productDTO);
     } catch (err) {
       console.error('Error:', err);
       throw err

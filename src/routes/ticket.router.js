@@ -12,7 +12,7 @@ import {
     validateTicketQuery
 } from "../middlewares/ticket.validation.middleware.js"
 
-import { authToken, isUser } from "../middlewares/auth.js";
+import { authToken, isUser, isUserOrPremium } from "../middlewares/auth.js";
 
 const ticketRouter = express.Router();
 // Para rutas protegidas const protectWithJWT = passport.authenticate("jwt", { session: false });
@@ -31,7 +31,7 @@ ticketRouter.get("/",
 // Maneja la solicitud de agregar el producto al carrito
 ticketRouter.post("/",
     authToken,
-    isUser,
+    isUserOrPremium,
     validateTicket,
     createTicketDTO,
     TicketController.add);
@@ -39,7 +39,7 @@ ticketRouter.post("/",
 // Maneja la solicitud para actualizar el carrito con nuevos productos
 ticketRouter.put("/:cid",
     authToken,
-    isUser,
+    isUserOrPremium,
     validateTicketId,
     validateTicket,
     createTicketDTO,
@@ -48,7 +48,7 @@ ticketRouter.put("/:cid",
 // Maneja la solicitud para limpiar el carrito
 ticketRouter.delete("/:cid",
     authToken,
-    isUser,
+    isUserOrPremium,
     validateTicketId,
     TicketController.delete);
 

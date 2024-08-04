@@ -38,7 +38,7 @@ class TicketManager {
         }
     }
 
-    static async add(ticketDTO) {
+    static async add(ticketDTO, userRole) {
         try {
             customLogger.info("-----------------", { ticketToAddDraft: ticketDTO })
             /**
@@ -71,22 +71,23 @@ class TicketManager {
                     // Suficiente stock, reducir stock y agregar a la compra
                     product.stock -= cartProductItem.quantity;
 
-
+                    // Solo mando un pequeño update.
                     const productDTO = new ProductDTO({
-                        title: product.title,
+                        /*title: product.title,
                         description: product.description,
                         code: product.code,
                         category: product.category,
                         brand: product.brand,
-                        price: product.price,
+                        price: product.price,*/
                         stock: product.stock,
-                        status: product.status,
+                        /*status: product.status,
                         image: product.image,
-                        thumbnails: product.thumbnails,
-                        id: product._id
+                        thumbnails: product.thumbnails,*/
+                        id: product._id,
+                        // owner: product.owner ?? "664b4d5c37c6f3f18e374ac5" // Admin.
                     })
 
-                    const productUpdateResult = await ProductManager.update(productDTO)
+                    const productUpdateResult = await ProductManager.updateWhileBuying(productDTO)
                     productUpdateResults.push(productUpdateResult)
 
                     // totalPurchaseAmount += item.productTotal; // TODO revisar esto.
