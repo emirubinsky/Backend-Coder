@@ -82,7 +82,8 @@ function getMode() {
     if (modeIndex !== -1 && process.argv[modeIndex + 1]) {
         return process.argv[modeIndex + 1].toUpperCase();
     }
-    throw new Error('Mode not specified or invalid');
+    return "DEVELOPMENT"
+    // throw new Error('Mode not specified or invalid');
 }
 
 
