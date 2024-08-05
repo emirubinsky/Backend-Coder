@@ -59,27 +59,34 @@ async function modifyQuantity(cid, pid, quantityExtra) {
     console.log("id del producto:", pid);
     console.log("id del producto:", quantityExtra);
 
-    try {
-        const incrementado = quantityExtra > 0
+    const incrementado = quantityExtra > 0
 
-        const userId = localStorage.getItem('userId');
-        const cartId = cid//localStorage.getItem('cartId');
 
-        const productId = pid//event.target.getAttribute('data-product-id');
-        const quantityNow = parseInt(event.target.getAttribute('data-product-qty'));
-        const quantity = quantityNow + quantityExtra
+    const userId = localStorage.getItem('userId');
+    const cartId = cid//localStorage.getItem('cartId');
 
-        showLoading()
-        const response = await fetch(`http://localhost:8080/api/carts/${cid}/products/${pid}`, {
-            method: 'PUT',
-            headers: {
-                "authorization": `Bearer ${token}`,
-                'Content-Type': 'application/json'
+    const productId = pid//event.target.getAttribute('data-product-id');
+    const quantityNow = parseInt(event.target.getAttribute('data-product-qty'));
+    const quantity = quantityNow + quantityExtra
+
+    showLoading();
+
+    fetch(`http://localhost:8080/api/carts/${cid}/products/${pid}`, {
+        method: 'PUT',
+        headers: {
+            "authorization": `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ userId, cartId, productId, quantity, replace: true })
+    })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(badResult => {
+                    throw new Error(badResult.details);
+                });
             }
-            , body: JSON.stringify({ userId, cartId, productId, quantity, replace: true })
-        });
 
-        if (response.ok) {
+
             hideLoading()
             console.log(`Producto con ID ${pid} ${incrementado ? 'incrementado' : 'reducido'} en el carrito ${cid}`);
             showCustomAlert({
@@ -87,26 +94,20 @@ async function modifyQuantity(cid, pid, quantityExtra) {
                 message: `Producto con ID ${pid} ${incrementado ? 'incrementado' : 'reducido'} en el carrito ${cid}`
             })
             window.location.reload()
+        })
 
-        } else {
-            hideLoading()
-            console.error(`Error al intentar: Producto con ID ${pid} ${incrementado ? 'incrementado' : 'reducido'} en el carrito ${cid}`);
+        .catch(error => {
+            console.error('Error de red:', error);
             showCustomAlert({
                 type: 'error',
                 message: `Error al intentar: Producto con ID ${pid} ${incrementado ? 'incrementado' : 'reducido'} en el carrito ${cid}`,
-                stack: response
+                stack: error
             })
-        }
-    } catch (error) {
-        console.error('Error de red:', error);
-        showCustomAlert({
-            type: 'error',
-            message: `Error generico`,
-            stack: error
         })
-    } finally {
-        hideLoading()
-    }
+        .finally(() => hideLoading());
+
+
+
 }
 
 // Función para manejar el evento de hacer clic en el botón "Eliminar Producto"
@@ -160,6 +161,59 @@ returnToShoppingBtn.addEventListener('click', () => {
 async function confirmCartToTicket(cid) {
     console.log("id del carrito:", cid);
 
+    console.log({
+        body: {
+            cartId: cid
+        }
+    })
+
+    showLoading()
+
+    fetch(`http://localhost:8080/api/tickets`, {
+        method: 'POST',
+        headers: {
+            "authorization": `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            cartId: cid
+        })
+    })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(badResult => {
+                    throw new Error(badResult.details);
+                });
+            }
+
+            hideLoading()
+            console.log(`Creado el ticket a partir del del carrito ${cid}`);
+            showCustomAlert({
+                type: 'success',
+                message: `Creado el ticket a partir del del carrito ${cid}`
+            })
+
+            // Construir la URL del carrito utilizando el ID seleccionado
+            const ticketsUrl = `http://localhost:8080/tickets`;
+
+            // Redireccionar al usuario a la URL del carrito
+            window.location.href = ticketsUrl;
+        })
+
+        .catch(error => {
+            console.error('Algo ha pasado al intentar crear un Ticket', error);
+            showCustomAlert({
+                type: 'error',
+                message: `Algo ha pasado al intentar crear un Ticket`,
+                stack: error
+            })
+        })
+        .finally(() => hideLoading());
+}
+
+async function confirmCartToTicketOld(cid) {
+    console.log("id del carrito:", cid);
+
     try {
 
         console.log({
@@ -185,8 +239,14 @@ async function confirmCartToTicket(cid) {
             console.log(`Creado el ticket a partir del del carrito ${cid}`);
             showCustomAlert({
                 type: 'success',
-                message: `Producto con ID ${pid} eliminado del carrito ${cid}`
+                message: `Creado el ticket a partir del del carrito ${cid}`
             })
+
+            // Construir la URL del carrito utilizando el ID seleccionado
+            const ticketsUrl = `http://localhost:8080/tickets`;
+
+            // Redireccionar al usuario a la URL del carrito
+            window.location.href = ticketsUrl;
         } else {
             hideLoading()
             console.error(`Algo ha pasado al intentar crear un Ticket`);

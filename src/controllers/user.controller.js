@@ -292,7 +292,7 @@ const userController = {
             const updateData = { resetToken, resetTokenExpires }
             await User.findByIdAndUpdate(userId, updateData, { new: true })
 
-            const resetUrl = `http://${req.headers.host}/api/sessions/resetPassword/${resetToken}`;
+            const resetUrl = `http://${req.headers.host}/resetPassword/${resetToken}`;
             const mailOptions = {
                 to: user.email,
                 from: MAIL_USERNAME,
@@ -319,9 +319,15 @@ const userController = {
         const userId = req.session.userId;
 
         try {
+            console.log("resetPassword", newPassword)
             const user = await User.findOne({ token });
             //userService.getUserByResetToken(token);
 
+            console.log("resetPassword > begin", {
+                user,
+                resetTokenExpires: user.resetTokenExpires,
+                expiredToken: user.resetTokenExpires < Date.now()
+            })
             if (!user || user.resetTokenExpires < Date.now()) {
                 return res.status(400).json({ error: "Token de restablecimiento inválido o expirado" });
             }
@@ -329,10 +335,12 @@ const userController = {
             const hashedPassword = createHash(newPassword) // bcrypt.hash(newPassword, 10);
             const updateDataPwd = { password: hashedPassword }
             await User.findByIdAndUpdate(userId, updateDataPwd, { new: true })
+            console.log("resetPassword > updateDataPwd", updateDataPwd)
             // userService.updatePassword(userId, newPassword);
 
             const updateDataToken = { resetToken: null, resetTokenExpires: null }
             await User.findByIdAndUpdate(userId, updateDataToken, { new: true })
+            console.log("resetPassword > updateDataToken", updateDataToken)
             // userService.clearPasswordResetToken(userId);
 
             res.status(200).json({ message: "Contraseña restablecida con éxito" });

@@ -267,6 +267,7 @@ class CartManager {
                 throw new Error("Producto fuera de stock");
             }
 
+            console.log("validateCartProduct", { stock: product.stock, quantity })
             if (product.stock < quantity) {
                 throw new Error("Producto no posee suficiente stock");
             }
@@ -275,10 +276,14 @@ class CartManager {
                 success: true
             }
         } catch (error) {
+            console.log("validateCartProduct > error", error )
+            throw error;
+            /*
             return {
                 success: false,
                 reason: error
             }
+            */
         }
     }
 }
