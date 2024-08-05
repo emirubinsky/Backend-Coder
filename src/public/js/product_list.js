@@ -1,4 +1,4 @@
-const socket = io.connect('http://localhost:8080');
+const socket = io.connect(ORGANICA_BASE_URL);
 
 /**
  * Funciones asociados a la view the product_list
@@ -30,7 +30,7 @@ function handleDeleteProduct(event) {
 
     if (!token) {
         console.log("Usuario no logueado o registrado");
-        window.location.href = "http://localhost:8080/"
+        window.location.href = `${ORGANICA_BASE_URL}`+"/"
     }
 
     const userId = localStorage.getItem('userId');
@@ -39,7 +39,7 @@ function handleDeleteProduct(event) {
     const productId = event.target.getAttribute('data-product-id');
 
     // Realizar una solicitud HTTP POST para agregar el producto al carrito
-    const url = `http://localhost:8080/api/products/${productId}` 
+    const url = `${ORGANICA_BASE_URL}/api/products/${productId}` 
 
     showLoading();
     fetch(url, {
@@ -86,7 +86,7 @@ function handleUpdateProduct(event) {
             message: `Usuario no logueado o registrado`,
             stack: error
         })
-        window.location.href = "http://localhost:8080/"
+        window.location.href = `${ORGANICA_BASE_URL}`+"/"
     }
 
     const userId = localStorage.getItem('userId');
@@ -94,7 +94,7 @@ function handleUpdateProduct(event) {
 
     const productId = event.target.getAttribute('data-product-id');
 
-    window.location.href = `http://localhost:8080/products/update/${productId}` 
+    window.location.href = `${ORGANICA_BASE_URL}/products/update/${productId}` 
 
 }
 

@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             showLoading()
-            const response = await fetch(`http://localhost:8080/users/changePassword/${userId}`, {
+            const response = await fetch(`${ORGANICA_BASE_URL}/users/changePassword/${userId}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
             })
 
             // La contraseña se cambió exitosamente, redirigir a otra página o mostrar un mensaje de éxito
-            window.location.href = "http://localhost:8080/home";
+            window.location.href = `${ORGANICA_BASE_URL}`+"/home";
         } catch (error) {
             hideLoading()
             errorMessage.textContent = error.message;

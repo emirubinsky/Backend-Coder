@@ -1,4 +1,4 @@
-const socket = io.connect('http://localhost:8080');
+const socket = io.connect(ORGANICA_BASE_URL);
 
 /**
  * Funciones asociados a la view the product_list
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     async function populateStoredFiles(productId) {
         try {
             showLoading();
-            const response = await fetch(`http://localhost:8080/api/products/${productId}`);
+            const response = await fetch(`${ORGANICA_BASE_URL}/api/products/${productId}`);
             const data = await response.json();
 
             if (response.ok && data.product && data.product.thumbnails) {
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                     console.log("thumbnailUrl", thumbnailUrl);
 
                     if (thumbnailUrl !== null) {
-                        const blobResponse = await fetch(`http://localhost:8080/img/products/${thumbnailUrl}`);
+                        const blobResponse = await fetch(`${ORGANICA_BASE_URL}/img/products/${thumbnailUrl}`);
                         const blob = await blobResponse.blob();
 
                         // Obtén el tipo MIME del blob
@@ -175,7 +175,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                 body: formData
             };
 
-            const response = await fetch(`http://localhost:8080/api/products/${productId}`, requestOptions);
+            const response = await fetch(`${ORGANICA_BASE_URL}/api/products/${productId}`, requestOptions);
             const data = await response.json();
 
             if (response.ok && data.Product && data.Product._id) {
@@ -185,7 +185,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                     message: `Producto actualizado correctamente`
                 })
 
-                window.location.href = `http://localhost:8080/products/${data.Product._id}`;
+                window.location.href = `${ORGANICA_BASE_URL}/products/${data.Product._id}`;
             } else {
                 hideLoading();
                 if (data.hasOwnProperty('details')) {

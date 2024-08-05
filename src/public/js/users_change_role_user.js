@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function() {
         try {
             // `https://backend-final-production-8834.up.railway.app/api/sessions/user/$
             showLoading()
-            const response = await fetch(`http://localhost:8080/users/role/${userId}`, {
+            const response = await fetch(`${ORGANICA_BASE_URL}/users/role/${userId}`, {
                 method: 'PUT',
                 body: formData,
                 headers: {
@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         message: `Actualizacion de ROL exitosa! => Ahora es USER`
                     })
                     // "https://backend-final-production-8834.up.railway.app/api/sessions/login"
-                    window.location.href = "http://localhost:8080/login"; 
+                    window.location.href = `${ORGANICA_BASE_URL}`+"/login"; 
                 } else {
                     hideLoading()
                     errorMessage.style.display = "block";

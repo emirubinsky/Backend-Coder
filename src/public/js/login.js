@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const errorMessage = document.getElementById('errorMessage');
 
         showLoading();
-        fetch('http://localhost:8080/users/login', {
+        fetch(`${ORGANICA_BASE_URL}`+'/users/login', {
             method: 'POST',
             body: JSON.stringify(obj),
             headers: {
@@ -64,7 +64,7 @@ function postLogin(data) {
     console.log("userId:", userId);
     console.log("Inicio de sesión exitoso!");
 
-    window.location.href = "http://localhost:8080/home"
+    window.location.href = `${ORGANICA_BASE_URL}`+"/home"
 
 }
 
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const errorMessage = document.getElementById('errorMessage');
 
             showLoading();
-            fetch('http://localhost:8080/users/github', {
+            fetch(`${ORGANICA_BASE_URL}`+'/users/github', {
                 method: 'GET',
                 headers: {
                     //'Content-Type': 'application/json',

@@ -27,6 +27,12 @@
 </head>
 
 <body>
+    <script>
+        // Set the la url BASE para todas
+        const ORGANICA_BASE_URL = "{{BASE_URL}}";
+        console.log("ORGANICA_BASE_URL", ORGANICA_BASE_URL)
+    </script>
+
     <!-- Generate Monstera shapes dynamically -->
     <div class="monstera-container">
         {{#each monsteraShapes}}
@@ -67,6 +73,7 @@
 
     <script>
         /* FUNCIONES GLOBALES */
+
         // Funcion para Sweet Alert centralizado
         function showCustomAlert({ type, message, stack = '' }) {
             Swal.fire({

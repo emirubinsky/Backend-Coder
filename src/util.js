@@ -26,6 +26,9 @@ console.log("UTIL > enviroment declarations", enviroment)
 
 let path_enviroment = ""
 switch (enviroment) {
+    case "LOCAL":
+        path_enviroment = './.env.local'
+        break;
     case "DEVELOPMENT":
         path_enviroment = './.env.development'
         break;
@@ -47,7 +50,8 @@ dotenv.config({ path: path.resolve(__dirname, path_enviroment) });
 
 // Si el scripting en package.json funciona...entonces podemos leer directamente el process.env
 
-export const PORT = process.env.PORT
+export const PORT = process.env.PORT || 8080
+export const MAIN_URL = `${process.env.MAIN_URL}:${PORT}`
 export const MONGO_URL = process.env.MONGO_URL;
 export const JWT_SECRET = process.env.JWT_SECRET;
 export const CLIENT_ID = process.env.CLIENT_ID;
@@ -63,6 +67,7 @@ export const PHONE_NUMBER_TO = process.env.PHONE_NUMBER_TO
 
 console.log("UTIL ending, these are the .env readings", {
     PORT,
+    MAIN_URL,
     MONGO_URL,
     JWT_SECRET,
     CLIENT_ID,

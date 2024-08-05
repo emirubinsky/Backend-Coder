@@ -115,7 +115,7 @@ const initializePassport = () => {
             {
                 clientID: CLIENT_ID,                      //clientID: "Iv1.f60f672a1689aa16",//id de la app en github 
                 clientSecret: CLIENT_SECRET,               // clientSecret: "8b94a8adb2d9d006e9c23221eec10749f43918094",//clave secreta de github
-                callbackURL: CALLBACK_URL,                 //callbackURL: "http://localhost:8080/users/githubcallback",//url callback de github
+                callbackURL: CALLBACK_URL,                 //callbackURL: "ORGANICA_BASE_URL/users/githubcallback",//url callback de github
             },
             async (accessToken, refreshToken, profile, done) => {
                 // customLogger.info("GitHubStrategy", { accessToken, refreshToken, profile }); 

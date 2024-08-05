@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // http://localhost:8080/api/sessions/premium/
             showLoading()
 
-            const response = await fetch(`http://localhost:8080/users/premium/${userId}`, {
+            const response = await fetch(`${ORGANICA_BASE_URL}/users/premium/${userId}`, {
                 method: 'PUT',
                 body: formData,
                 headers: {
@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     // https://backend-final-production-8834.up.railway.app/api/sessions/login
                     // http://localhost:8080/api/sessions/premium/
-                    window.location.href = "http://localhost:8080/login";
+                    window.location.href = `${ORGANICA_BASE_URL}`+"/login";
                 } else {
                     hideLoading()
                     errorMessage.style.display = "block";

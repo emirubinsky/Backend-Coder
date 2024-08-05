@@ -1,4 +1,4 @@
-const socket = io.connect('http://localhost:8080');
+const socket = io.connect(ORGANICA_BASE_URL);
 
 /**
  * Funciones asociados a la view the product_list
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 formData.append(`thumbnails`, file);
             });
 
-            const response = await fetch('http://localhost:8080/api/products/', {
+            const response = await fetch(`${ORGANICA_BASE_URL}`+'/api/products/', {
                 method: 'POST',
                 body: formData  // Use formData directly as the body
             });
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     message: `Producto creado correctamente`
                 })
 
-                window.location.href = `http://localhost:8080/products/${data.Product._id}`;
+                window.location.href = `${ORGANICA_BASE_URL}/products/${data.Product._id}`;
             } else {
                 hideLoading();
                 if (data.hasOwnProperty('details')) {

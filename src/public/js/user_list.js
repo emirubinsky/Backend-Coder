@@ -1,6 +1,6 @@
 
 const prodURL = "https://backend-final-production-8834.up.railwayx.app/api/sessions/"
-const socket = io.connect('http://localhost:8080');
+const socket = io.connect(ORGANICA_BASE_URL);
 
 const token = localStorage.getItem("token");
 
@@ -14,7 +14,7 @@ function handleDeleteUser(event) {
 
     showLoading();
     // Realizar la solicitud HTTP DELETE para eliminar el usuario
-    fetch(`http://localhost:8080/users/${userId}`, {
+    fetch(`${ORGANICA_BASE_URL}/users/${userId}`, {
         method: 'DELETE',
         headers: {
             'Authorization': `Bearer ${token}`,
@@ -74,7 +74,7 @@ function handleChangeUserRole(event) {
 
     // Realizar la solicitud HTTP PUT para cambiar el rol del usuario
     showLoading();
-    fetch(`http://localhost:8080/users/swapRole/${userId}`, {
+    fetch(`${ORGANICA_BASE_URL}/users/swapRole/${userId}`, {
         method: 'PUT',
         headers: {
             'Authorization': `Bearer ${token}`,

@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         try {
             showLoading()
-            const response = await fetch(`http://localhost:8080/api/sessions/premium/${userId}`, {
+            const response = await fetch(`${ORGANICA_BASE_URL}/api/sessions/premium/${userId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         type: 'success',
                         message: `Intercambio de ROL exitosa!`
                     })
-                    window.location.href = "http://localhost:8080/home"; 
+                    window.location.href = `${ORGANICA_BASE_URL}`+"/home"; 
                 } else {
                     hideLoading()
                     console.error("Respuesta mala!", result.error);

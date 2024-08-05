@@ -57,14 +57,14 @@ import initilizePassport from "./config/passport.config.js";
 import passport from 'passport'
 // import auth from "./config/auth.js"; // Esto no lo usamos más. Esta todo en ./config/passport.config.js
 
-import { MONGO_URL } from "./util.js";
+import { MONGO_URL, PORT, MAIN_URL } from "./util.js";
 customLogger.info("SERVER IMPORTS - OK")
 
 try {
     customLogger.info("SERVER SETUP - INICIO")
 
-    const PORT = 8080;
-    
+    //const PORT = 8080;
+
     // FileStore fue la primera version de session que usamos. CLASE 19
     // const fileStore = FileStore(session); // TODO: Estamos usando el FileStore?
     const app = express();
@@ -73,7 +73,7 @@ try {
     customLogger.info("http.createServer > ...setup OK")
     /* Inicializamos manejo de errores GLOBALES */
     // Catch unhandled errors
-        
+
     // Middleware para analizar el cuerpo de la solicitud JSON
     customLogger.info("express.json > ...setup")
     app.use(express.json());
@@ -84,7 +84,11 @@ try {
     customLogger.info("cookieParser > ...setup  OK")
 
     // Middleware para usar cors
-    app.use(cors());
+    //app.use(cors());
+    app.use(cors({
+        origin: MAIN_URL || 'http://localhost:8080/'
+    }));
+
     customLogger.info("cors > ...setup  OK")
 
     // Middleware para usar el session para autenticaciones de usuarios
@@ -138,6 +142,12 @@ try {
         next();
     });
 
+    // Middleware para pasar la variable BASE_URL a todas las vistas
+    app.use((req, res, next) => {
+        res.locals.BASE_URL = MAIN_URL;
+        next();
+    });
+
     // Middlewares para el enrutamiento
     customLogger.info("INICIANDO ROUTER ...........")
     app.use("/", router);
@@ -163,5 +173,5 @@ try {
 
 } catch (error) {
     customLogger.error('APP ERROR FATAL ', { ...error });
-    console.error("ERROR > ",error)
+    console.error("ERROR > ", error)
 }

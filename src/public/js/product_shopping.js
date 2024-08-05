@@ -1,4 +1,4 @@
-const socket = io.connect('http://localhost:8080');
+const socket = io.connect(ORGANICA_BASE_URL);
 
 /**
  * Funciones asociados a la view the product_list
@@ -29,7 +29,7 @@ function handleAddToCart(event) {
             message: `Usuario no logueado o registrado`,
             stack: error
         })
-        window.location.href = "http://localhost:8080/"
+        window.location.href = `${ORGANICA_BASE_URL}`+"/"
     }
 
     const userId = localStorage.getItem('userId');
@@ -39,7 +39,7 @@ function handleAddToCart(event) {
     const quantity = 1
 
     // Realizar una solicitud HTTP POST para agregar el producto al carrito
-    const url = `http://localhost:8080/api/carts/${cartId}/products/${productId}`
+    const url = `${ORGANICA_BASE_URL}/api/carts/${cartId}/products/${productId}`
 
     showLoading();
     fetch(url, {
@@ -85,7 +85,7 @@ goToCartBtn.addEventListener('click', () => {
     const cartId = localStorage.getItem('cartId')
 
     // Construir la URL del carrito utilizando el ID seleccionado
-    const cartUrl = `http://localhost:8080/cart/${cartId}`;
+    const cartUrl = `${ORGANICA_BASE_URL}/cart/${cartId}`;
 
     // Redireccionar al usuario a la URL del carrito
     window.location.href = cartUrl;

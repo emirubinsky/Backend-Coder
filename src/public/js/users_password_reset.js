@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         try {
             showLoading()
-            const response = await fetch(`http://localhost:8080/users/resetPassword/${token}`, {
+            const response = await fetch(`${ORGANICA_BASE_URL}/users/resetPassword/${token}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     type: 'success',
                     message: `Contraseña restablecida correctamente.`
                 })
-                window.location.href = "http://localhost:8080/login";
+                window.location.href = `${ORGANICA_BASE_URL}`+"/login";
             } else {
                 hideLoading()
                 errorMessage.style.display = "block";

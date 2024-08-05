@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         try {
             showLoading()
-            const response = await fetch("http://localhost:8080/users/requestPasswordReset", {
+            const response = await fetch(`${ORGANICA_BASE_URL}`+"/users/requestPasswordReset", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

@@ -1,4 +1,4 @@
-const socket = io.connect('http://localhost:8080');
+const socket = io.connect(ORGANICA_BASE_URL);
 
 socket.on('addMessage', (addMessage) => {
     const chatList = document.getElementById('chatList');
@@ -20,7 +20,7 @@ document.getElementById('messageForm').addEventListener('submit', async (event) 
 
     if (user && message) {
         try {
-            const response = await fetch('http://localhost:8080/api/messages/addMessage', {
+            const response = await fetch(`${ORGANICA_BASE_URL}`+'/api/messages/addMessage', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

@@ -1,6 +1,6 @@
-const socket = io.connect('http://localhost:8080');
+const socket = io.connect(ORGANICA_BASE_URL);
 
-const token = localStorage.getItem("token");
+// const token = localStorage.getItem("token");
 const userId = localStorage.getItem("userId");
 
 /* Boton para remover un producto del carrito */
@@ -10,12 +10,14 @@ document.getElementById('cartList').addEventListener('click', handleDeleteProduc
 
 // Función para eliminar un producto del carrito usando Fetch
 async function deleteProductFromCart(cid, pid) {
+    const token = localStorage.getItem('token');
+
     console.log("id del carrito:", cid);
     console.log("id del producto:", pid);
 
     try {
         showLoading();
-        const response = await fetch(`http://localhost:8080/api/carts/${cid}/products/${pid}`, {
+        const response = await fetch(`${ORGANICA_BASE_URL}/api/carts/${cid}/products/${pid}`, {
             method: 'DELETE',
             headers: {
                 "authorization": `Bearer ${token}`,
@@ -61,7 +63,7 @@ async function modifyQuantity(cid, pid, quantityExtra) {
 
     const incrementado = quantityExtra > 0
 
-
+    const token = localStorage.getItem('token');
     const userId = localStorage.getItem('userId');
     const cartId = cid//localStorage.getItem('cartId');
 
@@ -71,7 +73,7 @@ async function modifyQuantity(cid, pid, quantityExtra) {
 
     showLoading();
 
-    fetch(`http://localhost:8080/api/carts/${cid}/products/${pid}`, {
+    fetch(`${ORGANICA_BASE_URL}/api/carts/${cid}/products/${pid}`, {
         method: 'PUT',
         headers: {
             "authorization": `Bearer ${token}`,
@@ -149,7 +151,7 @@ const returnToShoppingBtn = document.getElementById('returnToShopping');
 returnToShoppingBtn.addEventListener('click', () => {
 
     // Construir la URL del carrito utilizando el ID seleccionado
-    const shoppingUrl = `http://localhost:8080/products`;
+    const shoppingUrl = `${ORGANICA_BASE_URL}/products`;
 
     // Redireccionar al usuario a la URL del carrito
     window.location.href = shoppingUrl;
@@ -167,9 +169,11 @@ async function confirmCartToTicket(cid) {
         }
     })
 
+    const token = localStorage.getItem('token');
+
     showLoading()
 
-    fetch(`http://localhost:8080/api/tickets`, {
+    fetch(`${ORGANICA_BASE_URL}/api/tickets`, {
         method: 'POST',
         headers: {
             "authorization": `Bearer ${token}`,
@@ -194,7 +198,7 @@ async function confirmCartToTicket(cid) {
             })
 
             // Construir la URL del carrito utilizando el ID seleccionado
-            const ticketsUrl = `http://localhost:8080/tickets`;
+            const ticketsUrl = `${ORGANICA_BASE_URL}/tickets`;
 
             // Redireccionar al usuario a la URL del carrito
             window.location.href = ticketsUrl;
@@ -216,6 +220,8 @@ async function confirmCartToTicketOld(cid) {
 
     try {
 
+        const token = localStorage.getItem('token');
+
         console.log({
             body: {
                 cartId: cid
@@ -223,7 +229,7 @@ async function confirmCartToTicketOld(cid) {
         })
 
         showLoading()
-        const response = await fetch(`http://localhost:8080/api/tickets`, {
+        const response = await fetch(`${ORGANICA_BASE_URL}/api/tickets`, {
             method: 'POST',
             headers: {
                 "authorization": `Bearer ${token}`,
@@ -243,7 +249,7 @@ async function confirmCartToTicketOld(cid) {
             })
 
             // Construir la URL del carrito utilizando el ID seleccionado
-            const ticketsUrl = `http://localhost:8080/tickets`;
+            const ticketsUrl = `${ORGANICA_BASE_URL}/tickets`;
 
             // Redireccionar al usuario a la URL del carrito
             window.location.href = ticketsUrl;

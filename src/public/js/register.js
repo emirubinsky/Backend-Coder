@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
             formData.forEach((val, key) => obj[key]=val);
 
             showLoading();
-            fetch('http://localhost:8080/users/register', {
+            fetch(`${ORGANICA_BASE_URL}`+'/users/register', {
                 method: 'POST',
                 body: formData,
             })
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     message: `Inicio de sesión exitoso!`
                 })
 
-                window.location.href = "http://localhost:8080/home"
+                window.location.href = `${ORGANICA_BASE_URL}`+"/home"
             })
             .catch(error => {
                 console.error('Error en el inicio de sesión:', error);

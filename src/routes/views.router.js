@@ -5,6 +5,8 @@ import { customLogger } from '../appHelpers/logger.helper.js';
 
 import axios from 'axios'
 
+import { MAIN_URL } from "../util.js";
+
 const router = Router();
 
 /*** Rutas generales ***/
@@ -79,7 +81,7 @@ router.get("/products/list", auth, isPremiumOrAdmin, async (req, res) => {
       view: true,
       adm: true
     };
-    const axiosResponse = await apiClient.get('http://localhost:8080/api/products?',
+    const axiosResponse = await apiClient.get(`${MAIN_URL}`+'/api/products?',
       {
         // Forward the original request's cookies
         headers: {
@@ -117,7 +119,7 @@ router.get("/products", auth, isUserOrPremium, async (req, res) => {
       ...req.query,
       view: true
     };
-    const axiosResponse = await apiClient.get('http://localhost:8080/api/products/', {
+    const axiosResponse = await apiClient.get(`${MAIN_URL}`+'/api/products/', {
 
       // Forward the original request's cookies
       headers: {
@@ -151,7 +153,7 @@ router.get("/products/:id", auth, isUserOrPremium, async (req, res) => {
     // Procesamos request-response
     // Obtención de parametros desde el body/query/url
     const id = req.params.id
-    const responseAPI = await axios.get(`http://localhost:8080/api/products/${id}`, {
+    const responseAPI = await axios.get(`${MAIN_URL}/api/products/${id}`, {
       // Forward the original request's cookies
       headers: {
         Cookie: req.headers.cookie
@@ -184,7 +186,7 @@ router.get("/products/update/:id", auth, isPremiumOrAdmin, async (req, res) => {
     customLogger.debug('HOLA /products/update/:id');
 
     const id = req.params.id
-    const responseAPI = await axios.get(`http://localhost:8080/api/products/${id}`, {
+    const responseAPI = await axios.get(`${MAIN_URL}/api/products/${id}`, {
       // Forward the original request's cookies
       headers: {
         Cookie: req.headers.cookie
@@ -240,7 +242,7 @@ router.get("/cart/:id", auth, isUserOrPremium, async (req, res) => {
     customLogger.info("VIEWS > /cart/:id", req.params)
 
     const id = req.params.id
-    const responseAPI = await axios.get(`http://localhost:8080/api/carts/${id}`,
+    const responseAPI = await axios.get(`${MAIN_URL}/api/carts/${id}`,
       {
         // Forward the original request's cookies
         headers: {
@@ -284,7 +286,7 @@ router.get("/carts", auth, isUserOrPremium, async (req, res) => {
       ...req.query,
       view: true
     };
-    const axiosResponse = await apiClient.get('http://localhost:8080/api/carts',
+    const axiosResponse = await apiClient.get(`${MAIN_URL}`+'/api/carts',
       {
         // Forward the original request's cookies
         headers: {
@@ -319,7 +321,7 @@ router.get("/tickets", auth, isUserOrPremium, async (req, res) => {
     const apiClient = axios.create({ baseUrl: '/tickets' });
 
     // Make a request to the API route to get product data
-    const axiosResponse = await apiClient.get('http://localhost:8080/api/tickets',
+    const axiosResponse = await apiClient.get(`${MAIN_URL}`+'/api/tickets',
       {
         // Forward the original request's cookies
         headers: {
@@ -366,7 +368,7 @@ router.get("/users/list", auth, isAdmin, async (req, res) => {
       view: true,
       adm: true
     };
-    const axiosResponse = await apiClient.get('http://localhost:8080/users', {
+    const axiosResponse = await apiClient.get(`${MAIN_URL}`+'/users', {
 
       // Forward the original request's cookies
       headers: {

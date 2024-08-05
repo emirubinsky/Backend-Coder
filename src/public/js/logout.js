@@ -4,7 +4,7 @@ const logout = async () => {
 
     try {
         showLoading();
-        const response = await fetch('http://localhost:8080/users/logout', {
+        const response = await fetch(`${ORGANICA_BASE_URL}`+'/users/logout', {
             method: 'GET',
             headers: {
                 "authorization": `Bearer ${token}`

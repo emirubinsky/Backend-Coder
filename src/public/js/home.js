@@ -1,4 +1,4 @@
-// const socket = io.connect('http://localhost:8080');
+// const socket = io.connect(ORGANICA_BASE_URL);
 // socket.emit('message', 'Se ha conectado el websocket');
 
 
@@ -8,7 +8,7 @@ function onLoad() {
     const userId = localStorage.getItem("userId")
 
     showLoading()
-    fetch('http://localhost:8080/api/carts/user', {
+    fetch(`${ORGANICA_BASE_URL}`+'/api/carts/user', {
         method: 'POST',
         body: JSON.stringify({
             user: userId
