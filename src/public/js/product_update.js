@@ -16,9 +16,9 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     const productIdInput = document.getElementById('productId');
     const productId = productIdInput.value;
-    console.log('Product ID:', productId);
 
     const storedFiles = []; // Array to hold selected files
+    const removedThumbnails = []; // Array to hold removed thumbnails
 
     // Function to fetch existing thumbnails and populate storedFiles
     async function populateStoredFiles(productId) {
@@ -26,21 +26,24 @@ document.addEventListener('DOMContentLoaded', async function () {
             showLoading();
             const response = await fetch(`http://localhost:8080/api/products/${productId}`);
             const data = await response.json();
-            console.log("populateStoredFiles > ", data);
 
             if (response.ok && data.product && data.product.thumbnails) {
                 for (const thumbnailUrl of data.product.thumbnails) {
                     console.log("thumbnailUrl", thumbnailUrl);
 
                     if (thumbnailUrl !== null) {
-                        const blob = await fetch(`http://localhost:8080/img/products/${thumbnailUrl}`).then(res => res.blob());
-                        const file = new File([blob], thumbnailUrl.substring(thumbnailUrl.lastIndexOf('/') + 1));
+                        const blobResponse = await fetch(`http://localhost:8080/img/products/${thumbnailUrl}`);
+                        const blob = await blobResponse.blob();
+
+                        // Obtén el tipo MIME del blob
+                        const mimeType = blob.type;
+
+                        const file = new File([blob], thumbnailUrl.substring(thumbnailUrl.lastIndexOf('/') + 1), { type: mimeType });
                         storedFiles.push(file);
-                        console.log("new file stored in storedFiles", file.name);
+                        console.log("new file stored in storedFiles", file.name, file.type);
                     }
                 }
             }
-            hideLoading();
         } catch (error) {
             console.error('Error fetching thumbnails:', error);
             showCustomAlert({
@@ -56,28 +59,19 @@ document.addEventListener('DOMContentLoaded', async function () {
     // Function to display existing thumbnails in the table
     function displayExistingThumbnails() {
         thumbnailList.innerHTML = ''; // Clear existing thumbnails
-
         console.log("displayExistingThumbnails > ", storedFiles)
-
         storedFiles.forEach(file => {
-            //const reader = new FileReader();
-            //reader.onload = function (e) {
-            //const imageUrl = e.target.result;
             const row = `
-                    <tr>
-                        <td><img src="/img/products/${file.name}" style="max-height: 100px;"></td>
-                        <td><button class="btn btn-danger remove-thumbnail">Remove</button></td>
-                    </tr>
-                `;
+                <tr>
+                    <td><img src="/img/products/${file.name}" style="max-height: 100px;"></td>
+                    <td><button class="btn btn-danger remove-thumbnail" data-thumbnail="${file.name}">Remove</button></td>
+                </tr>
+            `;
             thumbnailList.insertAdjacentHTML('beforeend', row);
-            //};
-            //reader.readAsDataURL(file);
         });
     }
 
-
     /* "Multi File input" */
-
     // Add event listener to file input for selecting files
     fileInput.addEventListener('change', function (event) {
         const files = event.target.files;
@@ -85,16 +79,15 @@ document.addEventListener('DOMContentLoaded', async function () {
         Array.from(files).forEach(file => {
             storedFiles.push(file);
 
-            // Display thumbnail in table row
             const reader = new FileReader();
             reader.onload = function (e) {
                 const imageUrl = e.target.result;
                 const row = `
-            <tr>
-                <td><img src="${imageUrl}" style="max-height: 100px;"></td>
-                <td><button class="btn btn-danger remove-thumbnail">Remove</button></td>
-            </tr>
-        `;
+                    <tr>
+                        <td><img src="${imageUrl}" style="max-height: 100px;"></td>
+                        <td><button class="btn btn-danger remove-thumbnail">Remove</button></td>
+                    </tr>
+                `;
                 thumbnailList.insertAdjacentHTML('beforeend', row);
             };
             reader.readAsDataURL(file);
@@ -110,20 +103,18 @@ document.addEventListener('DOMContentLoaded', async function () {
             // Remove the thumbnail from the storedFiles array
             const row = event.target.closest('tr');
             const thumbnailIndex = Array.from(thumbnailList.children).indexOf(row);
+            const removedThumbnail = event.target.getAttribute('data-thumbnail');
 
             if (thumbnailIndex !== -1) {
                 storedFiles.splice(thumbnailIndex, 1); // Remove file from storedFiles array
+                removedThumbnails.push(removedThumbnail); // Add to removedThumbnails array
                 row.remove(); // Remove row from table
             }
         }
     });
-
     // Preload existing thumbnails and display on page load
     await populateStoredFiles(productId);
-    displayExistingThumbnails();
-
-
-
+    // displayExistingThumbnails();
 
     // Handle form submission for updating product
     updateProductBtn.addEventListener('click', async function (event) {
@@ -138,16 +129,46 @@ document.addEventListener('DOMContentLoaded', async function () {
             // Check if a new main image file is selected
             const mainImageInput = document.querySelector('#image');
             if (mainImageInput.files.length > 0) {
-                console.log("no voy a agregar algo mas")
-                //formData.append('image', mainImageInput.files[0]);
+                // Ya me acordé porque tenia esto comentado...
+                // formData.append('image', mainImageInput.files[0]);
             } else {
                 formData.delete('image'); // Remove 'image' field if not present
             }
 
             // Append new thumbnail files to formData
-            storedFiles.forEach((file, index) => {
-                formData.append(`thumbnails`, file);
+            storedFiles.forEach(file => {
+                formData.append('thumbnails', file);
             });
+
+            // Append removed thumbnails to formData
+            removedThumbnails.forEach(thumbnail => {
+                formData.append('removedThumbnails', thumbnail);
+            });
+
+            // Remove potential duplicate entries for image and thumbnails
+            /*
+            const uniqueEntries = new Map();
+            for (const [key, value] of formData.entries()) {
+                if (!uniqueEntries.has(key)) {
+                    uniqueEntries.set(key, value);
+                } else if (key === 'thumbnails') {
+                    if (Array.isArray(uniqueEntries.get(key))) {
+                        uniqueEntries.get(key).push(value);
+                    } else {
+                        uniqueEntries.set(key, [uniqueEntries.get(key), value]);
+                    }
+                }
+            }
+
+            const cleanedFormData = new FormData();
+            for (const [key, value] of uniqueEntries.entries()) {
+                if (Array.isArray(value)) {
+                    value.forEach(val => cleanedFormData.append(key, val));
+                } else {
+                    cleanedFormData.append(key, value);
+                }
+            }    
+            */
 
             const requestOptions = {
                 method: 'PUT',
