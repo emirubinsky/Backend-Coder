@@ -51,7 +51,7 @@ dotenv.config({ path: path.resolve(__dirname, path_enviroment) });
 // Si el scripting en package.json funciona...entonces podemos leer directamente el process.env
 
 export const PORT = process.env.PORT || 8080
-export const MAIN_URL = `${process.env.MAIN_URL}:${PORT}`
+export const MAIN_URL = `${process.env.MAIN_URL}`//:${PORT}`
 export const MONGO_URL = process.env.MONGO_URL;
 export const JWT_SECRET = process.env.JWT_SECRET;
 export const CLIENT_ID = process.env.CLIENT_ID;
