@@ -19,7 +19,10 @@ import messenger from "../appHelpers/messenger.js";
 import {
     __dirname,
     MAIL_USERNAME,
+    createHash,
+    isValidPassword
 } from "../util.js";
+
 
 const userController = {
     /* Metodo para el proyecto en algun futuro
@@ -71,7 +74,7 @@ const userController = {
             };
 
             // Envío respuesta
-            res.json({ message: "Lista de Usuarios:", response })
+            res.status(200).json({ message: "Lista de Usuarios:", response })
 
         } catch (error) {
             customLogger.error(`Error loading Usuarios: ${error}`, { ...error });
@@ -159,7 +162,7 @@ const userController = {
                 throw { code: 'INVALID_IMAGE' };
             }
 
-            const hashedPassword = await bcrypt.hash(password, 10);
+            const hashedPassword = createHash(password)
 
             const role = email.includes("admin") ? "admin" : "user";
 
@@ -187,7 +190,7 @@ const userController = {
             res.json({ message: "Success", newUser, access_token });
 
         } catch (error) {
-            console.log("Error al registrar usuario:", error )
+            console.log("Error al registrar usuario:", error)
             customLogger.error("Error al registrar usuario:", { ...error });
             next(error);
         }
@@ -323,7 +326,7 @@ const userController = {
                 return res.status(400).json({ error: "Token de restablecimiento inválido o expirado" });
             }
 
-            const hashedPassword = await bcrypt.hash(newPassword, 10);
+            const hashedPassword = createHash(newPassword) // bcrypt.hash(newPassword, 10);
             const updateDataPwd = { password: hashedPassword }
             await User.findByIdAndUpdate(userId, updateDataPwd, { new: true })
             // userService.updatePassword(userId, newPassword);
@@ -354,22 +357,26 @@ const userController = {
                 throw new Error("El usuario no existe");
             }
 
+            console.log("comparando contraseñas ", { oldPassword, existingUser })
             const isPasswordValid = await bcrypt.compare(oldPassword, existingUser.password);
             if (!isPasswordValid) {
                 customLogger.warning(`Contraseña antigua no válida para user: ${userId}`);
                 throw new Error("La contraseña antigua es incorrecta");
             }
 
-            const hashedPassword = await bcrypt.hash(newPassword, 10);
+            const hashedPassword = createHash(newPassword) //await bcrypt.hash(newPassword, 10);
             existingUser.password = hashedPassword;
 
-            await existingUser.save();
+            const updateDataPwd = { password: hashedPassword }
+            await User.findByIdAndUpdate(userId, updateDataPwd, { new: true })
+            // await existingUser.save();
             customLogger.info(`La contraseña cambió exitosamente para el user: ${userId}`);
-            return { message: "Contraseña actualizada correctamente" };
+
+            res.status(200).json({ message: "Contraseña actualizada correctamente" });
         }
         catch (error) {
             console.error("Error al cambiar la contraseña:", error);
-            res.status(500).json({ error: "Error interno del servidor" });
+            res.status(500).json({ error: "Error interno del servidor", details: error.message });
         }
     },
 
@@ -445,7 +452,7 @@ const userController = {
 
             const results = await UserManager.deleteAllInactiveUsers();
 
-            res.json(results);
+            res.status(200).json(results);
         }
         catch (error) {
             customLogger.error("Error al deleteAllInactiveUsers:", error);

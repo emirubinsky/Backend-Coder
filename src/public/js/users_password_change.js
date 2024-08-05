@@ -26,7 +26,11 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.error || "Error al cambiar la contraseña");
+                if (data.hasOwnProperty('details')) {
+                    throw new Error(data.details);
+                } else {
+                    throw new Error('Revise el formulario y vuelva a intentar');
+                }
             }
 
             hideLoading()

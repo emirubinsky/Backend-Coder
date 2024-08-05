@@ -43,7 +43,7 @@ router.get("/forgot_password", (req, res) => {
 });
 
 // Solicitar enlace para recuperar constraseña
-router.get("/password_change", (req, res) => {
+router.get("/users_password_change", (req, res) => {
   res.render("users_password_change");
 });
 
